@@ -1,0 +1,234 @@
+Assignment 2
+Memory Management Simulation:
+
+Motivation:
+One of the jobs of an operating system is to manage memory. In this assignment, you will simulate the management of memory in a multi-process environment. 
+Our simulated operating system will only contain those elements relevant for memory management. The memory hierarchy is composed of only two levels: The fast small memory which represents your computer's main memory (RAM), and the slow big memory (backing store) the disk. Both main memory (MM) and disk are divided into pages of fixed byte size.
+Our simulation will handle the memory pages of several processes. Each process has its own virtual address space, and reads and writes information from memory using virtual addresses. Every process converts (using the MMU) the required logical address into a physical address, ensuring that the requested physical page is indeed in memory (if it is not, it must be loaded from the disk). 
+
+General Description:
+The simulator will include the following components:
+
+1.Main Memory (MM) – simulates the small fast memory.  The MM is of a fixed size and is composed of a collection of pages. 
+
+2.Disk – simulates the slow big memory device (like a hard disk).  The Disk keeps pages of the entire virtual memory. 
+The Disk is of a fixed size and is composed of a collection of pages. In the Disk we keep all the process' pages in order, only some subset of these process' pages has a copy in the MM. 
+
+3.Memory Management Unit (MMU) – is responsible for converting a process’ logical address to its physical address in MM. 
+The MMU uses an inverted page table (IPT), in which each entry represents a physical page in MM, which is always kept in the memory. A single IPT is used by the MMU to serve all processes. Hence, whenever a context switch is performed, there is no need to switch between different tables of the MMU. 
+Each entry in the IPT represents a physical page in MM. The most important data that each entry i contains is whether the physical page i is free or the process ID and the logical page number of this process' virtual page that is stored in physical page i. For example, it may indicate that the physical page i contains the virtual page no. 9 of process 17.
+
+4.Page Replacement Manager (PRM) – the PRM is a dedicated process simulated by a pthread. Each time a requested page is not in MM, the PRM is called to replace pages so that the requested page will be in the MM. It is the job of the PRM to find a free page slot in MM (if such free slot exists) and load the requested page from the Disk to the MM. If no such free page slot exists, the PRM removes a selected page to the Disk, and loads the requested page from the Disk to the now free slot in the MM. 
+
+5.User Interface (UI) – a simple interactive 'shell' to test your program. The user can create processes, request processes to read/write from/to a memory address (by giving a logical address), print statistics (like the hit ratio) and print "debugging" information (such as which pages are in MM right now).     
+
+
+
+We will have two modes to the simulator:
+1.Monitor Mode – In that mode, the MMU provides debugging printings (i.e., printings that reveal operations that were made by this component).
+2.No Monitor Mode - In that mode, none of the components will provide debugging printings except for UI.
+
+Data Structures:
+To simplify things, you may assume you have enough 'internal' memory for these data structures, meaning you don't need to store it in either MM or Disk. 
+ 
+1.ProcessControlBlock (PCB) – one is kept for each process. Contains information on a specific process: 
+a.Process ID (PID).
+b.Start and end indices to the Disk part, where this process' pages are stored.
+
+2.MM-Disk-Map - a data structure which maps each page in the MM to its page address on the Disk or marks that it is an unused page.
+Notice how you implement this mapping function is up to you. You can correlate between each page in MM and its Disk address, or you can keep some pointer to the PCB and offset (and then the Disk address can be calculated by start index from the PCB + offset).
+
+These data structures are there just for you in order to know what each page in the MM contains. You may implement them any way you wish (for example saving the explicit disk page number, or saving PID and offset).
+
+3.FreeList – List of free pages.
+
+You might find the last three data structures useful while implementing the PRM.
+
+4.Inverted Page Table (IPT) – will be described in details below.
+
+5.Hash Anchor Table (HAT) – will be described in details below.
+
+Detailed Description of Each Component:
+Comment: Each bolded symbol is a variable that will be given in the configuration file (discussed below).
+
+1.Main Memory (MM) – 
+We simulate the MM by an array of pages. Each page is an array of PageSize bytes. NumOfPagesInMM determines the number of pages in MM (the size of the array). 
+
+2.Disk – 
+Much like the MM, we use an array. NumOfPagesInDisk determines the number of pages in the Disk. Each page on the disk is also of PageSize bytes. 
+We keep the pages of each process sequentially. In addition, each process that is created is allocated exactly NumOfProcessPages pages and it can use only them (i.e., it cannot ask for more memory).
+
+
+3.Memory Management Unit (MMU) – 
+The MMU is responsible for converting a process' logical address to its physical address in the MM.
+It has a method which receives a logical address and the process ID, and returns the physical address in the MM. This method first splits the virtual address into a logical page number and offset. Then, it uses the IPT in order to convert the logical page number into a physical page number.
+
+Description of an entry in the Inverted Page Table:
+Each entry i contains the following information:
+a)A process id PID. 
+b)A logical page number N. 
+Which means that physical page i contains the logical page N of process PID.
+c)dirty bit. Whenever the content of a page is changed, this bit is set (flagged true). Whenever a page is loaded to MM or saved to Disk, this bit is cleared (flagged false). 
+d)A reference bit. Whenever a page is accessed (read or write), this bit is set (flagged true). The Aging Algorithm Daemon may read / change it.
+e)A pointer Next, that is NULL or pointing to another entry in the inverted page table. Initially Next = NULL. The usage of Next will be described later.
+f)A pointer Prev, that is NULL or pointing to another entry in the inverted page table. Initially Prev = NULL. The usage of Prev will be described later.
+
+
+
+In general, when using an IPT, in order to convert a logical page number into a physical page number, the MMU should linearly scan all the table entries until it finds an entry i which contains the given PID and logical page number and returns i. In order to avoid the linear search, our MMU uses the following speed-up technique:
+
+Speed up the linear searching - Hashing:
+The MMU uses the HAT in order to make the conversion.
+The HAT is a table which has NumOfPagesInMM entries. Each entry is either NULL or points to an entry in the IPT.
+Given a PID and a logical page number N, the MMU applies hash function Hash on PID and N in order to get an entry in the HAT. The hash function computes: 
+Hash(PID,N) = (PID*N)%NumOfPagesInMM
+Then, the entry’s pointer to the IPT entry e is followed, and the process ID and logical page number are compared with those stored in e. If they don’t match, e’s Next pointer is followed to get to another IPT entry, and the process is repeated until a match is found or e’s Next pointer is NULL.
+
+
+
+
+The conversion of a virtual address is illustrated in this figure
+
+
+
+When the requested page is not in the linked list starting at the computed entry of the HAT, the MMU generates a page fault and specifies which page it needs. It asks the PRM to load this page into MM and when the PRM is done the MMU searches the logical page number again as before.
+After converting the logical page number into a physical one, the MMU returns the physical address which is the number of the physical page that it found and the offset.
+
+Important! The MMU can be accessed by many different threads, some trying to read information and others trying to change entries.  Locking the entire MMU with one mutex (coarse grained synchronization) is not acceptable, as all processes need access to the MMU constantly. Therefore a possible solution is to synchronize this unit, using a fair solution for the readers-writers problem.
+
+In Monitor mode, the MMU should print whether a page fault occurred or whether it found the needed page number using the the IPT. 
+
+4.Page Replacement Manager (PRM) – 
+The PRM pthread is responsible for loading pages from the Disk to the MM. It should have a method similar to:
+
+loadPage(int processID, int pageNum, int diskStart);
+
+where diskStart is the address of the first page of this process on Disk. PRM uses diskStart to find the correct page on the Disk to load, selects where to load it to, and if the selected location already contains a page, then it first pages-out this page and only then copies the page from the Disk to the selected location in MM. 
+
+Selecting the location:
+If there is an unused page (free page), it is selected. Else, one is picked based on the algorithm "Aging".
+
+Replacement Algorithm:
+You are required to have an Aging Algorithm Daemon (that should be a dedicated pthread) that implements the Aging Algorithm. 
+
+Aging Algorithm – For each physical page you should hold a register of type int. Whenever a new page is brought to a physical page i, all the bits of register i are initialized to be 0, except for the MSB (Most Significant Bit) which is set to 1.
+Each ShiftClock memory references, all the registers are shifted right and the appropriate reference bit of each page i is inserted to the MSB of register i.
+When a page fault occurs and if there are no free pages, the page with the lowest register's value is replaced. If more than one page has the lowest value, we observe the dirty bits. Let P be the set of pages whose value is the lowest. If there exists exactly one page p in P with dirty bit 0 (i.e., is not dirty), p should be replaced. If there is more than one such page, the page with the lowest index among them is replaced. Otherwise, (all pages are dirty), the page whose index is the lowest from the set P is replaced.
+
+
+
+Pay attention that the PRM should handle the pointers of the HAT and the Next and Prev pointers of the IPT. Actually, it creates for each entry i in the HAT a bidirectional linked list of entries of the IPT that represent pages in the MM that contains a virtual page N of process PID such that Hash(PID,N) = i. 
+Assuming that the PRM decided to load the needed page into page j of the MM, it first has to remove j from the list that it was belonged to (might be also the free list). After that, it computes Hash(processID, pageNum) in order to get the entry in the HAT in whose list j should be inserted and it inserts j to the list that is pointed by this entry. 
+Pay attention that the list is bidirectional, and while updating the list, you should update both Next and Prev. 
+
+Paging-out a page p includes:
+If the dirty bit of p is on, then p must be written to the Disk. If the dirty bit of p is off, then there is no point of writing p to the Disk since its copy on the Disk is already up-to-date.  
+
+5.User Interface (UI)  – 
+A dedicated pthread, which transfers requests from the user to the system, simulating a simple interactive 'shell' to test your program. Prints the prompt ">" to stdout and waits for commands. The $ symbol means that this command might perform memory references. For simplicity, each reference to a byte in MM is considered as memory reference. (The references to the internal memory of the different processes, are not considered as memory references for our purposes). 
+Notice that the commands are case-sensitive (meaning createProcess is a valid command and createprocess is not). 
+Possible commands are:
+a.createProcess
+creates a new process and prints out the new process ID (or description of error if something like "insufficient space" occurred).
+
+It may simply call a function int createProcess(…) that creates a pthread that simulates the process (allocates a unique process id for the newly created process, creates its PCB, …), finds (sequential) space big enough on the Disk to hold the process pages, updates all data structures (updates the maps…) and prints the id of the process. The PID must be in the range [0,MaxNumOfProcesses-1] and the system should allocate the minimal possible id from this range, i.e., the minimal that is not allocated) . 
+
+delProcess id 
+passes a message to the requested process, causing the process to update all  data structures (maps are updated, IPT,…), after it has finished running all its existing jobs.  Note that there is no need to actually change the content of the Disk pages or the MM pages, the MM pages will just be marked free and contain 'trash' and the same goes for the Disk pages. 
+Afterwards, the UI thread deletes the process with the given id and prints "PID killed OK" (or description of error if something like "no such process id" occurred). The UI should not return until this procedure is finished. 
+
+b.read vAddr id amount
+reads and prints amount bytes from vAddr of process id. Prints each byte as a char. (or description of error if it occurred). $
+
+The receiving process should implement the following function
+read(int vAddr, int amount) which does the following: for each address address from vAddr to vAddr+amount-1, send address and PID to the MMU, and wait until the MMU returns its answer. Then it should go to the MM to the physical address provided by the MMU and retrieve the specified byte inside that page. After obtaining all requested data, the process should print a char array of the bytes that were read to the screen.
+
+If there are less than amount bytes from vAddr to the end of PID's memory, the read command will read only until the end of the memory.
+
+c.loopRead vAddr id off amount
+reads and prints the chars found at vAddr, vAddr+off, vAddr+2*off, …, vAddr+(amount-1)*off of process id. Assume these memory addresses are within the bounds of the virtual memory (not below 0 or too big). Assume amount > 0. $
+
+d.readToFile vAddr id amount filename 
+identical in definition to “read vAddr id amount”, with the sole difference that output is written to the specified file filename, instead of to the screen. $
+
+e.loopReadToFile vAddr id off amount filename
+identical in definition to “loopRead vAddr id off amount”, except that output is to the file filename and not to the screen. $
+
+f.write vAddr id s
+writes the string s starting from location vAddr. Prints "ok" (or description of error if it occurred). $
+
+The receiving process should implement the following function
+write(int vAddr,  char[] c, int amount) . For each address address from vAddr to vAddr+amount-1, this function does the following:
+It sends address and PID to the MMU, and waits until the MMU returns its answer. Then it writes c[address - vAddr] to MM at the returned physical address and raises the dirty flag of that page.
+If there are less bytes than the size of c from vAddr to the end of PID's memory, the write command will write only until the end of the memory.
+
+g.loopWrite vAddr id c off amount
+writes the char c to the following virtual addresses: vAddr, vAddr+off, vAddr+2*off, …, vAddr+(amount-1)*off. Assume these memory addresses are within the bounds of the virtual memory (not below 0 or too big). Assume amount > 0. $
+
+h.hitRate
+prints the total hit ratio (a real number between 0 and 1). (Reminder – this is equal to "how many times pages were already in MM, divided by the number of times we referred to pages").
+
+i.printMM
+prints the MM.
+
+j.printMMUTable
+prints the IPT, entry by entry. Each entry should be displayed in form "(pid, pageNum, dirty bit, aging reference bit, next, prev)". For free pages (unused) print "(free)".
+
+k.printRegisters
+prints the registers of the aging algorithm, each register on a new line.
+
+l.printHat
+For each entry in the HAT, prints the list that is pointed by this entry.
+
+m.monitor
+switches the system to Monitor mode.
+
+
+n.noMonitor
+switches the system to No Monitor mode.
+
+o.exit
+Terminates the simulator.
+
+p.batchFile filename 
+read commands from the file filename. Each command will appear on a new line with the correct syntax. The UI must deliver all commands to the correct processes. The UI must not hang until a command is completed unless this behavior is explicitly specified for this command i.e. the del command.
+
+
+Synchronization Issues:
+It is important to mention that no busy waiting is allowed
+Special attention should be given to the following scenarios.
+1.Communication between UI and processes should be done using a mailer system. This means that every process has a dedicated “mailing box”, in which requests are placed by the UI. If there are no requests, the process should block until a new request is placed by the UI.
+2.Multiple processes which have a page fault simultaneously. 
+3.A process which is preempted (by the real OS) in the middle of accessing a page and then that page is paged out.
+4.Synchronization of  IPT. One possible solution is your own adaptation of the readers/writers synchronization algorithm. Who should have precedence the readers or the writers?
+5.Aging daemon, should be called every ShiftClock number of memory accesses. This counter is shared by many processes.
+6.A useful link on pthreads and synchronization tools: http://www.yolinux.com/TUTORIALS/LinuxTutorialPosixThreads.html
+
+
+The Configuration File:
+Has the following format:
+
+MaxNumOfProcesses = [integer]
+PageSize = [integer]
+NumOfPagesInMM = [integer]
+NumOfPagesInDisk = [integer]
+NumOfProcessPages = [integer] 
+ShiftClock = [integer]
+
+You may assume that the given file will have this exact format and that the input is correct. Notice fine detail, such that there is exactly one space between field name and the '=' char, and also one space between the '=' char and the value.
+
+Running your program:
+Is done by typing:
+> sim <config_filename>
+
+Submitting Requirements & Technical Information:
+1.Programming language to be used is C.
+2.Submit a single zip file called ID1_ID2.zip (where the ID is your and your partner's ID). This zip file should contain only source code (cpp and h files) and makefile.
+3.Unzipping your program and running 'make' should compile your code and create the executable 'sim'.
+4.Your program will be tested on local Linux machines as installed in the labs of building 34. Make sure the code and makefile you submit run flawlessly on these machines before submitting.
+5.Submit your zip file using the submission system.
+6.Questions should be sent to os102.cs.bgu@gmail.com with the subject “Assignment 2: <your subject>”.
+7.This assignment is worth 15% of your final course grade. 
+8.Due date – as published in the course website. 
+
+Good Luck!
