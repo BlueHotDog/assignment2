@@ -36,6 +36,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/disk.o \
 	${OBJECTDIR}/ui.o \
 	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/ipt.o \
 	${OBJECTDIR}/tests.o \
 	${OBJECTDIR}/mm.o
 
@@ -87,6 +88,11 @@ ${OBJECTDIR}/main.o: nbproject/Makefile-${CND_CONF}.mk main.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/ipt.o: nbproject/Makefile-${CND_CONF}.mk ipt.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/ipt.o ipt.c
 
 ${OBJECTDIR}/tests.o: nbproject/Makefile-${CND_CONF}.mk tests.c 
 	${MKDIR} -p ${OBJECTDIR}

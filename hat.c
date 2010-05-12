@@ -4,12 +4,12 @@
 
 
 
-int Hash(PID proccessID,int pageNumber)
+int HAT_Hash(PID proccessID,int pageNumber)
 {
     return (proccessID*pageNumber)%NumOfPagesInMM;
 }
 
-bool InitHAT()
+bool HAT_Init()
 {
     HATArray = calloc(NumOfPagesInMM,sizeof(IPT_t));
     if(!HATArray)

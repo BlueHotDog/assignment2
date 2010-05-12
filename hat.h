@@ -1,8 +1,22 @@
-/* 
+/*
  * File:   hat.h
  * Author: danni & yaniv
  *
  * Created on May 9, 2010, 7:01 PM
+ *
+ * The MMU uses the HAT in order to make the conversion.
+ * The HAT is a table which has NumOfPagesInMM entries. Each entry is either
+ * NULL or points to an entry in the IPT.
+ * Given a PID and a logical page number N, the MMU applies hash
+ * function Hash on PID and N in order to get an entry in the HAT.
+ * The hash function computes:
+ * Hash(PID,N) = (PID*N)%NumOfPagesInMM
+ * Then, the entry’s pointer to the IPT entry e is followed,
+ * and the process ID and logical page number are compared with
+ * those stored in e. If they don’t match,
+ * e’s Next pointer is followed to get to another IPT entry,
+ * and the process is repeated until a match is
+ * found or e’s Next pointer is NULL.
  */
 
 #ifndef _HAT_H
@@ -12,7 +26,7 @@
 
 HAT_t HATArray;
 
-bool InitHAT();
-int Hash(PID proccessID,int pageNumber);
+bool HAT_Init();
+int HAT_Hash(PID proccessID,int pageNumber);
 #endif	/* _HAT_H */
 
