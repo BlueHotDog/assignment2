@@ -12,10 +12,16 @@
 typedef unsigned int PID; //proccess id
 typedef unsigned int LPN; //logical page number
 
-const volatile unsigned int PageSize;
-const volatile unsigned int NumOfPagesInMM;
-const volatile unsigned int NumOfPagesInDisk;
-const volatile unsigned int NumOfProcessPages;
+typedef char* Page;
+typedef IPT_t_p* HAT_t; //HAT is just an array of IPT enteries
+
+
+volatile unsigned int MaxNumOfProcesses;
+volatile unsigned int PageSize;
+volatile unsigned int NumOfPagesInMM;
+volatile unsigned int NumOfPagesInDisk;
+volatile unsigned int NumOfProcessPages;
+volatile unsigned int ShiftClock;
 
 typedef struct iptStruct {
     PID proccessID;
@@ -29,7 +35,8 @@ typedef struct iptStruct {
 
 typedef struct pcbStruct {
     PID proccessID;
-
+    unsigned int start; //Start indices
+    unsigned int end; //end indices
 } PCB_t,*PCB_t_p;
 
 typedef struct mmDiskMapStruct

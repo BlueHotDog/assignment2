@@ -28,18 +28,22 @@ typedef char* string;
 #define DEBUG
 
 //DEBUGGING
-# define __ASSERT_VOID_CAST (void)
-#ifdef DEBUG
-    #define ASSERT(expr)							\
+#define __ASSERT_VOID_CAST (void)
+#define ASSERT_ALWAYS(expr)							\
       ((expr)								\
        ? __ASSERT_VOID_CAST (0)						\
        : exit(printf("=========assertion failed on line:%d\t file:%s\n",__LINE__,__FILE__)))
-    #define ASSERT_RUN(expr) (expr)
-    #define ASSERT_PRINT(expr...)  (printf(expr))
+#ifdef DEBUG
+#define ASSERT(expr)							\
+      ((expr)								\
+       ? __ASSERT_VOID_CAST (0)						\
+       : exit(printf("=========assertion failed on line:%d\t file:%s\n",__LINE__,__FILE__)))
+#define ASSERT_RUN(expr) (expr)
+#define ASSERT_PRINT(expr...)  (printf(expr))
 #else
-    #define ASSERT(expr)        __ASSERT_VOID_CAST (0)
-    #define ASSERT_RUN(expr)    __ASSERT_VOID_CAST (0)
-    #define ASSERT_PRINT(expr...)  __ASSERT_VOID_CAST (0)
+#define ASSERT(expr)        __ASSERT_VOID_CAST (0)
+#define ASSERT_RUN(expr)    __ASSERT_VOID_CAST (0)
+#define ASSERT_PRINT(expr...)  __ASSERT_VOID_CAST (0)
 #endif
 
 #endif	/* _GLOBALDEFS_H */

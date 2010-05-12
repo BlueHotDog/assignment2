@@ -8,22 +8,22 @@
 #ifndef _PRM_H
 #define	_PRM_H
 #include "globaldefs.h"
+#include "datatypes.h"
+static bool PRM_shouldClose = FALSE;
 
-static bool shouldAgingDeamonClose = FALSE;
+pthread_t PRM;
 
-pthread_t AgingDaemon;
-bool CreateAgingDeamon();
-void CloseAgingDeamon();
-/*
- * where diskStart is the address of the first page of this process on Disk.
- * PRM uses diskStart to find the correct page on the Disk to load,
- * selects where to load it to,
- * and if the selected location already contains a page,
- * then it first pages-out this page and only then copies the page from
- * the Disk to the selected location in MM.
- */
-//bool loadPage(PID processID, int pageNum,int diskStart);
-void agingAlgorithm();
+typedef struct PRM_RequestQueueValueStruct
+{
+    unsigned int pageNumber;
+    unsigned int ProccessID;
+
+} PRM_RequestQueueValue_t,*PRM_RequestQueueValue_tp;
+
+bool PRM_Create();
+void PRM_Close();
+
+bool loadPage(const PID processID, const int pageNum, const int diskStart);
 
 
 #endif	/* _PRM_H */

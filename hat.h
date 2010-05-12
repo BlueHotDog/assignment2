@@ -8,7 +8,8 @@
 #ifndef _HAT_H
 #define	_HAT_H
 #include "globaldefs.h"
-typedef IPT_t_p* HAT_t; //HAT is just an array of IPT enteries
+
+
 HAT_t HATArray;
 
 bool InitHAT();

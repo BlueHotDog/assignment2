@@ -33,9 +33,11 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/prm.o \
 	${OBJECTDIR}/hat.o \
+	${OBJECTDIR}/disk.o \
 	${OBJECTDIR}/ui.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/tests.o
+	${OBJECTDIR}/tests.o \
+	${OBJECTDIR}/mm.o
 
 # C Compiler Flags
 CFLAGS=
@@ -71,6 +73,11 @@ ${OBJECTDIR}/hat.o: nbproject/Makefile-${CND_CONF}.mk hat.c
 	${RM} $@.d
 	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/hat.o hat.c
 
+${OBJECTDIR}/disk.o: nbproject/Makefile-${CND_CONF}.mk disk.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/disk.o disk.c
+
 ${OBJECTDIR}/ui.o: nbproject/Makefile-${CND_CONF}.mk ui.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
@@ -85,6 +92,11 @@ ${OBJECTDIR}/tests.o: nbproject/Makefile-${CND_CONF}.mk tests.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/tests.o tests.c
+
+${OBJECTDIR}/mm.o: nbproject/Makefile-${CND_CONF}.mk mm.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/mm.o mm.c
 
 # Subprojects
 .build-subprojects:
