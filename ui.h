@@ -12,11 +12,13 @@
 
 #define MAX_INPUT_LENGTH 50
 
-static pthread_t UI_Thread;
+pthread_t UI_Thread;
 static volatile bool UI_ShouldUIThreadClose = FALSE;
-void UI_Main();
+void* UI_Main();
 bool UI_CreateUIThread();
 void UI_SignalUIThreadToStop();
+
+void UI_ParseCommand(const string* const comm);
 
 /*creates a new process and prints out the new process ID
  * (or description of error if something like "insufficient space" occurred).

@@ -37,7 +37,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/pcb.o \
 	${OBJECTDIR}/ui.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/tests.o
+	${OBJECTDIR}/tests.o \
+	${OBJECTDIR}/freelist.o
 
 # C Compiler Flags
 CFLAGS=
@@ -66,37 +67,42 @@ dist/Debug/GNU-Linux-x86/assignment2: ${OBJECTFILES}
 ${OBJECTDIR}/prm.o: nbproject/Makefile-${CND_CONF}.mk prm.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/prm.o prm.c
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/prm.o prm.c
 
 ${OBJECTDIR}/hat.o: nbproject/Makefile-${CND_CONF}.mk hat.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/hat.o hat.c
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/hat.o hat.c
 
 ${OBJECTDIR}/disk.o: nbproject/Makefile-${CND_CONF}.mk disk.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/disk.o disk.c
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/disk.o disk.c
 
 ${OBJECTDIR}/pcb.o: nbproject/Makefile-${CND_CONF}.mk pcb.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/pcb.o pcb.c
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/pcb.o pcb.c
 
 ${OBJECTDIR}/ui.o: nbproject/Makefile-${CND_CONF}.mk ui.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/ui.o ui.c
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/ui.o ui.c
 
 ${OBJECTDIR}/main.o: nbproject/Makefile-${CND_CONF}.mk main.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.c
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.c
 
 ${OBJECTDIR}/tests.o: nbproject/Makefile-${CND_CONF}.mk tests.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/tests.o tests.c
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/tests.o tests.c
+
+${OBJECTDIR}/freelist.o: nbproject/Makefile-${CND_CONF}.mk freelist.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/freelist.o freelist.c
 
 # Subprojects
 .build-subprojects:

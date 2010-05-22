@@ -17,9 +17,9 @@ Disk_t Disk;
 //return true on success, false otherwise
 bool DISK_Init();
 //Findes a free space in the Disk using the PCB and allocate the space
-bool DISK_AllocateNewProcess(PID id);
+bool DISK_AllocateSpace(unsigned int start,unsigned int end);
 //Removes the relevant PCB block
-bool DISK_DeAllocateProcess(PID id);
+bool DISK_DeAllocateSpace(unsigned int start,unsigned int end);
 //returns the Page to the PRM
 Page DISK_ReadPage(int pageNum);
 //Writes the data to the pageNumber returns true if all went well, false otherwise.

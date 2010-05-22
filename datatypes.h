@@ -36,6 +36,7 @@ volatile unsigned int ShiftClock;
 
 
 typedef struct pcbStruct {
+    bool Active;
     PID proccessID;
     unsigned int start; //Start indices
     unsigned int end; //end indices
@@ -48,7 +49,7 @@ typedef struct mmDiskMapStruct
 
 typedef struct freeListStruct
 {
-    
+    bool isFree;
 } FreeList_t,*FreeList_t_p;
 
 typedef struct PRM_RequestQueueValueStruct

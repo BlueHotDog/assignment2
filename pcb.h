@@ -8,12 +8,14 @@
 #ifndef _PCB_H
 #define	_PCB_H
 #include "globaldefs.h"
+#include "datatypes.h"
+
+PCB_t_p PCBArray;
 
 bool PCB_Init();
-bool PCB_AllocateProccess(PID id,int start,int end);
+PCB_t PCB_AllocateProccess(PID id,int start,int end);
 bool PCB_DeAllocateProccess(PID id);
-//Returns the start address of the free space on disk, -1 if failure
-int PCB_SearchForFreeSpace();
+int PCB_GetFreeProcessID();
 
 #endif	/* _PCB_H */
 

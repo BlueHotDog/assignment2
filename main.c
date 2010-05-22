@@ -13,6 +13,8 @@
 #include "ui.h"
 #include "disk.h"
 #include "pcb.h"
+#include "freelist.h"
+
 void readConfigFromFile(string fileName)
 {
     const int lineLength = 100;
@@ -62,8 +64,30 @@ void printUsage()
     printf("Incorrect usage, please user:\n sim config_file_name");
 
 }
-int main(int argc, char** argv) {
+void init()
+{
+    bool ReturnVal = FALSE;
+    ASSERT_PRINT("===Starting init===\n");
 
+    ASSERT_PRINT("Init FreeList...\n");
+    ReturnVal = FREELIST_Init();
+    ASSERT(ReturnVal!=FALSE);
+
+    ASSERT_PRINT("Init Disk...\n");
+    ReturnVal = DISK_Init();
+    ASSERT(ReturnVal!=FALSE);
+
+    ASSERT_PRINT("Creating UI Thread...\n");
+    ReturnVal = UI_CreateUIThread();
+    ASSERT(ReturnVal!=FALSE);
+
+    ASSERT_PRINT("Creating PCB array for %d processes..\n",MaxNumOfProcesses);
+    ReturnVal = PCB_Init();
+    ASSERT(ReturnVal!=FALSE);
+}
+
+int main(int argc, char** argv) {
+    void*   status;
     #ifdef DEBUG
     readConfigFromFile("config");
     printConfigInfo();
@@ -75,12 +99,11 @@ int main(int argc, char** argv) {
     }
     readConfigFromFile(argv[1]);
     #endif
+    init();
+    pthread_join(UI_Thread,status);
+
     return (EXIT_SUCCESS);
 }
 
-void init()
-{
-    //UI_CreateUIThread();
-}
 
 

@@ -15,10 +15,10 @@ CFLAGS = $(BASICOPTS)
 
 
 # Define the target directories.
-TARGETDIR_sim=GNU-i386-Linux
+TARGETDIR_sim=dist/Debug/GNU-Linux-x86
 
 
-all: $(TARGETDIR_sim)/sim
+all: $(TARGETDIR_sim)/assignment2
 
 ## Target: sim
 CPPFLAGS_sim = \
@@ -29,6 +29,8 @@ OBJS_sim =  \
 	$(TARGETDIR_sim)/ui.o \
 	$(TARGETDIR_sim)/tests.o \
 	$(TARGETDIR_sim)/prm.o \
+	$(TARGETDIR_sim)/pcb.o \
+	$(TARGETDIR_sim)/freelist.o \
 	$(TARGETDIR_sim)/main.o
 SYSLIBS_sim = -lpthread 
 USERLIBS_sim = $(SYSLIBS_sim) 
@@ -37,7 +39,7 @@ LDLIBS_sim = $(USERLIBS_sim)
 
 
 # Link or archive
-$(TARGETDIR_sim)/sim: $(TARGETDIR_sim) $(OBJS_sim) $(DEPLIBS_sim)
+$(TARGETDIR_sim)/assignment2: $(TARGETDIR_sim) $(OBJS_sim) $(DEPLIBS_sim)
 	$(LINK.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ $(OBJS_sim) $(LDLIBS_sim)
 
 
@@ -60,7 +62,11 @@ $(TARGETDIR_sim)/prm.o: $(TARGETDIR_sim) prm.c
 $(TARGETDIR_sim)/main.o: $(TARGETDIR_sim) main.c
 	$(COMPILE.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ main.c
 
+$(TARGETDIR_sim)/pcb.o: $(TARGETDIR_sim) pcb.c
+	$(COMPILE.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ pcb.c
 
+$(TARGETDIR_sim)/freelist.o: $(TARGETDIR_sim) freelist.c
+	$(COMPILE.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ freelist.c
 
 #### Clean target deletes all generated files ####
 clean:
@@ -71,6 +77,8 @@ clean:
 		$(TARGETDIR_sim)/ui.o \
 		$(TARGETDIR_sim)/tests.o \
 		$(TARGETDIR_sim)/prm.o \
+		$(TARGETDIR_sim)/pcb.o \
+		$(TARGETDIR_sim)/freelist.o \
 		$(TARGETDIR_sim)/main.o
 	rm -f -r $(TARGETDIR_sim)
 

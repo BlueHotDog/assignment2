@@ -37,7 +37,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/pcb.o \
 	${OBJECTDIR}/ui.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/tests.o
+	${OBJECTDIR}/tests.o \
+	${OBJECTDIR}/freelist.o
 
 # C Compiler Flags
 CFLAGS=
@@ -97,6 +98,11 @@ ${OBJECTDIR}/tests.o: nbproject/Makefile-${CND_CONF}.mk tests.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/tests.o tests.c
+
+${OBJECTDIR}/freelist.o: nbproject/Makefile-${CND_CONF}.mk freelist.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/freelist.o freelist.c
 
 # Subprojects
 .build-subprojects:
