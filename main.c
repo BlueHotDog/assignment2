@@ -11,7 +11,8 @@
 #include "datatypes.h"
 #include "hat.h"
 #include "ui.h"
-
+#include "disk.h"
+#include "pcb.h"
 void readConfigFromFile(string fileName)
 {
     const int lineLength = 100;

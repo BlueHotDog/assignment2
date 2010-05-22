@@ -1,109 +1,86 @@
-#
-#  There exist several targets which are by default empty and which can be 
-#  used for execution of your targets. These targets are usually executed 
-#  before and after some main targets. They are: 
-#
-#     .build-pre:              called before 'build' target
-#     .build-post:             called after 'build' target
-#     .clean-pre:              called before 'clean' target
-#     .clean-post:             called after 'clean' target
-#     .clobber-pre:            called before 'clobber' target
-#     .clobber-post:           called after 'clobber' target
-#     .all-pre:                called before 'all' target
-#     .all-post:               called after 'all' target
-#     .help-pre:               called before 'help' target
-#     .help-post:              called after 'help' target
-#
-#  Targets beginning with '.' are not intended to be called on their own.
-#
-#  Main targets can be executed directly, and they are:
-#  
-#     build                    build a specific configuration
-#     clean                    remove built files from a configuration
-#     clobber                  remove all built files
-#     all                      build all configurations
-#     help                     print help mesage
-#  
-#  Targets .build-impl, .clean-impl, .clobber-impl, .all-impl, and
-#  .help-impl are implemented in nbproject/makefile-impl.mk.
-#
-#  Available make variables:
-#
-#     CND_BASEDIR                base directory for relative paths
-#     CND_DISTDIR                default top distribution directory (build artifacts)
-#     CND_BUILDDIR               default top build directory (object files, ...)
-#     CONF                       name of current configuration
-#     CND_PLATFORM_${CONF}       platform name (current configuration)
-#     CND_ARTIFACT_DIR_${CONF}   directory of build artifact (current configuration)
-#     CND_ARTIFACT_NAME_${CONF}  name of build artifact (current configuration)
-#     CND_ARTIFACT_PATH_${CONF}  path to build artifact (current configuration)
-#     CND_PACKAGE_DIR_${CONF}    directory of package (current configuration)
-#     CND_PACKAGE_NAME_${CONF}   name of package (current configuration)
-#     CND_PACKAGE_PATH_${CONF}   path to package (current configuration)
-#
-# NOCDDL
+## -*- Makefile -*-
+##
+## User: yanivdu
+## Time: May 22, 2010 8:19:43 PM
+## Makefile created by Sun Studio.
+##
+## This file is generated automatically.
+##
 
 
-# Environment 
-MKDIR=mkdir
-CP=cp
-CCADMIN=CCadmin
-RANLIB=ranlib
+#### Compiler and tool definitions shared by all build targets #####
+CC = gcc
+BASICOPTS = -g
+CFLAGS = $(BASICOPTS)
 
 
-# build
-build: .build-post
-
-.build-pre:
-# Add your pre 'build' code here...
-
-.build-post: .build-impl
-# Add your post 'build' code here...
+# Define the target directories.
+TARGETDIR_sim=GNU-i386-Linux
 
 
-# clean
-clean: .clean-post
+all: $(TARGETDIR_sim)/sim
 
-.clean-pre:
-# Add your pre 'clean' code here...
-
-.clean-post: .clean-impl
-# Add your post 'clean' code here...
-
-
-# clobber
-clobber: .clobber-post
-
-.clobber-pre:
-# Add your pre 'clobber' code here...
-
-.clobber-post: .clobber-impl
-# Add your post 'clobber' code here...
+## Target: sim
+CPPFLAGS_sim = \
+	-I.
+OBJS_sim =  \
+	$(TARGETDIR_sim)/hat.o \
+	$(TARGETDIR_sim)/disk.o \
+	$(TARGETDIR_sim)/ui.o \
+	$(TARGETDIR_sim)/tests.o \
+	$(TARGETDIR_sim)/prm.o \
+	$(TARGETDIR_sim)/main.o
+SYSLIBS_sim = -lpthread 
+USERLIBS_sim = $(SYSLIBS_sim) 
+DEPLIBS_sim =  
+LDLIBS_sim = $(USERLIBS_sim)
 
 
-# all
-all: .all-post
-
-.all-pre:
-# Add your pre 'all' code here...
-
-.all-post: .all-impl
-# Add your post 'all' code here...
+# Link or archive
+$(TARGETDIR_sim)/sim: $(TARGETDIR_sim) $(OBJS_sim) $(DEPLIBS_sim)
+	$(LINK.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ $(OBJS_sim) $(LDLIBS_sim)
 
 
-# help
-help: .help-post
+# Compile source files into .o files
+$(TARGETDIR_sim)/hat.o: $(TARGETDIR_sim) hat.c
+	$(COMPILE.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ hat.c
 
-.help-pre:
-# Add your pre 'help' code here...
+$(TARGETDIR_sim)/disk.o: $(TARGETDIR_sim) disk.c
+	$(COMPILE.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ disk.c
 
-.help-post: .help-impl
-# Add your post 'help' code here...
+$(TARGETDIR_sim)/ui.o: $(TARGETDIR_sim) ui.c
+	$(COMPILE.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ ui.c
+
+$(TARGETDIR_sim)/tests.o: $(TARGETDIR_sim) tests.c
+	$(COMPILE.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ tests.c
+
+$(TARGETDIR_sim)/prm.o: $(TARGETDIR_sim) prm.c
+	$(COMPILE.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ prm.c
+
+$(TARGETDIR_sim)/main.o: $(TARGETDIR_sim) main.c
+	$(COMPILE.c) $(CFLAGS_sim) $(CPPFLAGS_sim) -o $@ main.c
 
 
 
-# include project implementation makefile
-include nbproject/Makefile-impl.mk
+#### Clean target deletes all generated files ####
+clean:
+	rm -f \
+		$(TARGETDIR_sim)/sim \
+		$(TARGETDIR_sim)/hat.o \
+		$(TARGETDIR_sim)/disk.o \
+		$(TARGETDIR_sim)/ui.o \
+		$(TARGETDIR_sim)/tests.o \
+		$(TARGETDIR_sim)/prm.o \
+		$(TARGETDIR_sim)/main.o
+	rm -f -r $(TARGETDIR_sim)
 
-# include project make variables
-include nbproject/Makefile-variables.mk
+
+# Create the target directory (if needed)
+$(TARGETDIR_sim):
+	mkdir -p $(TARGETDIR_sim)
+
+
+# Enable dependency checking
+.KEEP_STATE:
+.KEEP_STATE_FILE:.make.state.GNU-i386-Linux
+

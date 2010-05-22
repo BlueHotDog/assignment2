@@ -24,6 +24,8 @@ typedef struct iptStruct {
 typedef char* Page;
 typedef IPT_t_p* HAT_t; //HAT is just an array of IPT enteries
 
+typedef Page* Disk_t;
+typedef Page* MM_t;
 
 volatile unsigned int MaxNumOfProcesses;
 volatile unsigned int PageSize;
@@ -31,8 +33,6 @@ volatile unsigned int NumOfPagesInMM;
 volatile unsigned int NumOfPagesInDisk;
 volatile unsigned int NumOfProcessPages;
 volatile unsigned int ShiftClock;
-
-
 
 
 typedef struct pcbStruct {

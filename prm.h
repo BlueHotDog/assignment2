@@ -18,6 +18,7 @@
 #define	_PRM_H
 #include "globaldefs.h"
 #include "datatypes.h"
+
 static bool PRM_shouldClose = FALSE;
 
 pthread_t PRM;

@@ -30,7 +30,14 @@ include Makefile
 OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
-OBJECTFILES=
+OBJECTFILES= \
+	${OBJECTDIR}/prm.o \
+	${OBJECTDIR}/hat.o \
+	${OBJECTDIR}/disk.o \
+	${OBJECTDIR}/pcb.o \
+	${OBJECTDIR}/ui.o \
+	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/tests.o
 
 # C Compiler Flags
 CFLAGS=
@@ -55,6 +62,41 @@ LDLIBSOPTIONS=
 dist/Release/GNU-Linux-x86/assignment2: ${OBJECTFILES}
 	${MKDIR} -p dist/Release/GNU-Linux-x86
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/assignment2 ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/prm.o: nbproject/Makefile-${CND_CONF}.mk prm.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/prm.o prm.c
+
+${OBJECTDIR}/hat.o: nbproject/Makefile-${CND_CONF}.mk hat.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/hat.o hat.c
+
+${OBJECTDIR}/disk.o: nbproject/Makefile-${CND_CONF}.mk disk.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/disk.o disk.c
+
+${OBJECTDIR}/pcb.o: nbproject/Makefile-${CND_CONF}.mk pcb.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/pcb.o pcb.c
+
+${OBJECTDIR}/ui.o: nbproject/Makefile-${CND_CONF}.mk ui.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/ui.o ui.c
+
+${OBJECTDIR}/main.o: nbproject/Makefile-${CND_CONF}.mk main.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/tests.o: nbproject/Makefile-${CND_CONF}.mk tests.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/tests.o tests.c
 
 # Subprojects
 .build-subprojects:
