@@ -36,6 +36,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/disk.o \
 	${OBJECTDIR}/pcb.o \
 	${OBJECTDIR}/ui.o \
+	${OBJECTDIR}/process.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/tests.o \
 	${OBJECTDIR}/freelist.o
@@ -88,6 +89,11 @@ ${OBJECTDIR}/ui.o: nbproject/Makefile-${CND_CONF}.mk ui.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/ui.o ui.c
+
+${OBJECTDIR}/process.o: nbproject/Makefile-${CND_CONF}.mk process.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/process.o process.c
 
 ${OBJECTDIR}/main.o: nbproject/Makefile-${CND_CONF}.mk main.c 
 	${MKDIR} -p ${OBJECTDIR}

@@ -8,6 +8,8 @@
 #ifndef _DATATYPES_H
 #define	_DATATYPES_H
 #include "globaldefs.h"
+#include <mqueue.h>
+#include <sys/stat.h>
 
 typedef unsigned int PID; //proccess id
 typedef unsigned int LPN; //logical page number
@@ -36,6 +38,7 @@ volatile unsigned int ShiftClock;
 
 
 typedef struct pcbStruct {
+    pthread_t processThread;
     bool Active;
     PID proccessID;
     unsigned int start; //Start indices
@@ -56,7 +59,6 @@ typedef struct PRM_RequestQueueValueStruct
 {
     unsigned int pageNumber;
     unsigned int ProccessID;
-
 } PRM_RequestQueueValue_t,*PRM_RequestQueueValue_tp;
 
 #endif	/* _DATATYPES_H */

@@ -13,8 +13,10 @@
 PCB_t_p PCBArray;
 
 bool PCB_Init();
-PCB_t PCB_AllocateProccess(PID id,int start,int end);
+bool PCB_Free();
+PCB_t_p PCB_AllocateProccess(PID id,int start,int end);
 bool PCB_DeAllocateProccess(PID id);
+PCB_t_p PCB_GetByProcessID(PID id);
 int PCB_GetFreeProcessID();
 
 #endif	/* _PCB_H */
