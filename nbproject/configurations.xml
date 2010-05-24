@@ -9,6 +9,7 @@
       <itemPath>freelist.h</itemPath>
       <itemPath>globaldefs.h</itemPath>
       <itemPath>hat.h</itemPath>
+      <itemPath>mm.h</itemPath>
       <itemPath>mmu.h</itemPath>
       <itemPath>pcb.h</itemPath>
       <itemPath>prm.h</itemPath>
@@ -26,6 +27,8 @@
       <itemPath>freelist.c</itemPath>
       <itemPath>hat.c</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>mm.c</itemPath>
+      <itemPath>mmu.c</itemPath>
       <itemPath>pcb.c</itemPath>
       <itemPath>prm.c</itemPath>
       <itemPath>process.c</itemPath>
