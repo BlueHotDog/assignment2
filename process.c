@@ -46,3 +46,11 @@ int PROCESS_CREATE() {
 void PROCESS_STOP() {
     PROCESS_ShouldClose = TRUE;
 }
+bool PROCESS_Read(PID processID,int vAddr, int amount)
+{
+    int i=vAddr;
+    for(i;i<(vAddr+amount);i++)
+    {
+        
+    }
+}

@@ -18,6 +18,12 @@ void UI_ParseCommand(const string * const comm) {
     ASSERT_PRINT("Entering: UI_ParseCommand(%s)\n",*comm);
     if (strcmp(*comm, "createProcess") == 0 || strcmp(*comm, "c") == 0) {
         UI_HandleCreateProcess();
+    } else if(strcmp(*comm,"read")==0){
+        int vAddr = -1;
+        int id = -1;
+        int amount = -1;
+        scanf("%d %d %d",&vAddr,&id,&amount);
+        UI_HandleRead(vAddr,id,amount);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
     }
@@ -49,7 +55,7 @@ void UI_HandleDelProcess(PID proccessID) {
 }
 
 void UI_HandleRead(int vAddr, PID proccessID, unsigned int amount) {
-
+    ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n",vAddr,proccessID,amount);
 }
 
 void UI_HandleLoopRead(int vAddr, PID proccessID, int offset, unsigned int amount) {
