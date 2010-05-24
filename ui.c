@@ -1,7 +1,5 @@
 #include "ui.h"
-#include "freelist.h"
-#include "pcb.h"
-#include "process.h"
+
 
 void* UI_Main() {
 
@@ -56,6 +54,17 @@ void UI_HandleDelProcess(PID proccessID) {
 
 void UI_HandleRead(int vAddr, PID proccessID, unsigned int amount) {
     ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n",vAddr,proccessID,amount);
+    mqd_t queue = QUEUE_OpenForProcess(proccessID);
+    QUEUE_Send(queue,"read bluh bluh");
+    QUEUE_Close(queue);
+/*
+    string name = calloc(MAX_MESSAGE_SIZE,sizeof(char));
+    sprintf(name,"/%d",proccessID);
+    mqd_t ret = mq_open(name, O_RDWR,(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH),NULL);
+    string message = "read bliuh bluhhh";
+    int messageLength = mq_send(ret, message, strlen(message),0);
+*/
+   
 }
 
 void UI_HandleLoopRead(int vAddr, PID proccessID, int offset, unsigned int amount) {

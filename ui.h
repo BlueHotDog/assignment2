@@ -9,6 +9,10 @@
 #define	_UI_H
 #include "globaldefs.h"
 #include "datatypes.h"
+#include "freelist.h"
+#include "pcb.h"
+#include "process.h"
+#include "messagequeues.h"
 
 #define MAX_INPUT_LENGTH 50
 

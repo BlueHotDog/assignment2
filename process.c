@@ -1,12 +1,29 @@
 #include "process.h"
 #include "pcb.h"
 #include "disk.h"
+#include "messagequeues.h"
 
 void* PROCESS_RUN(void* pcb) {
     PCB_t_p local_pcb = (PCB_t_p)pcb;
-    //while (!PROCESS_ShouldClose) {
-        //printf("runing process %d\n",local_pcb->proccessID);
-    //}
+   /*  string name = calloc(MAX_MESSAGE_SIZE,sizeof(char));
+    sprintf(name,"/%d",local_pcb->proccessID);
+   printf("Opening message queue %s for process %d\n",name,local_pcb->proccessID);
+
+    struct mq_attr attr;
+    memset(&attr,0,sizeof(struct mq_attr));
+    attr.mq_maxmsg= MAX_MESSAGE_SIZE;
+    //attr.mq_msgsize= MAX_MESSAGE_SIZE;
+*/
+
+     //mqd_t queue = QUEUE_OpenForProcess(local_pcb->proccessID);
+    mqd_t queue = QUEUE_OpenForProcess(local_pcb->proccessID);
+    while (!PROCESS_ShouldClose) {
+        //QUEUE_Send(queue,"123");
+        string read = QUEUE_Read(queue);
+        printf("READ:%s\n",read);
+        free(read);
+    }
+    QUEUE_Close(queue);
 }
 
 int PROCESS_CREATE() {
@@ -25,11 +42,7 @@ int PROCESS_CREATE() {
             break;
         }
         PCB_t_p pcb = PCB_AllocateProccess(id, start, start + NumOfProcessPages);
-
-        string name = calloc(50,sizeof(char));
-        sprintf(name,"/%d",id);
-        printf("Opening message queue %s for process %d\n",name,id);
-        mqd_t ret = mq_open(name, O_RDWR | O_CREAT,(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH),NULL);
+        mqd_t ret = QUEUE_CreateForProcess(id);
         if(ret==-1)
         {
             printf("Error opening message queue.\n");

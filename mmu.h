@@ -9,6 +9,7 @@
 #define	_MMU_H
 #include "globaldefs.h"
 #include "datatypes.h"
+#include "messagequeues.h"
 
 static bool MMU_shouldClose = FALSE;
 

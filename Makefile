@@ -34,6 +34,7 @@ OBJS_Assignment2 =  \
 	$(TARGETDIR_Assignment2)/pcb.o \
 	$(TARGETDIR_Assignment2)/mm.o \
 	$(TARGETDIR_Assignment2)/mmu.o \
+	$(TARGETDIR_Assignment2)/messagequeues.o \
 	$(TARGETDIR_Assignment2)/hat.o
 SYSLIBS_Assignment2 = -lpthread -lrt
 USERLIBS_Assignment2 = $(SYSLIBS_Assignment2) 
@@ -80,6 +81,9 @@ $(TARGETDIR_Assignment2)/mm.o: $(TARGETDIR_Assignment2) mm.c
 $(TARGETDIR_Assignment2)/mmu.o: $(TARGETDIR_Assignment2) mmu.c
 	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ mmu.c
 
+$(TARGETDIR_Assignment2)/messagequeues.o: $(TARGETDIR_Assignment2) messagequeues.c
+	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ messagequeues.c
+
 #### Clean target deletes all generated files ####
 clean:
 	rm -f \
@@ -94,6 +98,7 @@ clean:
 		$(TARGETDIR_Assignment2)/pcb.o \
 		$(TARGETDIR_Assignment2)/mm.o \
 		$(TARGETDIR_Assignment2)/mmu.o \
+		$(TARGETDIR_Assignment2)/messagequeues.o \
 		$(TARGETDIR_Assignment2)/hat.o
 	rm -f -r $(TARGETDIR_Assignment2)
 
