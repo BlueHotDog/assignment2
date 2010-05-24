@@ -14,6 +14,8 @@
 #include "disk.h"
 #include "pcb.h"
 #include "freelist.h"
+#include "mmu.h"
+#include "mm.h"
 
 void readConfigFromFile(string fileName)
 {
@@ -84,6 +86,11 @@ void init()
     ASSERT_PRINT("Creating PCB array for %d processes..\n",MaxNumOfProcesses);
     ReturnVal = PCB_Init();
     ASSERT(ReturnVal!=FALSE);
+
+    ASSERT_PRINT("Init MM...\n");
+    ReturnVal = MM_Init();
+    ASSERT(ReturnVal!=FALSE);
+
 }
 
 int main(int argc, char** argv) {

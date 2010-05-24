@@ -31,6 +31,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/mmu.o \
 	${OBJECTDIR}/prm.o \
 	${OBJECTDIR}/hat.o \
 	${OBJECTDIR}/disk.o \
@@ -39,6 +40,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/process.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/tests.o \
+	${OBJECTDIR}/mm.o \
 	${OBJECTDIR}/freelist.o
 
 # C Compiler Flags
@@ -64,6 +66,11 @@ LDLIBSOPTIONS=
 dist/Debug/GNU-Linux-x86/assignment2: ${OBJECTFILES}
 	${MKDIR} -p dist/Debug/GNU-Linux-x86
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/assignment2 ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/mmu.o: nbproject/Makefile-${CND_CONF}.mk mmu.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/mmu.o mmu.c
 
 ${OBJECTDIR}/prm.o: nbproject/Makefile-${CND_CONF}.mk prm.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -104,6 +111,11 @@ ${OBJECTDIR}/tests.o: nbproject/Makefile-${CND_CONF}.mk tests.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/tests.o tests.c
+
+${OBJECTDIR}/mm.o: nbproject/Makefile-${CND_CONF}.mk mm.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/mm.o mm.c
 
 ${OBJECTDIR}/freelist.o: nbproject/Makefile-${CND_CONF}.mk freelist.c 
 	${MKDIR} -p ${OBJECTDIR}

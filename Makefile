@@ -32,6 +32,8 @@ OBJS_Assignment2 =  \
 	$(TARGETDIR_Assignment2)/tests.o \
 	$(TARGETDIR_Assignment2)/process.o \
 	$(TARGETDIR_Assignment2)/pcb.o \
+	$(TARGETDIR_Assignment2)/mm.o \
+	$(TARGETDIR_Assignment2)/mmu.o \
 	$(TARGETDIR_Assignment2)/hat.o
 SYSLIBS_Assignment2 = -lpthread -lrt
 USERLIBS_Assignment2 = $(SYSLIBS_Assignment2) 
@@ -72,7 +74,11 @@ $(TARGETDIR_Assignment2)/pcb.o: $(TARGETDIR_Assignment2) pcb.c
 $(TARGETDIR_Assignment2)/hat.o: $(TARGETDIR_Assignment2) hat.c
 	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ hat.c
 
+$(TARGETDIR_Assignment2)/mm.o: $(TARGETDIR_Assignment2) mm.c
+	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ mm.c
 
+$(TARGETDIR_Assignment2)/mmu.o: $(TARGETDIR_Assignment2) mmu.c
+	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ mmu.c
 
 #### Clean target deletes all generated files ####
 clean:
@@ -86,6 +92,8 @@ clean:
 		$(TARGETDIR_Assignment2)/tests.o \
 		$(TARGETDIR_Assignment2)/process.o \
 		$(TARGETDIR_Assignment2)/pcb.o \
+		$(TARGETDIR_Assignment2)/mm.o \
+		$(TARGETDIR_Assignment2)/mmu.o \
 		$(TARGETDIR_Assignment2)/hat.o
 	rm -f -r $(TARGETDIR_Assignment2)
 
