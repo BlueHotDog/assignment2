@@ -16,6 +16,11 @@ bool DISK_AllocateSpace(unsigned int start,unsigned int end)
     int i=start;
     for(i;i<end;i++)
     {
+        if(FreeList[i].isFree==FALSE)
+        {
+            printf("Error allocating space for process\n");
+            return FALSE;
+        }
         Disk[i] = calloc(PageSize,sizeof(char));
         if(Disk[i]==NULL)
             return FALSE;
@@ -28,6 +33,6 @@ bool DISK_DeAllocateSpace(unsigned int start,unsigned int end)
 {
     ASSERT_PRINT("Entering:DISK_DeAllocateSpace(%d,%d)\n",start,end);
     int i=start;
-    for(i;i<=end;i++)
+    for(i;i<end;i++)
         free(Disk[i]);
 }

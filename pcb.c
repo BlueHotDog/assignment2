@@ -10,7 +10,7 @@ bool PCB_Init()
         return FALSE;
     int i=0;
     for(i=0;i<MaxNumOfProcesses;i++)
-        PCBArray[i].Active = FALSE;
+        PCBArray[i].active = FALSE;
     return TRUE;
 }
 bool PCB_Free()
@@ -27,7 +27,7 @@ PCB_t_p PCB_AllocateProccess(PID id,int start,int end)
     PCBArray[id].end=end;
     PCBArray[id].proccessID = id;
     PCBArray[id].start = start;
-    PCBArray[id].Active = TRUE;
+    PCBArray[id].active = TRUE;
     return &PCBArray[id];
 }
 int PCB_GetFreeProcessID()
@@ -35,7 +35,7 @@ int PCB_GetFreeProcessID()
     ASSERT_PRINT("Entering:PCB_GetFreeProcessID\n");
     int i=0;
     for(i=0;i<MaxNumOfProcesses;i++)
-        if(PCBArray[i].Active == FALSE)
+        if(PCBArray[i].active == FALSE)
             return i;
     return -1;
 }
@@ -45,7 +45,7 @@ bool PCB_DeAllocateProccess(PID id)
     PCB_t_p process = PCB_GetByProcessID(id);
     if(process!=NULL)
     {
-        process->Active = FALSE;
+        process->active = FALSE;
         return TRUE;
     }
     return FALSE;

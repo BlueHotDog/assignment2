@@ -39,7 +39,7 @@ volatile unsigned int ShiftClock;
 
 typedef struct pcbStruct {
     pthread_t processThread;
-    bool Active;
+    bool active;
     PID proccessID;
     unsigned int start; //Start indices
     unsigned int end; //end indices

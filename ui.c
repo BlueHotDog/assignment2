@@ -15,6 +15,7 @@ void* UI_Main() {
 }
 
 void UI_ParseCommand(const string * const comm) {
+    ASSERT_PRINT("Entering: UI_ParseCommand(%s)\n",*comm);
     if (strcmp(*comm, "createProcess") == 0 || strcmp(*comm, "c") == 0) {
         UI_HandleCreateProcess();
     } else if (strcmp(*comm, "exit") == 0) {

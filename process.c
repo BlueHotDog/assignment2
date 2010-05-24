@@ -20,6 +20,7 @@ int PROCESS_CREATE() {
         DISK_AllocateSpace(start, start + NumOfProcessPages);
         int id = PCB_GetFreeProcessID();
         if (id == -1) {
+            DISK_DeAllocateSpace(start,start+NumOfProcessPages);
             printf("Error, unable to find free process id...\n");
             break;
         }
