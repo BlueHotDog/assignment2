@@ -4,9 +4,9 @@
 
 void* PROCESS_RUN(void* pcb) {
     PCB_t_p local_pcb = (PCB_t_p)pcb;
-    while (!PROCESS_ShouldClose) {
+    //while (!PROCESS_ShouldClose) {
         //printf("runing process %d\n",local_pcb->proccessID);
-    }
+    //}
 }
 
 int PROCESS_CREATE() {
