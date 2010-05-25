@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/home/danni/NetBeansProjects/Assignment2/disk.h</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/disk.c</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/main.c</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/ui.c</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/freelist.c</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/process.h</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/process.c</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/ui.h</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/datatypes.h</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/pcb.c</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/tests.c</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/mm.c</file>
-        <file>file:/home/danni/NetBeansProjects/Assignment2/mmu.c</file>
-    </open-files>
 </project-private>

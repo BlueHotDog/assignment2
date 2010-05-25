@@ -10,25 +10,28 @@ mqd_t QUEUE_Create(string name) {
 
     /* filling the attribute structure */
     wanted_attrs.mq_flags = 0; /* no exceptional behavior (just O_NONBLOCK currently available)  */
-    wanted_attrs.mq_maxmsg = 1; /* room for at most 100 messages in the queue */
-    wanted_attrs.mq_msgsize = 2; /* maximum size of a message */
+    wanted_attrs.mq_maxmsg = MAX_MESSAGES_IN_QUEUE; /* room for at most 100 messages in the queue */
+    wanted_attrs.mq_msgsize = MAX_MESSAGE_SIZE; /* maximum size of a message */
     wanted_attrs.mq_curmsgs = 0; /* this (current number of messages) will be ignored */
-    
-    mqd_t ret = mq_open("/test", O_RDWR | O_CREAT,(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH));
+
+    mqd_t ret = mq_open(name, O_RDWR | O_CREAT, (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH), &wanted_attrs);
 
     if (ret == -1) {
         if (errno == 17) {
             if (mq_unlink(name) == -1) {
                 perror("Error while creating message queue\n");
                 printf("Error was:%s\n", strerror(errno));
+                return -1;
             } else {
-                mqd_t ret = mq_open("/test", (O_RDWR | O_CREAT), (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH), &wanted_attrs);
+                mqd_t ret = mq_open(name, (O_RDWR | O_CREAT), (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH), &wanted_attrs);
             }
 
+        } else {
+            perror("Error while creating message queue\n");
+            printf("Error was:%s\n", strerror(errno));
+            return -1;
         }
-        perror("Error while creating message queue\n");
-        printf("Error was:%s\n", strerror(errno));
-        return -1;
+
     }
     return ret;
 
@@ -45,14 +48,16 @@ mqd_t QUEUE_Open(string name) {
     printf("Opening message queue %s \n", name);
 
 
-    struct mq_attr attr;
-    memset(&attr, 0, sizeof (struct mq_attr));
-    attr.mq_maxmsg = MAX_MESSAGE_SIZE + 1;
-    attr.mq_msgsize = MAX_MESSAGE_SIZE + 1;
-    attr.mq_flags = 0;
+    /*
+        struct mq_attr attr;
+        memset(&attr, 0, sizeof (struct mq_attr));
+        attr.mq_maxmsg = MAX_MESSAGE_SIZE + 1;
+        attr.mq_msgsize = MAX_MESSAGE_SIZE + 1;
+        attr.mq_flags = 0;
 
+     */
 
-    mqd_t ret = mq_open(name, O_RDWR, (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH), &attr);
+    mqd_t ret = mq_open(name, O_RDWR, (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH));
     if (ret == -1) {
         perror("Error while opening message queue\n");
         printf("Error was:%s\n", strerror(errno));
@@ -94,7 +99,7 @@ string QUEUE_Read(mqd_t queue) {
 
     printf("t=%d maxmsg=%ld\n", t, attr.mq_msgsize);
 
-    int ret = mq_receive(queue, toReturn, strlen (toReturn), 0);
+    int ret = mq_receive(queue, toReturn, 5, 0);
     if (ret == -1) {
         perror("Error while reading message queue\n");
         printf("Error was:%s\n", strerror(errno));

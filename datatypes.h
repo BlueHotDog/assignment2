@@ -10,15 +10,13 @@
 
 #include "globaldefs.h"
 
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <mqueue.h>
 
 #include <sys/stat.h>
 #include <errno.h>
 
 #define MAX_MESSAGE_SIZE 50
-#define MAX_MESSAGES_IN_QUEUE 50
+#define MAX_MESSAGES_IN_QUEUE 10
 
 typedef unsigned int PID; //proccess id
 typedef unsigned int LPN; //logical page number
