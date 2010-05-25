@@ -23,9 +23,8 @@ bool QUEUES_Init() {
         return FALSE;
     }
 
-    Queue_t_p MMUQueue = malloc(sizeof (Queue_t));
-
-    Queue_t_p PRMQueue = malloc(sizeof (Queue_t));
+    MMUQueue = malloc(sizeof (Queue_t));
+    PRMQueue = malloc(sizeof (Queue_t));
 
     if ((PRMQueue) == 0 || MMUQueue == 0) {
         ASSERT_PRINT("Error While creating MMUQueue or PRMQueue\n");
@@ -174,6 +173,7 @@ QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
 QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue) {
     ASSERT_PRINT("Entering:QUEUES_GetLastItem\n");
     QueueItem_t_p toReturn = NULL;
+    ASSERT(queue != NULL);
     Queue_t temp = *queue;
     while (temp.head != NULL) {
         toReturn = temp.head->next;

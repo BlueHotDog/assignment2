@@ -91,6 +91,10 @@ void init()
     ReturnVal = MM_Init();
     ASSERT(ReturnVal!=FALSE);
 
+    ASSERT_PRINT("Init MailBox Queue...\n");
+    ReturnVal = QUEUES_Init();
+    ASSERT(ReturnVal!=FALSE);
+
 }
 
 int main(int argc, char** argv) {
