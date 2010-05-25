@@ -40,5 +40,7 @@ QueueCommand_t_p QUEUES_ReadProcess(PID processID); //blocking if no messages
 QueueCommand_t_p QUEUES_ReadMMU(); //blocking if no messages
 QueueCommand_t_p QUEUES_ReadPRM(); //blocking if no messages
 
+
+QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue);
 #endif	/* _MESSAGEQUEUES_H */
 

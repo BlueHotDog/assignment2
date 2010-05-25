@@ -45,16 +45,71 @@ bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) {
     ASSERT(command != NULL);
     ASSERT_PRINT("Entering:QUEUES_WriteToProcess(%d,%d)\n", processID, command->t);
 
-    pthread_mutex_lock(&ProcessReader[processID]);
     pthread_mutex_lock(&ProcessWriter[processID]);
 
+    QueueItem_t_p lastItem = QUEUES_GetLastItem(ProcessQueues[processID]);
+    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
 
+    toInsert->command = command;
+    toInsert->next = NULL;
+    if (lastItem != NULL)
+        lastItem->next = toInsert;
+    else
+        ProcessQueues[processID]->head = toInsert;
 
-    pthread_mutex_unlock(&ProcessReader[processID]);
     pthread_mutex_unlock(&ProcessWriter[processID]);
+    pthread_mutex_unlock(&ProcessReader[processID]);
 
     ASSERT_PRINT("Exiting:QUEUES_WriteToProcess(%d,%d)\n", processID, command->t);
 }
+
+bool QUEUES_WriteToMMU(QueueCommand_t_p command) {
+    ASSERT(command != NULL);
+    ASSERT_PRINT("Entering:QUEUES_WriteToMMU(%d)\n", command->t);
+
+    pthread_mutex_lock(&MMUWriter);
+
+    QueueItem_t_p lastItem = QUEUES_GetLastItem(MMUQueue);
+    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
+
+    toInsert->command = command;
+    toInsert->next = NULL;
+    if (lastItem != NULL)
+        lastItem->next = toInsert;
+    else
+        MMUQueue->head = toInsert;
+
+    pthread_mutex_unlock(&MMUWriter);
+    pthread_mutex_unlock(&MMUReader);
+
+    ASSERT_PRINT("Entering:QUEUES_WriteToMMU(%d)\n", command->t);
+}
+
+bool QUEUES_WriteToPRM(QueueCommand_t_p command) {
+    ASSERT(command != NULL);
+    ASSERT_PRINT("Entering:QUEUES_WriteToPRM(%d)\n", command->t);
+
+    pthread_mutex_lock(&PRMWriter);
+
+    QueueItem_t_p lastItem = QUEUES_GetLastItem(PRMQueue);
+    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
+
+    toInsert->command = command;
+    toInsert->next = NULL;
+    if (lastItem != NULL)
+        lastItem->next = toInsert;
+    else
+        PRMQueue->head = toInsert;
+
+    pthread_mutex_unlock(&PRMWriter);
+    pthread_mutex_unlock(&PRMReader);
+
+    ASSERT_PRINT("Entering:QUEUES_WriteToPRM(%d)\n", command->t);
+}
+
+
+
+
 
 QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
 {
@@ -108,4 +163,16 @@ QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
 
     pthread_mutex_unlock(&PRMWriter);
     return queueCommand;
+}
+
+QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue) {
+    ASSERT_PRINT("Entering:QUEUES_GetLastItem\n");
+    QueueItem_t_p toReturn = NULL;
+    Queue_t temp = *queue;
+    while (temp.head != NULL) {
+        toReturn = temp.head->next;
+        temp.head = temp.head->next;
+    }
+    ASSERT_PRINT("Exiting:QUEUES_GetLastItem\n");
+    return toReturn;
 }
