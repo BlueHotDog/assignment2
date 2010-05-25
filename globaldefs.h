@@ -7,11 +7,7 @@
 
 #ifndef _GLOBALDEFS_H
 #define	_GLOBALDEFS_H
-#include <unistd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
+
 
 typedef unsigned char bool;
 typedef char* string;

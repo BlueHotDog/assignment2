@@ -22,8 +22,8 @@ pthread_mutex_t PRMWriter;
 
 //Queues declaration
 Queue_t_p* ProcessQueues;
-Queue_t MMUQueue;
-Queue_t PRMQueue;
+Queue_t_p MMUQueue;
+Queue_t_p PRMQueue;
 
 
 /*
