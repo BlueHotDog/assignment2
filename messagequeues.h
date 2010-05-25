@@ -10,18 +10,34 @@
 #include "globaldefs.h"
 #include "datatypes.h"
 
-mqd_t QUEUE_Create(string name);
-mqd_t QUEUE_CreateForProcess(PID processID);
+//Readers declarations
+pthread_mutex_t* ProcessReader; //array of mutex for the reading operation index correlates to process id, i.e reading will lock on this.
+pthread_mutex_t  MMUReader;
+pthread_mutex_t  PRMReader;
 
-mqd_t QUEUE_Open(string name);
-mqd_t QUEUE_OpenForProcess(PID processID);
+//Writers declaration
+pthread_mutex_t* ProcessWriter;
+pthread_mutex_t MMUWriter;
+pthread_mutex_t PRMWriter;
 
-int QUEUE_Send(mqd_t queue,string text);
+//Queues declaration
+Queue_t_p* ProcessQueues;
+Queue_t MMUQueue;
+Queue_t PRMQueue;
 
-string QUEUE_Read(mqd_t queue);
 
-string QUEUE_GetProcessQueueName(PID processID);
+/*
+ * Responsible for initing the queues for all the threads - memory allocation and setting to null
+ */
+bool QUEUES_Init();
 
-int QUEUE_Close(mqd_t queue);
+bool QUEUES_WriteToProcess(PID processID,QueueCommand_t_p command); //non blocking 
+bool QUEUES_WriteToMMU(QueueCommand_t_p command); //non blocking
+bool QUEUES_WriteToPRM(QueueCommand_t_p command); //non blocking
+
+QueueCommand_t_p QUEUES_ReadProcess(PID processID); //blocking if no messages
+QueueCommand_t_p QUEUES_ReadMMU(); //blocking if no messages
+QueueCommand_t_p QUEUES_ReadPRM(); //blocking if no messages
+
 #endif	/* _MESSAGEQUEUES_H */
 

@@ -16,14 +16,14 @@ void* PROCESS_RUN(void* pcb) {
 */
 
      //mqd_t queue = QUEUE_OpenForProcess(local_pcb->proccessID);
-    mqd_t queue = QUEUE_OpenForProcess(local_pcb->proccessID);
+    //mqd_t queue = QUEUE_OpenForProcess(local_pcb->proccessID);
     while (!PROCESS_ShouldClose) {
         //QUEUE_Send(queue,"123");
-        string read = QUEUE_Read(queue);
-        printf("READ:%s\n",read);
-        free(read);
+       // string read = QUEUE_Read(queue);
+        //printf("READ:%s\n",read);
+        //free(read);
     }
-    QUEUE_Close(queue);
+    //QUEUE_Close(queue);
 }
 
 int PROCESS_CREATE() {
@@ -42,6 +42,7 @@ int PROCESS_CREATE() {
             break;
         }
         PCB_t_p pcb = PCB_AllocateProccess(id, start, start + NumOfProcessPages);
+/*
         mqd_t ret = QUEUE_CreateForProcess(id);
         if(ret==-1)
         {
@@ -50,6 +51,7 @@ int PROCESS_CREATE() {
             DISK_DeAllocateSpace(start,start+NumOfProcessPages);
             break;
         }
+*/
         pthread_create(&(pcb->processThread),NULL,PROCESS_RUN,(void*)pcb);
         return id;
     } while (FALSE);

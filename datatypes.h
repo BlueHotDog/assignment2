@@ -10,7 +10,8 @@
 
 #include "globaldefs.h"
 
-#include <mqueue.h>
+#include <pthread.h>
+
 
 #include <sys/stat.h>
 #include <errno.h>
@@ -28,7 +29,7 @@ typedef struct iptStruct {
     bool referenceBit; //Whenever a page is accessed (read or write), this bit is set (flagged true). The Aging Algorithm Daemon may read / change it.
     struct iptStruct *next; // pointing to another entry in the inverted page table.
     struct iptStruct *prev;
-} IPT_t,*IPT_t_p;
+} IPT_t, *IPT_t_p;
 
 typedef char* Page;
 typedef IPT_t_p* HAT_t; //HAT is just an array of IPT enteries
@@ -43,6 +44,24 @@ volatile unsigned int NumOfPagesInDisk;
 volatile unsigned int NumOfProcessPages;
 volatile unsigned int ShiftClock;
 
+enum Commands {
+    MMUGetAddr
+    //TODO:AddMore
+};
+
+typedef struct queueCommandStruct {
+    enum Commands t;
+    int* params; //params array
+} QueueCommand_t,*QueueCommand_t_p;
+
+typedef struct queueItemStruct {
+    QueueCommand_t_p command;
+    struct queueItemStruct* next;
+} QueueItem_t, *QueueItem_t_p;
+
+typedef struct queueStruct {
+    QueueItem_t_p head; //reading for the head
+} Queue_t,*Queue_t_p;
 
 typedef struct pcbStruct {
     pthread_t processThread;
@@ -50,23 +69,20 @@ typedef struct pcbStruct {
     PID proccessID;
     unsigned int start; //Start indices
     unsigned int end; //end indices
-} PCB_t,*PCB_t_p;
+    Queue_t_p processQueue;
+} PCB_t, *PCB_t_p;
 
-typedef struct mmDiskMapStruct
-{
+typedef struct mmDiskMapStruct {
+} MMToDiskMap_t, *MMToDiskMap_t_p;
 
-} MMToDiskMap_t,*MMToDiskMap_t_p;
-
-typedef struct freeListStruct
-{
+typedef struct freeListStruct {
     bool isFree;
-} FreeList_t,*FreeList_t_p;
+} FreeList_t, *FreeList_t_p;
 
-typedef struct PRM_RequestQueueValueStruct
-{
+typedef struct PRM_RequestQueueValueStruct {
     unsigned int pageNumber;
     unsigned int ProccessID;
-} PRM_RequestQueueValue_t,*PRM_RequestQueueValue_tp;
+} PRM_RequestQueueValue_t, *PRM_RequestQueueValue_tp;
 
 #endif	/* _DATATYPES_H */
 
