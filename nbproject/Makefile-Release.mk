@@ -34,14 +34,15 @@ OBJECTFILES= \
 	${OBJECTDIR}/mmu.o \
 	${OBJECTDIR}/prm.o \
 	${OBJECTDIR}/hat.o \
-	${OBJECTDIR}/disk.o \
-	${OBJECTDIR}/pcb.o \
+	${OBJECTDIR}/messagequeues.o \
 	${OBJECTDIR}/ui.o \
-	${OBJECTDIR}/process.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/tests.o \
-	${OBJECTDIR}/mm.o \
-	${OBJECTDIR}/freelist.o
+	${OBJECTDIR}/freelist.o \
+	${OBJECTDIR}/disk.o \
+	${OBJECTDIR}/pcb.o \
+	${OBJECTDIR}/process.o \
+	${OBJECTDIR}/mm.o
 
 # C Compiler Flags
 CFLAGS=
@@ -82,25 +83,15 @@ ${OBJECTDIR}/hat.o: nbproject/Makefile-${CND_CONF}.mk hat.c
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/hat.o hat.c
 
-${OBJECTDIR}/disk.o: nbproject/Makefile-${CND_CONF}.mk disk.c 
+${OBJECTDIR}/messagequeues.o: nbproject/Makefile-${CND_CONF}.mk messagequeues.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/disk.o disk.c
-
-${OBJECTDIR}/pcb.o: nbproject/Makefile-${CND_CONF}.mk pcb.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/pcb.o pcb.c
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/messagequeues.o messagequeues.c
 
 ${OBJECTDIR}/ui.o: nbproject/Makefile-${CND_CONF}.mk ui.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/ui.o ui.c
-
-${OBJECTDIR}/process.o: nbproject/Makefile-${CND_CONF}.mk process.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/process.o process.c
 
 ${OBJECTDIR}/main.o: nbproject/Makefile-${CND_CONF}.mk main.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -112,15 +103,30 @@ ${OBJECTDIR}/tests.o: nbproject/Makefile-${CND_CONF}.mk tests.c
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/tests.o tests.c
 
-${OBJECTDIR}/mm.o: nbproject/Makefile-${CND_CONF}.mk mm.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/mm.o mm.c
-
 ${OBJECTDIR}/freelist.o: nbproject/Makefile-${CND_CONF}.mk freelist.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/freelist.o freelist.c
+
+${OBJECTDIR}/disk.o: nbproject/Makefile-${CND_CONF}.mk disk.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/disk.o disk.c
+
+${OBJECTDIR}/pcb.o: nbproject/Makefile-${CND_CONF}.mk pcb.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/pcb.o pcb.c
+
+${OBJECTDIR}/process.o: nbproject/Makefile-${CND_CONF}.mk process.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/process.o process.c
+
+${OBJECTDIR}/mm.o: nbproject/Makefile-${CND_CONF}.mk mm.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/mm.o mm.c
 
 # Subprojects
 .build-subprojects:
