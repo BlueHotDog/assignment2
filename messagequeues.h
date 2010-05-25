@@ -22,13 +22,9 @@ pthread_mutex_t PRMWriter;
 
 //Queues declaration
 Queue_t_p* ProcessQueues;
-<<<<<<< HEAD
+
 Queue_t_p MMUQueue;
 Queue_t_p PRMQueue;
-=======
-Queue_t_p  MMUQueue;
-Queue_t_p  PRMQueue;
->>>>>>> yaniv
 
 
 /*
