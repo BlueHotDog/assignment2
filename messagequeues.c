@@ -113,6 +113,7 @@ bool QUEUES_WriteToPRM(QueueCommand_t_p command) {
 
 QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
 {
+    ASSERT_PRINT("Entering:QUEUES_ReadProcess\n");
     QueueCommand_t_p queueCommand;
     pthread_mutex_lock(&ProcessWriter[processID]);
 
@@ -126,11 +127,13 @@ QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
     queueCommand = pointer->command;
 
     pthread_mutex_unlock(&ProcessWriter[processID]);
+    ASSERT_PRINT("Exiting:QUEUES_ReadProcess\n");
     return queueCommand;
 }
 
 QueueCommand_t_p QUEUES_ReadMMU() //blocking if no messages
 {
+    ASSERT_PRINT("Entering:QUEUES_ReadMMU\n");
     QueueCommand_t_p queueCommand;
     pthread_mutex_lock(&MMUWriter);
 
@@ -144,11 +147,13 @@ QueueCommand_t_p QUEUES_ReadMMU() //blocking if no messages
     queueCommand = pointer->command;
 
     pthread_mutex_unlock(&MMUWriter);
+    ASSERT_PRINT("Exit:QUEUES_ReadMMU\n");
     return queueCommand;
 }
 
 QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
 {
+    ASSERT_PRINT("Entering:QUEUES_ReadPRM\n");
     QueueCommand_t_p queueCommand;
     pthread_mutex_lock(&PRMWriter);
 
@@ -162,6 +167,7 @@ QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
     queueCommand = pointer->command;
 
     pthread_mutex_unlock(&PRMWriter);
+    ASSERT_PRINT("Exit:QUEUES_ReadPRM\n");
     return queueCommand;
 }
 
