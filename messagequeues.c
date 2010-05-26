@@ -1,5 +1,6 @@
 #include "messagequeues.h"
 
+/*
 bool QUEUES_Init() {
     ASSERT_PRINT("Entering:QUEUES_Init\n");
     int i = 0;
@@ -45,6 +46,7 @@ bool QUEUES_Init() {
     ASSERT_PRINT("Exiting:QUEUES_Init\n");
     return TRUE;
 }
+*/
 
 bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) {
     ASSERT(processID >= 0);
@@ -208,3 +210,86 @@ MMUWriteToAddress:
     for (i = 0; i < command->paramsAmount; i++)
         printf("%d\n", command->params[i]);
 }
+
+bool QUEUES_Init() {
+    BufferSize = 0x10000;
+
+    PROCESSES_mutex = calloc(MaxNumOfProcesses, sizeof (sem_t));
+    PROCESSES_empty = calloc(MaxNumOfProcesses, sizeof (sem_t));
+    PROCESSES_full = calloc(MaxNumOfProcesses, sizeof (sem_t));
+
+    int i;
+    for (i=0; i < MaxNumOfProcesses; i++) {
+        PROCESSES_mutex[i] = 1;              // Controls access to critical section
+        PROCESSES_empty[i] = BufferSize;     // counts number of empty buffer slots
+        PROCESSES_full[i] = 0;               // counts number of full buffer slots
+    }
+
+    MMU_mutex = 1;              // Controls access to critical section
+    MMU_empty = BufferSize;     // counts number of empty buffer slots
+    MMU_full = 0;               // counts number of full buffer slots
+
+    PRM_mutex = 1;              // Controls access to critical section
+    PRM_empty = BufferSize;     // counts number of empty buffer slots
+    PRM_full = 0;               // counts number of full buffer slots
+
+
+    //init process queue - mailing box
+    ProcessQueues = calloc(MaxNumOfProcesses, sizeof (Queue_t_p));
+    if (ProcessQueues == 0) {
+        ASSERT_PRINT("Error While creating ProcessQueues\n");
+        return FALSE;
+    }
+    for (int i = 0; i < MaxNumOfProcesses; i++) {
+        ProcessQueues[i] = malloc(sizeof (Queue_t));
+        if (ProcessQueues[i] == 0) {
+            ASSERT_PRINT("Error While creating ProcessQueues[%d]\n", i);
+            return FALSE;
+        }
+    }
+
+    MMUQueue = malloc(sizeof (Queue_t));
+    PRMQueue = malloc(sizeof (Queue_t));
+
+    if ((PRMQueue) == 0 || MMUQueue == 0) {
+        ASSERT_PRINT("Error While creating MMUQueue or PRMQueue\n");
+        return FALSE;
+    }
+
+    MMUQueue->head = NULL;
+    PRMQueue->head = NULL;
+
+    ASSERT_PRINT("Exiting:QUEUES_Init\n");
+    return TRUE;
+}
+
+
+  
+
+  QUEUE_Write() //Producer
+  {
+    int widget;
+
+    while (TRUE) {                  // loop forever
+      make_new(widget);             // create a new widget to put in the buffer
+      down(empty);                 // decrement the empty semaphore
+      down(&mutex);                 // enter critical section
+      put_item(widget);             // put widget in buffer
+      up(&mutex);                   // leave critical section
+      up(&full);                    // increment the full semaphore
+      }
+  }
+
+  QUEUE_Read() //Consumer
+  {
+    int widget;
+      
+    while (TRUE) {                  // loop forever
+      down(&full);                  // decrement the full semaphore
+      down(&mutex);                 // enter critical section
+      remove_item(widget);          // take a widget from the buffer
+      up(&mutex);                   // leave critical section
+      up(empty);                   // increment the empty semaphore
+      consume_item(widget);         // consume the item
+      }
+  }

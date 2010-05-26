@@ -9,6 +9,7 @@
 #define	_MESSAGEQUEUES_H
 #include "globaldefs.h"
 #include "datatypes.h"
+#include </usr/include/semaphore.h>
 
 //Readers declarations
 pthread_mutex_t* ProcessReader; //array of mutex for the reading operation index correlates to process id, i.e reading will lock on this.
@@ -45,5 +46,15 @@ QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue);
 
 
 void QUEUES_PrintCommand(QueueCommand_t_p command);
+int BufferSize;
+sem_t* PROCESSES_mutex;              // Controls access to critical section
+sem_t* PROCESSES_empty;     // counts number of empty buffer slots
+sem_t* PROCESSES_full;               // counts number of full buffer slots
+sem_t MMU_mutex;              // Controls access to critical section
+sem_t MMU_empty;     // counts number of empty buffer slots
+sem_t MMU_full;               // counts number of full buffer slots
+sem_t PRM_mutex;              // Controls access to critical section
+sem_t PRM_empty;     // counts number of empty buffer slots
+sem_t PRM_full;               // counts number of full buffer slots
 #endif	/* _MESSAGEQUEUES_H */
 

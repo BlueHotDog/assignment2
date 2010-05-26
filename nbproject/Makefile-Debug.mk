@@ -39,6 +39,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/tests.o \
 	${OBJECTDIR}/freelist.o \
+	${OBJECTDIR}/semaphore.o \
 	${OBJECTDIR}/disk.o \
 	${OBJECTDIR}/pcb.o \
 	${OBJECTDIR}/process.o \
@@ -107,6 +108,11 @@ ${OBJECTDIR}/freelist.o: nbproject/Makefile-${CND_CONF}.mk freelist.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/freelist.o freelist.c
+
+${OBJECTDIR}/semaphore.o: nbproject/Makefile-${CND_CONF}.mk semaphore.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -g -Werror -MMD -MP -MF $@.d -o ${OBJECTDIR}/semaphore.o semaphore.c
 
 ${OBJECTDIR}/disk.o: nbproject/Makefile-${CND_CONF}.mk disk.c 
 	${MKDIR} -p ${OBJECTDIR}
