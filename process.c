@@ -1,29 +1,22 @@
 #include "process.h"
-#include "pcb.h"
-#include "disk.h"
-#include "messagequeues.h"
+
 
 void* PROCESS_RUN(void* pcb) {
     PCB_t_p local_pcb = (PCB_t_p)pcb;
-   /*  string name = calloc(MAX_MESSAGE_SIZE,sizeof(char));
-    sprintf(name,"/%d",local_pcb->proccessID);
-   printf("Opening message queue %s for process %d\n",name,local_pcb->proccessID);
-
-    struct mq_attr attr;
-    memset(&attr,0,sizeof(struct mq_attr));
-    attr.mq_maxmsg= MAX_MESSAGE_SIZE;
-    //attr.mq_msgsize= MAX_MESSAGE_SIZE;
-*/
-
-     //mqd_t queue = QUEUE_OpenForProcess(local_pcb->proccessID);
-    //mqd_t queue = QUEUE_OpenForProcess(local_pcb->proccessID);
     while (!PROCESS_ShouldClose) {
-        //QUEUE_Send(queue,"123");
-       // string read = QUEUE_Read(queue);
-        //printf("READ:%s\n",read);
-        //free(read);
+        QueueCommand_t_p comm = malloc(sizeof(QueueCommand_t));
+        comm->params = calloc(2,sizeof(int));
+        comm->params[0] = 12;
+        comm->params[1] = 56;
+        comm->paramsAmount = 2;
+        
+        if(local_pcb->proccessID%2==0)
+            comm->command = MMUReadAddress;
+        else
+            comm->command = MMUWriteToAddress;
+
+        QUEUES_WriteToMMU(comm);
     }
-    //QUEUE_Close(queue);
 }
 
 int PROCESS_CREATE() {
@@ -42,16 +35,7 @@ int PROCESS_CREATE() {
             break;
         }
         PCB_t_p pcb = PCB_AllocateProccess(id, start, start + NumOfProcessPages);
-/*
-        mqd_t ret = QUEUE_CreateForProcess(id);
-        if(ret==-1)
-        {
-            printf("Error opening message queue.\n");
-            PCB_DeAllocateProccess(id);
-            DISK_DeAllocateSpace(start,start+NumOfProcessPages);
-            break;
-        }
-*/
+        
         pthread_create(&(pcb->processThread),NULL,PROCESS_RUN,(void*)pcb);
         return id;
     } while (FALSE);

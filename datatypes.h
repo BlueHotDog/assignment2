@@ -46,13 +46,13 @@ volatile unsigned int NumOfProcessPages;
 volatile unsigned int ShiftClock;
 
 enum Commands {
-    MMUGetAddr
-    //TODO:AddMore
+    MMUReadAddress,
+    MMUWriteToAddress
 };
-
 typedef struct queueCommandStruct {
-    enum Commands t;
+    enum Commands command;
     int* params; //params array
+    int paramsAmount;
 } QueueCommand_t,*QueueCommand_t_p;
 
 typedef struct queueItemStruct {

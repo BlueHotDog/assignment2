@@ -17,7 +17,7 @@ pthread_t MMU;
 
 
 
-bool MMU_Create();
+bool MMU_Init();
 void MMU_Close();
 void* MMU_Main();
 

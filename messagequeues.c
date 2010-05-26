@@ -42,7 +42,7 @@ bool QUEUES_Init() {
 bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) {
     ASSERT(processID >= 0);
     ASSERT(command != NULL);
-    ASSERT_PRINT("Entering:QUEUES_WriteToProcess(%d,%d)\n", processID, command->t);
+    ASSERT_PRINT("Entering:QUEUES_WriteToProcess(%d,%d)\n", processID, command->command);
 
     pthread_mutex_lock(&ProcessWriter[processID]);
 
@@ -59,12 +59,12 @@ bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) {
     pthread_mutex_unlock(&ProcessWriter[processID]);
     pthread_mutex_unlock(&ProcessReader[processID]);
 
-    ASSERT_PRINT("Exiting:QUEUES_WriteToProcess(%d,%d)\n", processID, command->t);
+    ASSERT_PRINT("Exiting:QUEUES_WriteToProcess(%d,%d)\n", processID, command->command);
 }
 
 bool QUEUES_WriteToMMU(QueueCommand_t_p command) {
     ASSERT(command != NULL);
-    ASSERT_PRINT("Entering:QUEUES_WriteToMMU(%d)\n", command->t);
+    ASSERT_PRINT("Entering:QUEUES_WriteToMMU(%d)\n", command->command);
 
     pthread_mutex_lock(&MMUWriter);
 
@@ -81,12 +81,12 @@ bool QUEUES_WriteToMMU(QueueCommand_t_p command) {
     pthread_mutex_unlock(&MMUWriter);
     pthread_mutex_unlock(&MMUReader);
 
-    ASSERT_PRINT("Entering:QUEUES_WriteToMMU(%d)\n", command->t);
+    ASSERT_PRINT("Entering:QUEUES_WriteToMMU(%d)\n", command->command);
 }
 
 bool QUEUES_WriteToPRM(QueueCommand_t_p command) {
     ASSERT(command != NULL);
-    ASSERT_PRINT("Entering:QUEUES_WriteToPRM(%d)\n", command->t);
+    ASSERT_PRINT("Entering:QUEUES_WriteToPRM(%d)\n", command->command);
 
     pthread_mutex_lock(&PRMWriter);
 
@@ -103,12 +103,8 @@ bool QUEUES_WriteToPRM(QueueCommand_t_p command) {
     pthread_mutex_unlock(&PRMWriter);
     pthread_mutex_unlock(&PRMReader);
 
-    ASSERT_PRINT("Entering:QUEUES_WriteToPRM(%d)\n", command->t);
+    ASSERT_PRINT("Entering:QUEUES_WriteToPRM(%d)\n", command->command);
 }
-
-
-
-
 
 QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
 {
@@ -141,9 +137,11 @@ QueueCommand_t_p QUEUES_ReadMMU() //blocking if no messages
         pthread_mutex_lock(&MMUReader);
 
     //else of when a message arrived
-    QueueItem_t_p pointer = MMUQueue->head;
-    MMUQueue->head = pointer->next;
-    queueCommand = pointer->command;
+    if (MMUQueue->head != NULL) {
+        QueueItem_t_p pointer = MMUQueue->head;
+        MMUQueue->head = pointer->next;
+        queueCommand = pointer->command;
+    }
 
     pthread_mutex_unlock(&MMUWriter);
     ASSERT_PRINT("Exit:QUEUES_ReadMMU\n");
@@ -181,4 +179,22 @@ QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue) {
     }
     ASSERT_PRINT("Exiting:QUEUES_GetLastItem\n");
     return toReturn;
+}
+
+void QUEUES_PrintCommand(QueueCommand_t_p command) {
+    printf("command:");
+    switch (command->command) {
+MMUReadAddress:
+            printf("MMUReadAddress");
+            break;
+MMUWriteToAddress:
+            printf("MMUWriteToAddress");
+            break;
+    }
+    printf("\n");
+    printf("paramsAmount:%d\n", command->paramsAmount);
+    printf("params:\n");
+    int i = 0;
+    for (i = 0; i < command->paramsAmount; i++)
+        printf("%d\n", command->params[i]);
 }

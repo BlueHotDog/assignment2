@@ -42,5 +42,8 @@ QueueCommand_t_p QUEUES_ReadPRM(); //blocking if no messages
 
 
 QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue);
+
+
+void QUEUES_PrintCommand(QueueCommand_t_p command);
 #endif	/* _MESSAGEQUEUES_H */
 

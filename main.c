@@ -95,6 +95,10 @@ void init()
     ReturnVal = QUEUES_Init();
     ASSERT(ReturnVal!=FALSE);
 
+    ASSERT_PRINT("Init MMU..\n");
+    ReturnVal = MMU_Init();
+    ASSERT(ReturnVal!=FALSE);
+
 }
 
 int main(int argc, char** argv) {

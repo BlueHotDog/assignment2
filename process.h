@@ -9,6 +9,9 @@
 #define	_PROCESS_H
 #include "globaldefs.h"
 #include "datatypes.h"
+#include "messagequeues.h"
+#include "pcb.h"
+#include "disk.h"
 
 static volatile bool PROCESS_ShouldClose = FALSE;
 void* PROCESS_RUN(void* pcb);
