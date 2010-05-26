@@ -10,6 +10,8 @@ bool QUEUES_Init() {
     }
     for (i = 0; i < MaxNumOfProcesses; i++) {
         ProcessQueues[i] = malloc(sizeof (Queue_t));
+        pthread_mutex_init(&ProcessReader[i],NULL);
+        pthread_mutex_init(&ProcessWriter[i],NULL);
         if (ProcessQueues[i] == 0) {
             ASSERT_PRINT("Error While creating ProcessQueues[%d]\n", i);
             return FALSE;
@@ -24,7 +26,12 @@ bool QUEUES_Init() {
     }
 
     MMUQueue = malloc(sizeof (Queue_t));
+    pthread_mutex_init(&MMUReader,NULL);
+    pthread_mutex_init(&MMUWriter,NULL);
+    
     PRMQueue = malloc(sizeof (Queue_t));
+    pthread_mutex_init(&PRMReader,NULL);
+    pthread_mutex_init(&PRMWriter,NULL);
 
     if ((PRMQueue) == 0 || MMUQueue == 0) {
         ASSERT_PRINT("Error While creating MMUQueue or PRMQueue\n");
@@ -141,14 +148,12 @@ QueueCommand_t_p QUEUES_ReadMMU() //blocking if no messages
         QueueItem_t_p pointer = MMUQueue->head;
         MMUQueue->head = pointer->next;
         queueCommand = pointer->command;
-    }
-    else
-    {
+    } else {
         pthread_mutex_unlock(&MMUWriter);
         pthread_mutex_lock(&MMUReader);
     }
 
-    
+
     ASSERT_PRINT("Exit:QUEUES_ReadMMU\n");
     return queueCommand;
 }
