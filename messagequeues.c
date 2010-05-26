@@ -142,8 +142,13 @@ QueueCommand_t_p QUEUES_ReadMMU() //blocking if no messages
         MMUQueue->head = pointer->next;
         queueCommand = pointer->command;
     }
+    else
+    {
+        pthread_mutex_unlock(&MMUWriter);
+        pthread_mutex_lock(&MMUReader);
+    }
 
-    pthread_mutex_unlock(&MMUWriter);
+    
     ASSERT_PRINT("Exit:QUEUES_ReadMMU\n");
     return queueCommand;
 }
