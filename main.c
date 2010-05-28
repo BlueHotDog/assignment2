@@ -95,8 +95,8 @@ void init()
     ReturnVal = QUEUES_Init();
     ASSERT(ReturnVal!=FALSE);
 
-    ASSERT_PRINT("Init MMU..\n");
-    ReturnVal = MMU_Init();
+    ASSERT_PRINT("Init PRM..\n");
+    ReturnVal = PRM_Init();
     ASSERT(ReturnVal!=FALSE);
 
 }

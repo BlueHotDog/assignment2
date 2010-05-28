@@ -20,9 +20,9 @@ void* MMU_Main() {
     while (!MMU_shouldClose) {
 
         ASSERT_PRINT("MMU trying to read from queue /MMU\n");
-        QueueCommand_t_p command = QUEUES_ReadMMU();
-        QUEUES_PrintCommand(command);
-        free(command);
+//        QueueCommand_t_p command = QUEUES_ReadMMU();
+//        QUEUES_PrintCommand(command);
+//        free(command);
     }
     ASSERT_PRINT("Exiting:MMU_Main()\n");
 }

@@ -1,184 +1,5 @@
 #include "messagequeues.h"
 
-/*
-bool QUEUES_Init() {
-    ASSERT_PRINT("Entering:QUEUES_Init\n");
-    int i = 0;
-    ProcessQueues = calloc(MaxNumOfProcesses, sizeof (Queue_t_p));
-    if (ProcessQueues == 0) {
-        ASSERT_PRINT("Error While creating ProcessQueues\n");
-        return FALSE;
-    }
-    for (i = 0; i < MaxNumOfProcesses; i++) {
-        ProcessQueues[i] = malloc(sizeof (Queue_t));
-        pthread_mutex_init(&ProcessReader[i],NULL);
-        pthread_mutex_init(&ProcessWriter[i],NULL);
-        if (ProcessQueues[i] == 0) {
-            ASSERT_PRINT("Error While creating ProcessQueues[%d]\n", i);
-            return FALSE;
-        }
-    }
-    ProcessReader = calloc(MaxNumOfProcesses, sizeof (pthread_mutex_t));
-    ProcessWriter = calloc(MaxNumOfProcesses, sizeof (pthread_mutex_t));
-
-    if (ProcessReader == 0 || ProcessWriter == 0) {
-        ASSERT_PRINT("Error While creating ProcessReader or ProcessWriter\n");
-        return FALSE;
-    }
-
-    MMUQueue = malloc(sizeof (Queue_t));
-    pthread_mutex_init(&MMUReader,NULL);
-    pthread_mutex_init(&MMUWriter,NULL);
-    
-    PRMQueue = malloc(sizeof (Queue_t));
-    pthread_mutex_init(&PRMReader,NULL);
-    pthread_mutex_init(&PRMWriter,NULL);
-
-    if ((PRMQueue) == 0 || MMUQueue == 0) {
-        ASSERT_PRINT("Error While creating MMUQueue or PRMQueue\n");
-        return FALSE;
-    }
-
-    MMUQueue->head = NULL;
-
-    PRMQueue->head = NULL;
-
-    ASSERT_PRINT("Exiting:QUEUES_Init\n");
-    return TRUE;
-}
-*/
-
-bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) {
-    ASSERT(processID >= 0);
-    ASSERT(command != NULL);
-    ASSERT_PRINT("Entering:QUEUES_WriteToProcess(%d,%d)\n", processID, command->command);
-
-    pthread_mutex_lock(&ProcessWriter[processID]);
-
-    QueueItem_t_p lastItem = QUEUES_GetLastItem(ProcessQueues[processID]);
-    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
-
-    toInsert->command = command;
-    toInsert->next = NULL;
-    if (lastItem != NULL)
-        lastItem->next = toInsert;
-    else
-        ProcessQueues[processID]->head = toInsert;
-
-    pthread_mutex_unlock(&ProcessWriter[processID]);
-    pthread_mutex_unlock(&ProcessReader[processID]);
-
-    ASSERT_PRINT("Exiting:QUEUES_WriteToProcess(%d,%d)\n", processID, command->command);
-}
-
-bool QUEUES_WriteToMMU(QueueCommand_t_p command) {
-    ASSERT(command != NULL);
-    ASSERT_PRINT("Entering:QUEUES_WriteToMMU(%d)\n", command->command);
-
-    pthread_mutex_lock(&MMUWriter);
-
-    QueueItem_t_p lastItem = QUEUES_GetLastItem(MMUQueue);
-    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
-
-    toInsert->command = command;
-    toInsert->next = NULL;
-    if (lastItem != NULL)
-        lastItem->next = toInsert;
-    else
-        MMUQueue->head = toInsert;
-
-    pthread_mutex_unlock(&MMUWriter);
-    pthread_mutex_unlock(&MMUReader);
-
-    ASSERT_PRINT("Entering:QUEUES_WriteToMMU(%d)\n", command->command);
-}
-
-bool QUEUES_WriteToPRM(QueueCommand_t_p command) {
-    ASSERT(command != NULL);
-    ASSERT_PRINT("Entering:QUEUES_WriteToPRM(%d)\n", command->command);
-
-    pthread_mutex_lock(&PRMWriter);
-
-    QueueItem_t_p lastItem = QUEUES_GetLastItem(PRMQueue);
-    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
-
-    toInsert->command = command;
-    toInsert->next = NULL;
-    if (lastItem != NULL)
-        lastItem->next = toInsert;
-    else
-        PRMQueue->head = toInsert;
-
-    pthread_mutex_unlock(&PRMWriter);
-    pthread_mutex_unlock(&PRMReader);
-
-    ASSERT_PRINT("Entering:QUEUES_WriteToPRM(%d)\n", command->command);
-}
-
-QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
-{
-    ASSERT_PRINT("Entering:QUEUES_ReadProcess\n");
-    QueueCommand_t_p queueCommand;
-    pthread_mutex_lock(&ProcessWriter[processID]);
-
-    //if there aren't any messages to read, wait.
-    if (ProcessQueues[processID]->head == NULL)
-        pthread_mutex_lock(&ProcessReader[processID]);
-
-    //else of when a message arrived
-    QueueItem_t_p pointer = ProcessQueues[processID]->head;
-    ProcessQueues[processID]->head = pointer->next;
-    queueCommand = pointer->command;
-
-    pthread_mutex_unlock(&ProcessWriter[processID]);
-    ASSERT_PRINT("Exiting:QUEUES_ReadProcess\n");
-    return queueCommand;
-}
-
-QueueCommand_t_p QUEUES_ReadMMU() //blocking if no messages
-{
-    ASSERT_PRINT("Entering:QUEUES_ReadMMU\n");
-    QueueCommand_t_p queueCommand;
-    pthread_mutex_lock(&MMUWriter);
-
-    //if there aren't any messages to read, wait.
-    if (MMUQueue->head == NULL)
-        pthread_mutex_lock(&MMUReader);
-
-    //else of when a message arrived
-    if (MMUQueue->head != NULL) {
-        QueueItem_t_p pointer = MMUQueue->head;
-        MMUQueue->head = pointer->next;
-        queueCommand = pointer->command;
-    } else {
-        pthread_mutex_unlock(&MMUWriter);
-        pthread_mutex_lock(&MMUReader);
-    }
-
-
-    ASSERT_PRINT("Exit:QUEUES_ReadMMU\n");
-    return queueCommand;
-}
-
-QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
-{
-    ASSERT_PRINT("Entering:QUEUES_ReadPRM\n");
-    QueueCommand_t_p queueCommand;
-    pthread_mutex_lock(&PRMWriter);
-
-    //if there aren't any messages to read, wait.
-    if (PRMQueue->head == NULL)
-        pthread_mutex_lock(&PRMReader);
-
-    //else of when a message arrived
-    QueueItem_t_p pointer = PRMQueue->head;
-    PRMQueue->head = pointer->next;
-    queueCommand = pointer->command;
-
-    pthread_mutex_unlock(&PRMWriter);
-    ASSERT_PRINT("Exit:QUEUES_ReadPRM\n");
-    return queueCommand;
-}
 
 QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue) {
     ASSERT_PRINT("Entering:QUEUES_GetLastItem\n");
@@ -196,11 +17,11 @@ QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue) {
 void QUEUES_PrintCommand(QueueCommand_t_p command) {
     printf("command:");
     switch (command->command) {
-MMUReadAddress:
-            printf("MMUReadAddress");
+        case PRMReadAddress:
+            printf("PRMReadAddress");
             break;
-MMUWriteToAddress:
-            printf("MMUWriteToAddress");
+        case PRMWriteToAddress:
+            printf("PRMWriteToAddress");
             break;
     }
     printf("\n");
@@ -212,26 +33,22 @@ MMUWriteToAddress:
 }
 
 bool QUEUES_Init() {
-    BufferSize = 0x10000;
+BufferSize = 0x10000;
 
     PROCESSES_mutex = calloc(MaxNumOfProcesses, sizeof (sem_t));
     PROCESSES_empty = calloc(MaxNumOfProcesses, sizeof (sem_t));
     PROCESSES_full = calloc(MaxNumOfProcesses, sizeof (sem_t));
 
     int i;
-    for (i=0; i < MaxNumOfProcesses; i++) {
-        PROCESSES_mutex[i] = 1;              // Controls access to critical section
-        PROCESSES_empty[i] = BufferSize;     // counts number of empty buffer slots
-        PROCESSES_full[i] = 0;               // counts number of full buffer slots
+    for (i = 0; i < MaxNumOfProcesses; i++) {
+        sem_init(&PROCESSES_mutex[i], 0, 1); // Controls access to critical section
+        sem_init(&PROCESSES_empty[i], 0, BufferSize);// counts number of empty buffer slots
+        sem_init(&PROCESSES_full[i],0,0); // counts number of full buffer slots
     }
 
-    MMU_mutex = 1;              // Controls access to critical section
-    MMU_empty = BufferSize;     // counts number of empty buffer slots
-    MMU_full = 0;               // counts number of full buffer slots
-
-    PRM_mutex = 1;              // Controls access to critical section
-    PRM_empty = BufferSize;     // counts number of empty buffer slots
-    PRM_full = 0;               // counts number of full buffer slots
+    sem_init(&PRM_mutex, 0, 1); // Controls access to critical section
+    sem_init(&PRM_empty, 0, BufferSize); // counts number of empty buffer slots
+    sem_init(&PRM_full, 0, 0); // counts number of full buffer slots
 
 
     //init process queue - mailing box
@@ -240,7 +57,7 @@ bool QUEUES_Init() {
         ASSERT_PRINT("Error While creating ProcessQueues\n");
         return FALSE;
     }
-    for (int i = 0; i < MaxNumOfProcesses; i++) {
+    for (i = 0; i < MaxNumOfProcesses; i++) {
         ProcessQueues[i] = malloc(sizeof (Queue_t));
         if (ProcessQueues[i] == 0) {
             ASSERT_PRINT("Error While creating ProcessQueues[%d]\n", i);
@@ -248,24 +65,104 @@ bool QUEUES_Init() {
         }
     }
 
-    MMUQueue = malloc(sizeof (Queue_t));
     PRMQueue = malloc(sizeof (Queue_t));
 
-    if ((PRMQueue) == 0 || MMUQueue == 0) {
+    if ((PRMQueue) == 0) {
         ASSERT_PRINT("Error While creating MMUQueue or PRMQueue\n");
         return FALSE;
     }
 
-    MMUQueue->head = NULL;
     PRMQueue->head = NULL;
 
     ASSERT_PRINT("Exiting:QUEUES_Init\n");
     return TRUE;
 }
 
+bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) //non blocking
+{
+    while (TRUE) { // loop forever
+        sem_wait(&PROCESSES_empty[processID]); // decrement the empty semaphore
+        sem_wait(&PROCESSES_mutex[processID]); // enter critical section
+        QueueItem_t_p lastItem = QUEUES_GetLastItem(ProcessQueues[processID]);
+        QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
 
-  
+        toInsert->command = command;
+        toInsert->next = NULL;
+        if (lastItem != NULL)
+            lastItem->next = toInsert;
+        else
+            ProcessQueues[processID]->head = toInsert;
+        sem_post(&PROCESSES_mutex[processID]); // leave critical section
+        sem_post(&PROCESSES_full[processID]); // increment the full semaphore
+    }
+}
 
+bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
+{
+    while (TRUE) { // loop forever
+        sem_wait(&PRM_empty); // decrement the empty semaphore
+        sem_wait(&PRM_mutex); // enter critical section
+        QueueItem_t_p lastItem = QUEUES_GetLastItem(PRMQueue);
+        QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
+
+        toInsert->command = command;
+        toInsert->next = NULL;
+        if (lastItem != NULL)
+            lastItem->next = toInsert;
+        else
+            PRMQueue->head = toInsert;
+        sem_post(&PRM_mutex); // leave critical section
+        sem_post(&PRM_full); // increment the full semaphore
+    }
+}
+
+QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
+{
+    QueueCommand_t_p ans;
+    while (TRUE) { // loop forever
+        sem_wait(&PROCESSES_full[processID]); // decrement the full semaphore
+        sem_wait(&PROCESSES_mutex[processID]); // enter critical section
+
+        //if there aren't any messages to read, wait.
+        if (ProcessQueues[processID]->head == NULL)
+            pthread_mutex_lock(&ProcessReader[processID]);
+
+        //else of when a message arrived
+        QueueItem_t_p pointer = ProcessQueues[processID]->head;
+        ProcessQueues[processID]->head = pointer->next;
+        ans = pointer->command;
+        sem_post(&PROCESSES_mutex[processID]); // leave critical section
+        sem_post(&PROCESSES_empty[processID]); // increment the empty semaphore
+        return ans;
+    }
+}
+
+QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
+{
+    QueueCommand_t_p ans;
+    while (TRUE) { // loop forever
+        sem_wait(&PRM_full); // decrement the full semaphore
+        sem_wait(&PRM_mutex); // enter critical section
+        //if there aren't any messages to read, wait.
+/*
+        if (PRMQueue->head == NULL)
+            pthread_mutex_lock(&PRMReader);
+*/
+
+        //else or when a message arrived
+        QueueItem_t_p pointer = PRMQueue->head;
+        PRMQueue->head = pointer->next;
+        ans = pointer->command;
+        ASSERT(ans != 0);
+
+        sem_post(&PRM_mutex); // leave critical section
+        sem_post(&PRM_empty); // increment the empty semaphore
+        return ans; // consume the item
+    }
+}
+
+
+/*
   QUEUE_Write() //Producer
   {
     int widget;
@@ -293,3 +190,4 @@ bool QUEUES_Init() {
       consume_item(widget);         // consume the item
       }
   }
+ */

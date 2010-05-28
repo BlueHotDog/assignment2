@@ -16,20 +16,19 @@
 
 #ifndef _PRM_H
 #define	_PRM_H
+
 #include "globaldefs.h"
 #include "datatypes.h"
+#include "messagequeues.h"
 
 static bool PRM_shouldClose = FALSE;
-
 pthread_t PRM;
-
-
 
 bool PRM_Create();
 void PRM_Close();
-
+void* PRM_Main();
+bool PRM_Init();
 bool PRM_loadPage(const PID processID, const int pageNum, const int diskStart);
-
 
 #endif	/* _PRM_H */
 
