@@ -28,9 +28,10 @@ typedef struct iptStruct {
     LPN pageNumber;
     bool dirtyBit; //Whenever the content of a page is changed, this bit is set (flagged true). Whenever a page is loaded to MM or saved to Disk, this bit is cleared (flagged false).
     bool referenceBit; //Whenever a page is accessed (read or write), this bit is set (flagged true). The Aging Algorithm Daemon may read / change it.
-    struct iptStruct *next; // pointing to another entry in the inverted page table.
-    struct iptStruct *prev;
+    struct iptStruct* next; // pointing to another entry in the inverted page table.
+    struct iptStruct* prev;
 } IPT_t, *IPT_t_p;
+
 
 typedef char* Page;
 typedef IPT_t_p* HAT_t; //HAT is just an array of IPT enteries
@@ -45,6 +46,10 @@ volatile unsigned int NumOfPagesInDisk;
 volatile unsigned int NumOfProcessPages;
 volatile unsigned int ShiftClock;
 
+
+
+
+//=====================QUEUE====================
 enum Commands {
     MMUReadAddress,
     MMUWriteToAddress
@@ -63,6 +68,8 @@ typedef struct queueItemStruct {
 typedef struct queueStruct {
     QueueItem_t_p head; //reading for the head
 } Queue_t,*Queue_t_p;
+//================================================
+
 
 typedef struct pcbStruct {
     pthread_t processThread;
@@ -80,10 +87,10 @@ typedef struct freeListStruct {
     bool isFree;
 } FreeList_t, *FreeList_t_p;
 
-typedef struct PRM_RequestQueueValueStruct {
+typedef struct memoryAddressStruct {
     unsigned int pageNumber;
-    unsigned int ProccessID;
-} PRM_RequestQueueValue_t, *PRM_RequestQueueValue_tp;
+    unsigned int processID;
+} MemoryAddress_t, *MemoryAddress_t_p;
 
 #endif	/* _DATATYPES_H */
 

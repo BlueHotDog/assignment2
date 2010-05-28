@@ -15,11 +15,15 @@ static bool MMU_shouldClose = FALSE;
 
 pthread_t MMU;
 
+IPT_t_p* IPT;
 
 
 bool MMU_Init();
 void MMU_Close();
-void* MMU_Main();
+
+Page MMU_ReadAddress(MemoryAddress_t address);
+bool MMU_WriteAddress(MemoryAddress_t address,Page* value);
+
 
 #endif	/* _MMU_H */
 

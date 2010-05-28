@@ -1,9 +1,14 @@
 #include "mmu.h"
+#include "hat.h"
 
 bool MMU_Init() {
     ASSERT_PRINT("Entering:MMU_Create()\n");
-    if (pthread_create(&MMU, NULL, MMU_Main, NULL) != 0)
-        return FALSE;
+    ASSERT_PRINT("Init IPT...");
+    IPT = calloc(NumOfPagesInMM, sizeof (IPT_t));
+    int i = 0;
+    for (i = 0; i < NumOfPagesInMM; i++) {
+        IPT[i] = 0;
+    }
     ASSERT_PRINT("Exiting:MMU_Create()\n");
     return TRUE;
 }
@@ -13,16 +18,18 @@ void MMU_Close() {
     MMU_shouldClose = TRUE;
     ASSERT_PRINT("Exiting:MMU_Close()\n");
 }
-
-void* MMU_Main() {
-    ASSERT_PRINT("Entering:MMU_Main()\n");
-
-    while (!MMU_shouldClose) {
-
-        ASSERT_PRINT("MMU trying to read from queue /MMU\n");
-        QueueCommand_t_p command = QUEUES_ReadMMU();
-        QUEUES_PrintCommand(command);
-        free(command);
-    }
-    ASSERT_PRINT("Exiting:MMU_Main()\n");
+Page MMU_ReadAddress(MemoryAddress_t address)
+{
+     ASSERT_PRINT("Entering:MMU_ReadAddress(pid:%d,addr:%d)\n",address.processID,address.pageNumber);
+     IPT_t_p addr = HAT_GetEntry(address);
+     if(addr==NULL)
+     {
+         printf("segmentation fault...");
+     }
+     else
+     {
+         
+     }
+     ASSERT_PRINT("Exiting:MMU_ReadAddress(pid:%d,addr:%d)\n",address.processID,address.pageNumber);
 }
+

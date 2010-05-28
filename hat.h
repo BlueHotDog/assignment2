@@ -22,11 +22,13 @@
 #ifndef _HAT_H
 #define	_HAT_H
 #include "globaldefs.h"
+#include "datatypes.h"
 
-
-HAT_t HATArray;
+static HAT_t HAT;
 
 bool HAT_Init();
-int HAT_Hash(PID proccessID,int pageNumber);
+int HAT_PRIVATE_Hash(MemoryAddress_t memoryAddress);
+
+IPT_t_p HAT_GetEntry(MemoryAddress_t memoryAddress);
 #endif	/* _HAT_H */
 
