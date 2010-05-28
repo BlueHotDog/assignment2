@@ -2,15 +2,17 @@
 
 
 QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue) {
-    ASSERT_PRINT("Entering:QUEUES_GetLastItem\n");
+    //ASSERT_PRINT("Entering:QUEUES_GetLastItem\n");
     QueueItem_t_p toReturn = NULL;
     ASSERT(queue != NULL);
     Queue_t temp = *queue;
-    while (temp.head != NULL) {
-        toReturn = temp.head->next;
-        temp.head = temp.head->next;
+    if (temp.head == NULL)
+        return NULL;
+    toReturn = temp.head;
+    while (toReturn->next != NULL) {
+        toReturn = toReturn->next;
     }
-    ASSERT_PRINT("Exiting:QUEUES_GetLastItem\n");
+    //ASSERT_PRINT("Exiting:QUEUES_GetLastItem\n");
     return toReturn;
 }
 
@@ -33,7 +35,7 @@ void QUEUES_PrintCommand(QueueCommand_t_p command) {
 }
 
 bool QUEUES_Init() {
-BufferSize = 0x10000;
+BufferSize = 0x200;
 
     PROCESSES_mutex = calloc(MaxNumOfProcesses, sizeof (sem_t));
     PROCESSES_empty = calloc(MaxNumOfProcesses, sizeof (sem_t));
@@ -80,7 +82,6 @@ BufferSize = 0x10000;
 
 bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) //non blocking
 {
-    while (TRUE) { // loop forever
         sem_wait(&PROCESSES_empty[processID]); // decrement the empty semaphore
         sem_wait(&PROCESSES_mutex[processID]); // enter critical section
         QueueItem_t_p lastItem = QUEUES_GetLastItem(ProcessQueues[processID]);
@@ -94,17 +95,15 @@ bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) //non blocki
             ProcessQueues[processID]->head = toInsert;
         sem_post(&PROCESSES_mutex[processID]); // leave critical section
         sem_post(&PROCESSES_full[processID]); // increment the full semaphore
-    }
 }
 
 bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
 {
-    while (TRUE) { // loop forever
         sem_wait(&PRM_empty); // decrement the empty semaphore
         sem_wait(&PRM_mutex); // enter critical section
         QueueItem_t_p lastItem = QUEUES_GetLastItem(PRMQueue);
         QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
-
+        //sleep(1);
         toInsert->command = command;
         toInsert->next = NULL;
         if (lastItem != NULL)
@@ -113,81 +112,31 @@ bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
             PRMQueue->head = toInsert;
         sem_post(&PRM_mutex); // leave critical section
         sem_post(&PRM_full); // increment the full semaphore
-    }
 }
 
 QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
 {
     QueueCommand_t_p ans;
-    while (TRUE) { // loop forever
         sem_wait(&PROCESSES_full[processID]); // decrement the full semaphore
         sem_wait(&PROCESSES_mutex[processID]); // enter critical section
-
-        //if there aren't any messages to read, wait.
-        if (ProcessQueues[processID]->head == NULL)
-            pthread_mutex_lock(&ProcessReader[processID]);
-
-        //else of when a message arrived
         QueueItem_t_p pointer = ProcessQueues[processID]->head;
         ProcessQueues[processID]->head = pointer->next;
         ans = pointer->command;
         sem_post(&PROCESSES_mutex[processID]); // leave critical section
         sem_post(&PROCESSES_empty[processID]); // increment the empty semaphore
         return ans;
-    }
 }
 
 QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
 {
     QueueCommand_t_p ans;
-    while (TRUE) { // loop forever
         sem_wait(&PRM_full); // decrement the full semaphore
         sem_wait(&PRM_mutex); // enter critical section
-        //if there aren't any messages to read, wait.
-/*
-        if (PRMQueue->head == NULL)
-            pthread_mutex_lock(&PRMReader);
-*/
-
-        //else or when a message arrived
         QueueItem_t_p pointer = PRMQueue->head;
         PRMQueue->head = pointer->next;
         ans = pointer->command;
         ASSERT(ans != 0);
-
         sem_post(&PRM_mutex); // leave critical section
         sem_post(&PRM_empty); // increment the empty semaphore
         return ans; // consume the item
-    }
 }
-
-
-/*
-  QUEUE_Write() //Producer
-  {
-    int widget;
-
-    while (TRUE) {                  // loop forever
-      make_new(widget);             // create a new widget to put in the buffer
-      down(empty);                 // decrement the empty semaphore
-      down(&mutex);                 // enter critical section
-      put_item(widget);             // put widget in buffer
-      up(&mutex);                   // leave critical section
-      up(&full);                    // increment the full semaphore
-      }
-  }
-
-  QUEUE_Read() //Consumer
-  {
-    int widget;
-      
-    while (TRUE) {                  // loop forever
-      down(&full);                  // decrement the full semaphore
-      down(&mutex);                 // enter critical section
-      remove_item(widget);          // take a widget from the buffer
-      up(&mutex);                   // leave critical section
-      up(empty);                   // increment the empty semaphore
-      consume_item(widget);         // consume the item
-      }
-  }
- */

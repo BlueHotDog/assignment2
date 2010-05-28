@@ -1,8 +1,8 @@
 #include "process.h"
-int counter = 1;
 
 void* PROCESS_RUN(void* pcb) {
     PCB_t_p local_pcb = (PCB_t_p)pcb;
+    int counter = 1;
     while (!PROCESS_ShouldClose) {
         QueueCommand_t_p comm = malloc(sizeof(QueueCommand_t));
         comm->params = calloc(2,sizeof(int));
