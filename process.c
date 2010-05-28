@@ -1,21 +1,21 @@
 #include "process.h"
 
-
 void* PROCESS_RUN(void* pcb) {
     PCB_t_p local_pcb = (PCB_t_p)pcb;
+    int counter = 1;
     while (!PROCESS_ShouldClose) {
         QueueCommand_t_p comm = malloc(sizeof(QueueCommand_t));
         comm->params = calloc(2,sizeof(int));
-        comm->params[0] = 12;
+        comm->params[0] = counter++;
         comm->params[1] = 56;
         comm->paramsAmount = 2;
         
         if(local_pcb->proccessID%2==0)
-            comm->command = MMUReadAddress;
+            comm->command = PRMReadAddress;
         else
-            comm->command = MMUWriteToAddress;
+            comm->command = PRMWriteToAddress;
 
-        QUEUES_WriteToMMU(comm);
+        QUEUES_WriteToPRM(comm);
     }
 }
 

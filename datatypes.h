@@ -51,8 +51,8 @@ volatile unsigned int ShiftClock;
 
 //=====================QUEUE====================
 enum Commands {
-    MMUReadAddress,
-    MMUWriteToAddress
+    PRMReadAddress,
+    PRMWriteToAddress
 };
 typedef struct queueCommandStruct {
     enum Commands command;
