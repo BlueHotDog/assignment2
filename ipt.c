@@ -152,5 +152,27 @@ bool IPT_Remove(
     free(toDelete);
     ASSERT_PRINT("Exiting:IPT_Remove() with return value: TRUE\n");
     return TRUE;
+}
 
+bool IPT_FindEmptyFrame(OUT MMFI* frame)
+{
+    ASSERT_PRINT("Entering:IPT_FindEmptyFrame()\n");
+    int i=0;
+    bool* frameArry = calloc(SIZE_OF_IPT, sizeof(bool));
+    for(i;i<SIZE_OF_IPT; i++)
+        frameArry[i] = FALSE;
+    for (i;i<SIZE_OF_IPT; i++)
+        frameArry[IPT[i]->frame] = TRUE;
+
+    i=0;
+    while (!frameArry[i] || i<SIZE_OF_IPT) i++;
+
+    if (i>=SIZE_OF_IPT)
+    {
+        ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: FALSE\n");
+        return FALSE;
+    }
+    *frame = i;
+    ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: TRUE, frame = %d\n",*frame);
+    return TRUE;
 }
