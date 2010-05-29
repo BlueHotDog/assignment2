@@ -15,7 +15,7 @@ static sem_t    m_semReaders;
 static sem_t    m_semWriters;
 static int      m_nReaders;
 
-void READERSWRITERS_Init();
+bool READERSWRITERS_Init();
 void READERSWRITERS_Destroy();
 void READERSWRITERS_LockDataRead();
 void READERSWRITERS_UnlockDataRead();

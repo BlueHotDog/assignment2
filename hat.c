@@ -5,7 +5,7 @@ bool HAT_Init() {
     HAT = calloc(NumOfPagesInMM, sizeof (IPT_t));
     int i = 0;
     for (i = 0; i < NumOfPagesInMM; i++) {
-        HAT[i] = NULL;
+        HAT[i] = 0;
     }
     if (!HAT)
         return FALSE;
@@ -16,17 +16,17 @@ bool HAT_Init() {
 
 int HAT_PRIVATE_Hash(MemoryAddress_t memoryAddress) {
     ASSERT_PRINT("Entering:HAT_PRIVATE_Hash(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
-    return (memoryAddress.processID * memoryAddress.pageNumber) % NumOfPagesInMM;
+    return (memoryAddress.processID+1 * memoryAddress.pageNumber+1) % NumOfPagesInMM;
     ASSERT_PRINT("Exiting:HAT_PRIVATE_Hash(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
 }
 
 IPT_t_p HAT_GetEntry(MemoryAddress_t memoryAddress) {
     ASSERT_PRINT("Entering:HAT_GetEntry(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
     int index = HAT_PRIVATE_Hash(memoryAddress);
-    if(HAT[index]==NULL)
+    if(HAT[index]==0)
     {
-        HAT[index] = IPT[index];
+        HAT[index] = index;
     }
-    return HAT[index];
+    return IPT[index];
     ASSERT_PRINT("Exiting:HAT_GetEntry(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
 }

@@ -14,8 +14,8 @@
 #define INDEX_INC(i) ((i+1)%NumOfPagesInMM)
 #define SIZE_OF_IPT NumOfPagesInMM
 
-static IPT_t_p* IPT;
-static int totalPagesInIPT;
+IPT_t_p* IPT;
+int totalPagesInIPT;
 
 bool IPT_Init();
 

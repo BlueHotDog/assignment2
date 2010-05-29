@@ -1,5 +1,5 @@
 #include "ui.h"
-
+#include "mmu.h"
 
 void* UI_Main() {
 
@@ -13,15 +13,15 @@ void* UI_Main() {
 }
 
 void UI_ParseCommand(const string * const comm) {
-    ASSERT_PRINT("Entering: UI_ParseCommand(%s)\n",*comm);
+    ASSERT_PRINT("Entering: UI_ParseCommand(%s)\n", *comm);
     if (strcmp(*comm, "createProcess") == 0 || strcmp(*comm, "c") == 0) {
         UI_HandleCreateProcess();
-    } else if(strcmp(*comm,"read")==0){
+    } else if (strcmp(*comm, "read") == 0 || strcmp(*comm, "r") == 0) {
         int vAddr = -1;
         int id = -1;
         int amount = -1;
-        scanf("%d %d %d",&vAddr,&id,&amount);
-        UI_HandleRead(vAddr,id,amount);
+        scanf("%d %d %d", &vAddr, &id, &amount);
+        UI_HandleRead(vAddr, id, amount);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
     }
@@ -53,20 +53,21 @@ void UI_HandleDelProcess(PID processID) {
 }
 
 void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
-    ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n",vAddr,processID,amount);
-/*
-    mqd_t queue = QUEUE_OpenForProcess(processID);
-    QUEUE_Send(queue,"read bluh bluh");
-    QUEUE_Close(queue);
-*/
-/*
-    string name = calloc(MAX_MESSAGE_SIZE,sizeof(char));
-    sprintf(name,"/%d",processID);
-    mqd_t ret = mq_open(name, O_RDWR,(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH),NULL);
-    string message = "read bliuh bluhhh";
-    int messageLength = mq_send(ret, message, strlen(message),0);
-*/
-   
+    ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
+    MemoryAddress_t addr;
+    addr.pageNumber = vAddr;
+    for(addr.pageNumber;addr.pageNumber<vAddr+amount;addr.pageNumber++)
+    {
+        QueueCommand_t_p comm = malloc(sizeof(QueueCommand_t));
+
+        comm->command = ProcessReadAddress;
+        comm->params = calloc(1,sizeof(int));
+        comm->params[0] = addr.pageNumber;
+        comm->paramsAmount = 1;
+
+        QUEUES_WriteToProcess(processID,comm);
+    }
+    ASSERT_PRINT("Exiting: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
 }
 
 void UI_HandleLoopRead(int vAddr, PID processID, int offset, unsigned int amount) {

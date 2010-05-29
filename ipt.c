@@ -2,7 +2,7 @@
 
 bool IPT_Init()
 {
-    ASSERT_PRINT("Entering:PRM_Init()\n");
+    ASSERT_PRINT("Entering:IPT_Init()\n");
     IPT = calloc(SIZE_OF_IPT, sizeof (IPT_t));
     if (IPT == NULL)
         return FALSE;
@@ -11,7 +11,7 @@ bool IPT_Init()
         IPT[i] = 0;
     }
     totalPagesInIPT = 0;
-    ASSERT_PRINT("Exiting:PRM_Init()\n");
+    ASSERT_PRINT("Exiting:IPT_Init()\n");
     return TRUE;
 }
 

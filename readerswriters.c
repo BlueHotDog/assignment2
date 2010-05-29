@@ -1,6 +1,6 @@
 #include "readerswriters.h"
 
-void READERSWRITERS_Init() {
+bool READERSWRITERS_Init() {
     ASSERT_PRINT("Entering:READERSWRITERS_Init()\n");
     /*
         m_semReaders = 0;
@@ -10,8 +10,10 @@ void READERSWRITERS_Init() {
     // initialize the Readers & Writers variables
 
 
-    ASSERT(sem_init(&m_semReaders, 0, 1) != -1);
-    ASSERT(sem_init(&m_semWriters, 0, 1) != -1);
+    if(sem_init(&m_semReaders, 0, 1) == -1)
+        return FALSE;
+    if(sem_init(&m_semWriters, 0, 1) == -1)
+        return FALSE;
     m_nReaders = 0;
     ASSERT_PRINT("Exiting:READERSWRITERS_Init()\n");
 }

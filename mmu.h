@@ -10,6 +10,10 @@
 #include "globaldefs.h"
 #include "datatypes.h"
 #include "messagequeues.h"
+#include "hat.h"
+#include "readerswriters.h"
+#include "mm.h"
+
 //#include "ipt.h"
 
 static bool MMU_shouldClose = FALSE;

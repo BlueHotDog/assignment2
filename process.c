@@ -1,21 +1,26 @@
 #include "process.h"
+#include "mmu.h"
 
 void* PROCESS_RUN(void* pcb) {
     PCB_t_p local_pcb = (PCB_t_p)pcb;
-    int counter = 1;
-    while (!PROCESS_ShouldClose) {
-        QueueCommand_t_p comm = malloc(sizeof(QueueCommand_t));
-        comm->params = calloc(2,sizeof(int));
-        comm->params[0] = counter++;
-        comm->params[1] = 56;
-        comm->paramsAmount = 2;
-        
-        if(local_pcb->processID%2==0)
-            comm->command = PRMReadAddress;
-        else
-            comm->command = PRMWriteToAddress;
 
-        QUEUES_WriteToPRM(comm);
+    while (!PROCESS_ShouldClose) {
+        QueueCommand_t_p comm = QUEUES_ReadProcess(local_pcb->processID);
+        switch(comm->command){
+            case ProcessReadAddress:
+            {
+                MemoryAddress_t mem;
+                mem.processID = local_pcb->processID;
+                mem.pageNumber = comm->params[0];
+                Page res = MMU_ReadAddress(mem);
+                int i=0;
+                for(i;i<PageSize;i++)
+                    printf("%c\n",res[i]);
+            }
+                break;
+        }
+        free(comm->params);
+        free(comm);
     }
 }
 
