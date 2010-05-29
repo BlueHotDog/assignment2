@@ -35,7 +35,8 @@ OBJS_Assignment2 =  \
 	$(TARGETDIR_Assignment2)/mm.o \
 	$(TARGETDIR_Assignment2)/mmu.o \
 	$(TARGETDIR_Assignment2)/messagequeues.o \
-	$(TARGETDIR_Assignment2)/hat.o
+	$(TARGETDIR_Assignment2)/hat.o \
+	$(TARGETDIR_Assignment2)/ipt.o
 SYSLIBS_Assignment2 = -lpthread -lrt
 USERLIBS_Assignment2 = $(SYSLIBS_Assignment2) 
 DEPLIBS_Assignment2 =  
@@ -75,6 +76,9 @@ $(TARGETDIR_Assignment2)/pcb.o: $(TARGETDIR_Assignment2) pcb.c
 $(TARGETDIR_Assignment2)/hat.o: $(TARGETDIR_Assignment2) hat.c
 	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ hat.c
 
+$(TARGETDIR_Assignment2)/ipt.o: $(TARGETDIR_Assignment2) ipt.c
+	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ ipt.c
+
 $(TARGETDIR_Assignment2)/mm.o: $(TARGETDIR_Assignment2) mm.c
 	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ mm.c
 
@@ -99,7 +103,8 @@ clean:
 		$(TARGETDIR_Assignment2)/mm.o \
 		$(TARGETDIR_Assignment2)/mmu.o \
 		$(TARGETDIR_Assignment2)/messagequeues.o \
-		$(TARGETDIR_Assignment2)/hat.o
+		$(TARGETDIR_Assignment2)/hat.o \
+		$(TARGETDIR_Assignment2)/ipt.o
 	rm -f -r $(TARGETDIR_Assignment2)
 
 

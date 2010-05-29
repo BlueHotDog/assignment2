@@ -10,13 +10,11 @@
 #include "globaldefs.h"
 #include "datatypes.h"
 #include "messagequeues.h"
+//#include "ipt.h"
 
 static bool MMU_shouldClose = FALSE;
 
 pthread_t MMU;
-
-IPT_t_p* IPT;
-
 
 bool MMU_Init();
 void MMU_Close();

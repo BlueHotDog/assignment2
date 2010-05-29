@@ -10,7 +10,7 @@ void* PROCESS_RUN(void* pcb) {
         comm->params[1] = 56;
         comm->paramsAmount = 2;
         
-        if(local_pcb->proccessID%2==0)
+        if(local_pcb->processID%2==0)
             comm->command = PRMReadAddress;
         else
             comm->command = PRMWriteToAddress;
@@ -34,7 +34,7 @@ int PROCESS_CREATE() {
             printf("Error, unable to find free process id...\n");
             break;
         }
-        PCB_t_p pcb = PCB_AllocateProccess(id, start, start + NumOfProcessPages);
+        PCB_t_p pcb = PCB_AllocateProcess(id, start, start + NumOfProcessPages);
         
         pthread_create(&(pcb->processThread),NULL,PROCESS_RUN,(void*)pcb);
         return id;

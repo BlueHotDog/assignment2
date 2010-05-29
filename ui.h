@@ -34,38 +34,38 @@ void UI_HandleCreateProcess();
  * content of the Disk pages or the MM pages, the MM pages will just be
  * marked free and contain 'trash' and the same goes for the Disk pages.
  */
-void UI_HandleDelProcess(PID proccessID);
+void UI_HandleDelProcess(PID processID);
 /*reads and prints amount bytes from vAddr of process id.
  * Prints each byte as a char. (or description of error if it occurred).
  * $
  */
-void UI_HandleRead(int vAddr,PID proccessID,unsigned int amount);
+void UI_HandleRead(int vAddr,PID processID,unsigned int amount);
 /*reads and prints the chars found at
  * vAddr, vAddr+off, vAddr+2*off, …, vAddr+(amount-1)*off of process id.
  * Assume these memory addresses are within the bounds of the virtual memory
  * (not below 0 or too big). Assume amount > 0.
  * $
  */
-void UI_HandleLoopRead(int vAddr,PID proccessID,int offset,unsigned int amount);
+void UI_HandleLoopRead(int vAddr,PID processID,int offset,unsigned int amount);
 /*
  * identical in definition to “read vAddr id amount”,
  * with the sole difference that output is written to the specified file
  * filename, instead of to the screen.
  * $
  */
-void UI_HandleReadToFile(int vAddr,PID proccessID,unsigned int amount,string filename);
+void UI_HandleReadToFile(int vAddr,PID processID,unsigned int amount,string filename);
 /*
  * identical in definition to “loopRead vAddr id off amount”,
  * except that output is to the file filename and not to the screen.
  * $
  */
-void UI_HandleLoopReadToFile(int vAddr,PID proccessID,int off,unsigned int amount,string filename);
+void UI_HandleLoopReadToFile(int vAddr,PID processID,int off,unsigned int amount,string filename);
 /*
  * writes the string s starting from location vAddr. Prints "ok"
  * (or description of error if it occurred).
  * $
  */
-void UI_HandleWrite(int vAddr,PID proccessID,string s);
+void UI_HandleWrite(int vAddr,PID processID,string s);
 /*
  * writes the char c to the following virtual
  * addresses: vAddr, vAddr+off, vAddr+2*off, …, vAddr+(amount-1)*off.
@@ -73,7 +73,7 @@ void UI_HandleWrite(int vAddr,PID proccessID,string s);
  * (not below 0 or too big). Assume amount > 0.
  * $
  */
-void UI_HandleLoopWrite(int vAddr,PID proccessID,char c,int off,unsigned int amount);
+void UI_HandleLoopWrite(int vAddr,PID processID,char c,int off,unsigned int amount);
 /*
  * prints the total hit ratio (a real number between 0 and 1).
  * (Reminder – this is equal to "how many times pages were already in MM,

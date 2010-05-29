@@ -1,6 +1,6 @@
 /*
  * File:   hat.h
- * Author: danni & yaniv
+ * Authors: danni & yaniv
  *
  * Created on May 9, 2010, 7:01 PM
  *
@@ -23,6 +23,7 @@
 #define	_HAT_H
 #include "globaldefs.h"
 #include "datatypes.h"
+#include "ipt.h"
 
 static HAT_t HAT;
 

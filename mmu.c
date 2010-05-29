@@ -3,12 +3,7 @@
 
 bool MMU_Init() {
     ASSERT_PRINT("Entering:MMU_Create()\n");
-    ASSERT_PRINT("Init IPT...");
-    IPT = calloc(NumOfPagesInMM, sizeof (IPT_t));
-    int i = 0;
-    for (i = 0; i < NumOfPagesInMM; i++) {
-        IPT[i] = 0;
-    }
+    
     ASSERT_PRINT("Exiting:MMU_Create()\n");
     return TRUE;
 }

@@ -20,12 +20,14 @@
 #define MAX_MESSAGE_SIZE 50
 #define MAX_MESSAGES_IN_QUEUE 10
 
-typedef unsigned int PID; //proccess id
-typedef unsigned int LPN; //logical page number
+typedef unsigned int PID;  //process id
+typedef unsigned int LPN;  //logical page number
+typedef unsigned int MMFI; //MM frame index
 
 typedef struct iptStruct {
-    PID proccessID;
+    PID processID;
     LPN pageNumber;
+    MMFI frame;
     bool dirtyBit; //Whenever the content of a page is changed, this bit is set (flagged true). Whenever a page is loaded to MM or saved to Disk, this bit is cleared (flagged false).
     bool referenceBit; //Whenever a page is accessed (read or write), this bit is set (flagged true). The Aging Algorithm Daemon may read / change it.
     struct iptStruct* next; // pointing to another entry in the inverted page table.
@@ -52,7 +54,9 @@ volatile unsigned int ShiftClock;
 //=====================QUEUE====================
 enum Commands {
     PRMReadAddress,
-    PRMWriteToAddress
+    PRMWriteToAddress,
+    PRMSegmentationFault,
+    PRMSegmentationFaultMMIsFull
 };
 typedef struct queueCommandStruct {
     enum Commands command;
@@ -74,7 +78,7 @@ typedef struct queueStruct {
 typedef struct pcbStruct {
     pthread_t processThread;
     bool active;
-    PID proccessID;
+    PID processID;
     unsigned int start; //Start indices
     unsigned int end; //end indices
     Queue_t_p processQueue;

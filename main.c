@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "globaldefs.h"
 #include "datatypes.h"
+#include "ipt.h"
 #include "hat.h"
 #include "ui.h"
 #include "disk.h"
@@ -94,6 +95,14 @@ void init()
     ASSERT_PRINT("Init MailBox Queue...\n");
     ReturnVal = QUEUES_Init();
     ASSERT(ReturnVal!=FALSE);
+    
+    ASSERT_PRINT("Init IPT..\n");
+    ReturnVal = IPT_Init();
+    ASSERT(ReturnVal!=FALSE);
+
+    ASSERT_PRINT("Init HAT..\n");
+    ReturnVal = HAT_Init();
+    ASSERT(ReturnVal!=FALSE);
 
     ASSERT_PRINT("Init PRM..\n");
     ReturnVal = PRM_Init();
@@ -119,6 +128,3 @@ int main(int argc, char** argv) {
 
     return (EXIT_SUCCESS);
 }
-
-
-

@@ -48,20 +48,20 @@ void UI_HandleCreateProcess() {
 
 }
 
-void UI_HandleDelProcess(PID proccessID) {
+void UI_HandleDelProcess(PID processID) {
 
 }
 
-void UI_HandleRead(int vAddr, PID proccessID, unsigned int amount) {
-    ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n",vAddr,proccessID,amount);
+void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
+    ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n",vAddr,processID,amount);
 /*
-    mqd_t queue = QUEUE_OpenForProcess(proccessID);
+    mqd_t queue = QUEUE_OpenForProcess(processID);
     QUEUE_Send(queue,"read bluh bluh");
     QUEUE_Close(queue);
 */
 /*
     string name = calloc(MAX_MESSAGE_SIZE,sizeof(char));
-    sprintf(name,"/%d",proccessID);
+    sprintf(name,"/%d",processID);
     mqd_t ret = mq_open(name, O_RDWR,(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH),NULL);
     string message = "read bliuh bluhhh";
     int messageLength = mq_send(ret, message, strlen(message),0);
@@ -69,6 +69,6 @@ void UI_HandleRead(int vAddr, PID proccessID, unsigned int amount) {
    
 }
 
-void UI_HandleLoopRead(int vAddr, PID proccessID, int offset, unsigned int amount) {
+void UI_HandleLoopRead(int vAddr, PID processID, int offset, unsigned int amount) {
 
 }
