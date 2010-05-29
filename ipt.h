@@ -62,5 +62,11 @@ bool IPT_Remove(
         PID processID,
         LPN pageNumber);
 
+/*
+ * search the ipt for empy frame by going over all frames in the ipt
+ * and searching for an empty spot.
+ * return false if there is no empty spot.
+ * */
+bool IPT_FindEmptyFrame(OUT MMFI* frame);
 #endif	/* _IPT_ */
 
