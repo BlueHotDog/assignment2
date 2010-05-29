@@ -57,10 +57,9 @@ bool IPT_Add(
     int iterations = 0;
     bool foundFrame = FALSE;
     while (!foundFrame) {
-        while (pointer != NULL || iterations <= SIZE_OF_IPT) {
+        while (IPT[HATPointedIndex] != NULL || iterations <= SIZE_OF_IPT) {
             INDEX_INC(HATPointedIndex);
             iterations++;
-            pointer = IPT[HATPointedIndex];
         }
         if (iterations > SIZE_OF_IPT) {
             //throw "segmentation fault - full MM" to the PRM
@@ -74,7 +73,84 @@ bool IPT_Add(
         } else
             foundFrame = TRUE;
     }
-    pointer = newIPTLine;
+    newIPTLine->next = pointer->next;
+    pointer->next = newIPTLine;
+    newIPTLine->prev = pointer;
     ASSERT_PRINT("Exiting:IPT_Add()\n");
     return TRUE;
+}
+
+bool IPT_FindIPTLine(
+        int HATPointedIndex,
+        PID processID,
+        LPN pageNumber,
+        OUT int *line)
+{
+    ASSERT_PRINT("Entering:IPT_FindIPTLine()\n");
+    int iterations = 0;
+    while (IPT[HATPointedIndex] != NULL || iterations <= SIZE_OF_IPT)
+    {
+        if (IPT[HATPointedIndex]->processID == processID && IPT[HATPointedIndex]->pageNumber == pageNumber)
+        {
+            *line = HATPointedIndex;
+            ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: TRUE\n");
+            return TRUE;
+        }
+        INDEX_INC(HATPointedIndex);
+        iterations++;
+    }
+    if (iterations > SIZE_OF_IPT)
+    {
+        //the page is not in the IPT, i.e. not in the MM
+        ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: FALSE\n");
+        return FALSE;
+    }
+}
+
+bool IPT_FindFrame(
+        int HATPointedIndex,
+        PID processID,
+        LPN pageNumber,
+        OUT MMFI *frame)
+{
+    ASSERT_PRINT("Entering:IPT_FindFrame()\n");
+    int line = -1;
+    if (IPT_FindIPTLine(HATPointedIndex,processID,pageNumber,&line))
+    {
+        *frame = IPT[line]->frame;
+        ASSERT_PRINT("Exiting:IPT_FindFrame() with return value: TRUE, frame=%d\n", *frame);
+        return TRUE;
+    }
+    ASSERT_PRINT("Exiting:IPT_FindFrame() with return value: FALSE\n");
+    return FALSE;
+}
+
+bool IPT_Remove(
+        int HATPointedIndex,
+        PID processID,
+        LPN pageNumber)
+{
+    ASSERT_PRINT("Entering:IPT_Remove()\n");
+    int line = -1;
+    if (!IPT_FindIPTLine(HATPointedIndex, processID, pageNumber, &line))
+    {
+        // the entry is not in the IPT.
+        return FALSE;
+    }
+    IPT_t_p toDelete = IPT[line];
+    IPT_t_p father = IPT[line]->prev;
+    IPT_t_p son = IPT[line]->next;
+    if (!father)
+    {
+        IPT[line] = son;
+    }
+    else
+    {
+        father->next = son;
+        son->prev = father;
+    }
+    free(toDelete);
+    ASSERT_PRINT("Exiting:IPT_Remove() with return value: TRUE\n");
+    return TRUE;
+
 }

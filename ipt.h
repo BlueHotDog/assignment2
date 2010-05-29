@@ -42,7 +42,25 @@ bool IPT_Add(
         LPN pageNumber,
         MMFI frame);
 
+/*
+ * search the table for processID, pageNumber and return the frame index.
+ * if the frame is not in the table, i.e. not in the MM, return FALSE.
+ * otherwize, return TRUE.
+ * */
+bool IPT_FindFrame(
+        int HATPointedIndex,
+        PID processID,
+        LPN pageNumber,
+        OUT MMFI *frame);
 
+/*
+ * search the IPT for processID, pageNumber and remove the entery.
+ * if can't find the entry, return false.
+ * */
+bool IPT_Remove(
+        int HATPointedIndex,
+        PID processID,
+        LPN pageNumber);
 
 #endif	/* _IPT_ */
 
