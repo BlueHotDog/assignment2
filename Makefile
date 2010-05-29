@@ -36,6 +36,7 @@ OBJS_Assignment2 =  \
 	$(TARGETDIR_Assignment2)/mmu.o \
 	$(TARGETDIR_Assignment2)/messagequeues.o \
 	$(TARGETDIR_Assignment2)/hat.o \
+	$(TARGETDIR_Assignment2)/readerswriters.o \
 	$(TARGETDIR_Assignment2)/ipt.o
 SYSLIBS_Assignment2 = -lpthread -lrt
 USERLIBS_Assignment2 = $(SYSLIBS_Assignment2) 
@@ -51,6 +52,9 @@ $(TARGETDIR_Assignment2)/assignment2: $(TARGETDIR_Assignment2) $(OBJS_Assignment
 # Compile source files into .o files
 $(TARGETDIR_Assignment2)/main.o: $(TARGETDIR_Assignment2) main.c
 	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ main.c
+	
+$(TARGETDIR_Assignment2)/readerswriters.o: $(TARGETDIR_Assignment2) readerswriters.c
+	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ readerswriters.c
 
 $(TARGETDIR_Assignment2)/ui.o: $(TARGETDIR_Assignment2) ui.c
 	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ ui.c
@@ -104,6 +108,7 @@ clean:
 		$(TARGETDIR_Assignment2)/mmu.o \
 		$(TARGETDIR_Assignment2)/messagequeues.o \
 		$(TARGETDIR_Assignment2)/hat.o \
+		$(TARGETDIR_Assignment2)/readerswriters.o \
 		$(TARGETDIR_Assignment2)/ipt.o
 	rm -f -r $(TARGETDIR_Assignment2)
 
