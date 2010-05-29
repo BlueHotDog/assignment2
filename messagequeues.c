@@ -35,15 +35,21 @@ void QUEUES_PrintCommand(QueueCommand_t_p command) {
 }
 
 bool QUEUES_Init() {
-BufferSize = 0x200;
+    BufferSize = 0x200;
 
-    PROCESSES_mutex = calloc(MaxNumOfProcesses, sizeof (sem_t));
+    PROCESSES_mutex = calloc(2, sizeof(sem_t*));
+;
+    
+    PROCESSES_mutex[0] = calloc(MaxNumOfProcesses, sizeof (sem_t));
     PROCESSES_empty = calloc(MaxNumOfProcesses, sizeof (sem_t));
     PROCESSES_full = calloc(MaxNumOfProcesses, sizeof (sem_t));
 
+    PROCESSES_mutex[1] = calloc(MaxNumOfProcesses, sizeof (sem_t));
+
+
     int i;
     for (i = 0; i < MaxNumOfProcesses; i++) {
-        sem_init(&PROCESSES_mutex[i], 0, 1); // Controls access to critical section
+        sem_init(&PROCESSES_mutex[0][i], 0, 1); // Controls access to critical section
         sem_init(&PROCESSES_empty[i], 0, BufferSize);// counts number of empty buffer slots
         sem_init(&PROCESSES_full[i],0,0); // counts number of full buffer slots
     }
@@ -83,7 +89,7 @@ BufferSize = 0x200;
 bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) //non blocking
 {
         sem_wait(&PROCESSES_empty[processID]); // decrement the empty semaphore
-        sem_wait(&PROCESSES_mutex[processID]); // enter critical section
+        sem_wait(&PROCESSES_mutex[0][processID]); // enter critical section
         QueueItem_t_p lastItem = QUEUES_GetLastItem(ProcessQueues[processID]);
         QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
 
@@ -93,7 +99,7 @@ bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) //non blocki
             lastItem->next = toInsert;
         else
             ProcessQueues[processID]->head = toInsert;
-        sem_post(&PROCESSES_mutex[processID]); // leave critical section
+        sem_post(&PROCESSES_mutex[0][processID]); // leave critical section
         sem_post(&PROCESSES_full[processID]); // increment the full semaphore
 }
 
@@ -112,17 +118,18 @@ bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
             PRMQueue->head = toInsert;
         sem_post(&PRM_mutex); // leave critical section
         sem_post(&PRM_full); // increment the full semaphore
+        sem_wait(&PRM_mutex);
 }
 
 QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
 {
     QueueCommand_t_p ans;
         sem_wait(&PROCESSES_full[processID]); // decrement the full semaphore
-        sem_wait(&PROCESSES_mutex[processID]); // enter critical section
+        sem_wait(&PROCESSES_mutex[0][processID]); // enter critical section
         QueueItem_t_p pointer = ProcessQueues[processID]->head;
         ProcessQueues[processID]->head = pointer->next;
         ans = pointer->command;
-        sem_post(&PROCESSES_mutex[processID]); // leave critical section
+        sem_post(&PROCESSES_mutex[0][processID]); // leave critical section
         sem_post(&PROCESSES_empty[processID]); // increment the empty semaphore
         return ans;
 }

@@ -9,13 +9,13 @@
       <itemPath>freelist.h</itemPath>
       <itemPath>globaldefs.h</itemPath>
       <itemPath>hat.h</itemPath>
+      <itemPath>ipt.h</itemPath>
       <itemPath>messagequeues.h</itemPath>
       <itemPath>mm.h</itemPath>
       <itemPath>mmu.h</itemPath>
       <itemPath>pcb.h</itemPath>
       <itemPath>prm.h</itemPath>
       <itemPath>process.h</itemPath>
-      <itemPath>semaphore.h</itemPath>
       <itemPath>ui.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -28,6 +28,7 @@
       <itemPath>disk.c</itemPath>
       <itemPath>freelist.c</itemPath>
       <itemPath>hat.c</itemPath>
+      <itemPath>ipt.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>messagequeues.c</itemPath>
       <itemPath>mm.c</itemPath>
@@ -35,7 +36,6 @@
       <itemPath>pcb.c</itemPath>
       <itemPath>prm.c</itemPath>
       <itemPath>process.c</itemPath>
-      <itemPath>semaphore.c</itemPath>
       <itemPath>tests.c</itemPath>
       <itemPath>ui.c</itemPath>
     </logicalFolder>

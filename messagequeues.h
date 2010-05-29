@@ -47,7 +47,7 @@ QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue);
 
 void QUEUES_PrintCommand(QueueCommand_t_p command);
 int BufferSize;
-sem_t* PROCESSES_mutex;              // Controls access to critical section
+sem_t** PROCESSES_mutex;              // Controls access to critical section
 sem_t* PROCESSES_empty;     // counts number of empty buffer slots
 sem_t* PROCESSES_full;               // counts number of full buffer slots
 sem_t PRM_mutex;              // Controls access to critical section

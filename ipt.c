@@ -63,7 +63,7 @@ bool IPT_Add(
             pointer = IPT[HATPointedIndex];
         }
         if (iterations > SIZE_OF_IPT) {
-            //throw segmentation fault to the PRM
+            //throw "segmentation fault - full MM" to the PRM
             QueueCommand_t_p command = malloc(sizeof (QueueCommand_t));
             command->params = calloc(2, sizeof (int));
             command->params[0] = processID;

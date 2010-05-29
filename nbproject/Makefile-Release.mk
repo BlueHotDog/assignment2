@@ -37,9 +37,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/messagequeues.o \
 	${OBJECTDIR}/ui.o \
 	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/ipt.o \
 	${OBJECTDIR}/tests.o \
 	${OBJECTDIR}/freelist.o \
-	${OBJECTDIR}/semaphore.o \
 	${OBJECTDIR}/disk.o \
 	${OBJECTDIR}/pcb.o \
 	${OBJECTDIR}/process.o \
@@ -99,6 +99,11 @@ ${OBJECTDIR}/main.o: nbproject/Makefile-${CND_CONF}.mk main.c
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.c
 
+${OBJECTDIR}/ipt.o: nbproject/Makefile-${CND_CONF}.mk ipt.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/ipt.o ipt.c
+
 ${OBJECTDIR}/tests.o: nbproject/Makefile-${CND_CONF}.mk tests.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
@@ -108,11 +113,6 @@ ${OBJECTDIR}/freelist.o: nbproject/Makefile-${CND_CONF}.mk freelist.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/freelist.o freelist.c
-
-${OBJECTDIR}/semaphore.o: nbproject/Makefile-${CND_CONF}.mk semaphore.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/semaphore.o semaphore.c
 
 ${OBJECTDIR}/disk.o: nbproject/Makefile-${CND_CONF}.mk disk.c 
 	${MKDIR} -p ${OBJECTDIR}

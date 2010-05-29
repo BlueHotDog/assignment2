@@ -40,7 +40,7 @@ bool IPT_Add(
         int HATPointedIndex,
         PID processID,
         LPN pageNumber,
-        MMFI frame)
+        MMFI frame);
 
 
 

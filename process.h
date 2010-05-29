@@ -5,8 +5,8 @@
  * Created on May 23, 2010, 10:06 PM
  */
 
-#ifndef _PROCESS_H
-#define	_PROCESS_H
+#ifndef _PROCCESS_H
+#define	_PROCCESS_H
 #include "globaldefs.h"
 #include "datatypes.h"
 #include "messagequeues.h"
@@ -18,5 +18,5 @@ void* PROCESS_RUN(void* pcb);
 int PROCESS_CREATE();
 void PROCESS_STOP();
 bool PROCESS_Read(PID processID,int vAddr, int amount);
-#endif	/* _PROCESS_H */
+#endif	/* _PROCCESS_H */
 
