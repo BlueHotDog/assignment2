@@ -38,7 +38,6 @@ bool QUEUES_Init() {
     BufferSize = 0x200;
 
     PROCESSES_mutex = calloc(2, sizeof(sem_t*));
-;
     
     PROCESSES_mutex[0] = calloc(MaxNumOfProcesses, sizeof (sem_t));
     PROCESSES_empty = calloc(MaxNumOfProcesses, sizeof (sem_t));

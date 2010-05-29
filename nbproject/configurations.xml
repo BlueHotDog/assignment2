@@ -16,6 +16,7 @@
       <itemPath>pcb.h</itemPath>
       <itemPath>prm.h</itemPath>
       <itemPath>process.h</itemPath>
+      <itemPath>readerswriters.h</itemPath>
       <itemPath>ui.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -36,6 +37,7 @@
       <itemPath>pcb.c</itemPath>
       <itemPath>prm.c</itemPath>
       <itemPath>process.c</itemPath>
+      <itemPath>readerswriters.c</itemPath>
       <itemPath>tests.c</itemPath>
       <itemPath>ui.c</itemPath>
     </logicalFolder>

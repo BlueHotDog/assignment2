@@ -34,6 +34,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/mmu.o \
 	${OBJECTDIR}/prm.o \
 	${OBJECTDIR}/hat.o \
+	${OBJECTDIR}/readerswriters.o \
 	${OBJECTDIR}/messagequeues.o \
 	${OBJECTDIR}/ui.o \
 	${OBJECTDIR}/main.o \
@@ -83,6 +84,11 @@ ${OBJECTDIR}/hat.o: nbproject/Makefile-${CND_CONF}.mk hat.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/hat.o hat.c
+
+${OBJECTDIR}/readerswriters.o: nbproject/Makefile-${CND_CONF}.mk readerswriters.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/readerswriters.o readerswriters.c
 
 ${OBJECTDIR}/messagequeues.o: nbproject/Makefile-${CND_CONF}.mk messagequeues.c 
 	${MKDIR} -p ${OBJECTDIR}
