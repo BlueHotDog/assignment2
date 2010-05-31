@@ -32,7 +32,7 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
         QUEUES_WriteToPRM(comm);
         WAIT_FOR_PCB(address.processID);
     }
-    Page toReturn = MM_ReadPage(res);
+    Page toReturn = MM_ReadPage(res); //May be an error here, need some mutex to protect agains RACE conditions..
     READERSWRITERS_UnlockDataRead();
     return toReturn;
     ASSERT_PRINT("Exiting:MMU_ReadAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);

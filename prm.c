@@ -74,7 +74,7 @@ void* PRM_Main() {
                     DISK_PrintContent();
                     int i=frame;
                 }
-                sem_post(&PROCESSES_mutex[1][command->params[1]]);
+                DONE_WITH_PCB(command->params[1]);
             }
             break;
         }

@@ -22,6 +22,25 @@ void UI_ParseCommand(const string * const comm) {
         int amount = -1;
         scanf("%d %d %d", &vAddr, &id, &amount);
         UI_HandleRead(vAddr, id, amount);
+    } else if (strcmp(*comm,"loopRead")==0)
+    {
+        //loopRead vAddr id off amount
+        int vAddr = -1;
+        int id = -1;
+        int amount = -1;
+        int offset = -1;
+        int i=0;
+        scanf("%d %d %d %d", &vAddr, &id,&offset, &amount);
+        for(i;i<amount;i++)
+            UI_HandleRead(vAddr,id,offset+i,1);
+    } else if(strcmp(*comm,"write")==0)
+    {
+        //write vAddr id s
+        int vAddr = -1;
+        int id = -1;
+        string val=0;
+        scanf("%d %d %s", &vAddr, &id,&val);
+        UI_HandleWrite(vAddr,id,val);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
     }
@@ -47,7 +66,10 @@ void UI_HandleCreateProcess() {
         printf("Error creating process\n");
 
 }
-
+void UI_HandleWrite(int vAddr,PID processID,string s)
+{
+    
+}
 void UI_HandleDelProcess(PID processID) {
 
 }

@@ -14,7 +14,7 @@ void* PROCESS_RUN(void* pcb) {
                 mem.pageNumber = comm->params[0];
                 Page res = MMU_ReadAddress(mem);
                 int i=0;
-                for(i;i<PageSize;i++)
+                for(i;i<comm->params[1];i++)
                     printf("%c",res[i]);
             }
                 break;
