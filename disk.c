@@ -6,6 +6,11 @@ bool DISK_Init()
 {
     ASSERT_PRINT("Entering:DISK_Init\n");
     Disk = calloc(NumOfPagesInDisk,sizeof(Page));
+    int i=0;
+    for(i;i<NumOfPagesInDisk;i++)
+    {
+        Disk[i] = i + '0';
+    }
     if(Disk==NULL)
         return FALSE;
     return TRUE;

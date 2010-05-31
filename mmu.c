@@ -38,6 +38,30 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
     ASSERT_PRINT("Exiting:MMU_ReadAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
 }
 
+bool MMU_WriteToAddress(MemoryAddress_t address,Page* value) {
+    ASSERT_PRINT("Entering:MMU_WriteToAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
+    MMFI res;
+    READERSWRITERS_LockDataRead();
+    IPT_t_p addr = HAT_GetEntry(address);
+    int hashIndex = HAT_PRIVATE_Hash(address);
+    while (IPT_FindFrame(hashIndex, address.processID, address.pageNumber, &res) == FALSE) {
+        ASSERT_PRINT("segmentation fault...\n");
+        QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
+        comm->command = PRMSegmentationFault;
+        comm->params = calloc(2, sizeof (int));
+        comm->params[0] = address.pageNumber;
+        comm->params[1] = address.processID;
+        comm->paramsAmount = 2;
+
+        QUEUES_WriteToPRM(comm);
+        WAIT_FOR_PCB(address.processID);
+    }
+    MM[res] = *value;
+    READERSWRITERS_UnlockDataRead();
+    return TRUE;
+    ASSERT_PRINT("Exiting:MMU_WriteToAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
+}
+
 void* MMU_Main() {
     ASSERT_PRINT("Entering:MMU_Main()\n");
 
