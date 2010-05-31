@@ -3,6 +3,7 @@
 #include "pcb.h"
 #include "disk.h"
 #include "hat.h"
+#include "mm.h"
 
 bool PRM_Init() {
     ASSERT_PRINT("Entering:PRM_Create()\n");
@@ -20,7 +21,6 @@ void PRM_Close() {
 
 void* PRM_Main() {
     ASSERT_PRINT("Entering:PRM_Main()\n");
-
     while (!PRM_shouldClose) {
 
         ASSERT_PRINT("PRM trying to read from queue /PRM\n");
@@ -30,33 +30,51 @@ void* PRM_Main() {
         {
             case PRMSegmentationFault: //params[0]=pageNumber, params[1]=ProcessID
             {
-                if (totalPagesInIPT = SIZE_OF_IPT)
+                if (totalPagesInIPT >= SIZE_OF_IPT)
                 {
                     //replace page from the MM
-
-                    int disk_index = PCBArray[command->params[1]].start + command->params[0];
-                    Page moved_page = Disk[disk_index];
-                    //add the page to the MM and IPT
-                    //find empty spot in the MM using the IPT
-                    //add a line to the IPT
+                    PID process = command->params[1];
+                    LPN pageNumber = command->params[0];
+                    int diskIndex = PCBArray[process].start + pageNumber;
+                    MMFI oldFrame = PRM_FindOldestPage();
+                    int line = -1;
+                    if (!IPT_FindLineByFrame(oldFrame, &line))
+                    {
+                        ASSERT(1==2);
+                    }
+                    PRM_ReplaceMMFrameWithDiskFrame(diskIndex, IPT[line]);
+                    MemoryAddress_t mem;
+                    mem.processID = process;
+                    mem.pageNumber = pageNumber;
+                    int HATPointedIndex = HAT_PRIVATE_Hash(mem);
+                    if(!IPT_Remove(HATPointedIndex,IPT[line]->processID,IPT[line]->pageNumber))
+                    {
+                        ASSERT(1==2);
+                        return;
+                    }
+                    if(!IPT_Add(HATPointedIndex,process,pageNumber,oldFrame))
+                    {
+                        ASSERT(1==2);
+                        return;
+                    }
 
                 }
                 else
                 {
-                    //get the relevent page from the Disk
-                    //and add it to the MM and IPT
-                    int disk_index = PCBArray[command->params[1]].start+command->params[0];
-                    Page moved_page = Disk[disk_index];
+                    PID process = command->params[1];
+                    LPN pageNumber = command->params[0];
+                    int disk_index = PCBArray[process].start + pageNumber;
                     MMFI frame = -1;
                     if(!IPT_FindEmptyFrame(&frame))//find empty spot in the MM using the IPT
                     {
                         ASSERT(1==2);
                     }
                     MemoryAddress_t mem;
-                    mem.pageNumber = command->params[0];
-                    mem.processID = command->params[1];
+                    mem.pageNumber = pageNumber;
+                    mem.processID = process;
                     int HATPointedIndex = HAT_PRIVATE_Hash(mem);
-                    IPT_Add(HATPointedIndex, command->params[1], command->params[1], frame);//add a line to the IPT
+                    IPT_Add(HATPointedIndex, process, pageNumber, frame);//add a line to the IPT
+                    MM[frame] = Disk[disk_index];
                 }
                 sem_post(&PROCESSES_mutex[1][command->params[1]]);
             }
@@ -66,4 +84,30 @@ void* PRM_Main() {
         free(command);
     }
     ASSERT_PRINT("Exiting:PRM_Main()\n");
+}
+
+MMFI PRM_FindOldestPage()
+{
+    return 1;
+}
+
+bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine)
+{
+    ASSERT_PRINT("Entering:PRM_ReplaceMMFrameWithDiskFrame()\n");
+    if (IPTOldFrameLine->frame > NumOfPagesInMM || diskPageIndex > NumOfPagesInDisk)
+    {
+        ASSERT_PRINT("Exiting:PRM_ReplaceMMFrameWithDiskFrame() - frame or disk index to large\n");
+        return FALSE;
+    }
+
+    int oldFramePage = IPTOldFrameLine->frame;
+    if (IPTOldFrameLine->dirtyBit) //reprace the memory in the disk with the memprt in the MM onlt if it changed
+    {
+        PID process = IPTOldFrameLine->processID;
+        LPN pageNumber = IPTOldFrameLine->pageNumber;
+        Disk[process + pageNumber] = MM[oldFramePage];
+    }
+    MM[oldFramePage] = Disk[diskPageIndex];
+    ASSERT_PRINT("Exiting:IPT_Replace() with return value: TRUE\n");
+    return TRUE;
 }

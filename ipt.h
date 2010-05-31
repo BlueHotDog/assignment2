@@ -68,5 +68,29 @@ bool IPT_Remove(
  * return false if there is no empty spot.
  * */
 bool IPT_FindEmptyFrame(OUT MMFI* frame);
+
+/*
+ * search the IPT for entry with frame value equal to given frame.
+ * return true if found such entry
+ * return false oherwize.
+ * */
+bool IPT_FindLineByFrame(
+        MMFI frame,
+        OUT int *line);
+
+/*
+ * search the IPT for line folding outProcessID and outPageNumber,
+ * free it's memory allocation, create new IPT_t_p line for the inProcessID
+ * and inPageNumber and frame.
+ * enter the line to the new place by using the HAT Hash function.
+ * return false if one of the memory allocation failed. 
+ * */
+bool IPT_Replace(
+        PID outProcessID,
+        LPN outPageNumber,
+        PID inProcessID,
+        LPN inPageNumber,
+        MMFI frame);
+
 #endif	/* _IPT_ */
 

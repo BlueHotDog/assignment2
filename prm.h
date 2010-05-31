@@ -28,6 +28,23 @@ bool PRM_Create();
 void PRM_Close();
 void* PRM_Main();
 bool PRM_Init();
+
+/*
+ * return the oldest frame index in the MM.
+ * */
+MMFI PRM_FindOldestPage();
+
+/*
+ * recieve diskPageIndex: a page from the disk to enter the MM
+ * and IPTOldFrameLine: entry in the IPT that folds all infromatoin about
+ * the MM frame that is going to be deleted from the MM.
+ * if the dirty bit is up, find the place of the page in the disk and update it.
+ * else do nothing.
+ * finaly replace the MM entry with the diskPage.
+ * return False if fail.
+ * */
+bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine);
+
 bool PRM_loadPage(const PID processID, const int pageNum, const int diskStart);
 
 #endif	/* _PRM_H */

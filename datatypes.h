@@ -23,6 +23,7 @@
 typedef unsigned int PID;  //process id
 typedef unsigned int LPN;  //logical page number
 typedef unsigned int MMFI; //MM frame index
+typedef unsigned int DPI; //MM disk page index
 
 typedef struct iptStruct {
     PID processID;

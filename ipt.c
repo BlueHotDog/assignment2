@@ -1,4 +1,5 @@
 #include "ipt.h"
+#include "hat.h"
 
 bool IPT_Init()
 {
@@ -76,6 +77,7 @@ bool IPT_Add(
     newIPTLine->next = pointer->next;
     pointer->next = newIPTLine;
     newIPTLine->prev = pointer;
+    totalPagesInIPT++;
     ASSERT_PRINT("Exiting:IPT_Add()\n");
     return TRUE;
 }
@@ -150,6 +152,7 @@ bool IPT_Remove(
         son->prev = father;
     }
     free(toDelete);
+    totalPagesInIPT--;
     ASSERT_PRINT("Exiting:IPT_Remove() with return value: TRUE\n");
     return TRUE;
 }
@@ -174,5 +177,50 @@ bool IPT_FindEmptyFrame(OUT MMFI* frame)
     }
     *frame = i;
     ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: TRUE, frame = %d\n",*frame);
+    return TRUE;
+}
+
+bool IPT_FindLineByFrame(MMFI frame, OUT int *line)
+{
+    ASSERT_PRINT("Entering:IPT_FindLineByFrame()\n");
+    int i=0;
+    for (i;i<SIZE_OF_IPT; i++)
+        if(IPT[i]->frame == frame)
+        {
+            *line = frame;
+            ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: TRUE, line = %d\n",*line);
+            return TRUE;
+        }
+    ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: FALSE\n");
+    return TRUE;
+}
+
+bool IPT_Replace(
+        PID outProcessID,
+        LPN outPageNumber,
+        PID inProcessID,
+        LPN inPageNumber,
+        MMFI inFrame)
+{
+    ASSERT_PRINT("Entering:IPT_Replace()\n");
+    int line = 0;
+    if(!IPT_FindIPTLine(0,outProcessID,outPageNumber, &line))
+        return FALSE;
+
+    IPT_t_p newIPTLine;
+    if(IPT_CreateIPT_t_p(inProcessID,inPageNumber,inFrame,newIPTLine))
+    {
+        ASSERT_PRINT("Exiting:IPT_Replace() - Cannot allocate memory for IPT line\n");
+        return FALSE;
+    }
+    IPT_t_p lineToDelete = IPT[line];
+    IPT[line] = NULL;
+    MemoryAddress_t mem;
+    mem.pageNumber = inPageNumber;
+    mem.processID = inProcessID;
+    int HATStartIndex = HAT_PRIVATE_Hash(mem);
+    IPT_Add(HATStartIndex,inProcessID,inPageNumber,inFrame);
+    free(lineToDelete);
+    ASSERT_PRINT("Exiting:IPT_Replace() with return value: TRUE\n");
     return TRUE;
 }
