@@ -75,6 +75,11 @@ void* PRM_Main() {
                     int HATPointedIndex = HAT_PRIVATE_Hash(mem);
                     IPT_Add(HATPointedIndex, process, pageNumber, frame);//add a line to the IPT
                     MM[frame] = Disk[disk_index];
+                    int i=frame;
+                    for(i;i<PageSize;i++)
+                    {
+                        printf("%c",MM[i]);
+                    }
                 }
                 sem_post(&PROCESSES_mutex[1][command->params[1]]);
             }

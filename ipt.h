@@ -28,7 +28,7 @@ bool IPT_CreateIPT_t_p(
             PID processID,
             LPN pageNumber,
             MMFI frame, 
-            OUT IPT_t_p newIPTLine);
+            OUT IPT_t_p *newIPTLine);
 
 /*
  * update prev and next of newIPTLine and add to IPT table.

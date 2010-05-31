@@ -20,18 +20,18 @@ bool IPT_CreateIPT_t_p(
         PID processID,
         LPN pageNumber,
         MMFI frame,
-        OUT IPT_t_p newIPTLine)
+        OUT IPT_t_p *newIPTLine)
 {
     ASSERT_PRINT("Entering:IPT_CreateIPT_t_p()\n");
-    if (newIPTLine = malloc(sizeof (IPT_t)))
+    if (!(*newIPTLine = malloc(sizeof (IPT_t))))
         return FALSE;
 
-    newIPTLine->dirtyBit = 0;
-    newIPTLine->frame = frame;
-    newIPTLine->next = NULL;
-    newIPTLine->pageNumber = pageNumber;
-    newIPTLine->processID = processID;
-    newIPTLine->referenceBit = 0;
+    (*newIPTLine)->dirtyBit = 0;
+    (*newIPTLine)->frame = frame;
+    (*newIPTLine)->next = NULL;
+    (*newIPTLine)->pageNumber = pageNumber;
+    (*newIPTLine)->processID = processID;
+    (*newIPTLine)->referenceBit = 0;
     ASSERT_PRINT("Exiting:IPT_CreateIPT_t_p()\n");
     return TRUE;
 }
@@ -43,15 +43,14 @@ bool IPT_Add(
         MMFI frame)
 {
     ASSERT_PRINT("Entering:IPT_Add()\n");
-
     IPT_t_p newIPTLine;
-    ASSERT(IPT_CreateIPT_t_p(processID, pageNumber, frame, newIPTLine));
+    ASSERT(IPT_CreateIPT_t_p(processID, pageNumber, frame, &newIPTLine));
     IPT_t_p pointer = IPT[HATPointedIndex];
     if (pointer == NULL) //the field was never invoked.
     {
         newIPTLine->prev = 0;
         newIPTLine->next = 0;
-        pointer = newIPTLine;
+        IPT[HATPointedIndex] = newIPTLine;
         return TRUE;
     }
 
@@ -77,6 +76,7 @@ bool IPT_Add(
     newIPTLine->next = pointer->next;
     pointer->next = newIPTLine;
     newIPTLine->prev = pointer;
+    IPT[HATPointedIndex] = newIPTLine;
     totalPagesInIPT++;
     ASSERT_PRINT("Exiting:IPT_Add()\n");
     return TRUE;
@@ -90,7 +90,7 @@ bool IPT_FindIPTLine(
 {
     ASSERT_PRINT("Entering:IPT_FindIPTLine()\n");
     int iterations = 0;
-    while (IPT[HATPointedIndex] != NULL || iterations <= SIZE_OF_IPT)
+    while (IPT[HATPointedIndex] != 0 && iterations <= SIZE_OF_IPT)
     {
         if (IPT[HATPointedIndex]->processID == processID && IPT[HATPointedIndex]->pageNumber == pageNumber)
         {
@@ -101,12 +101,10 @@ bool IPT_FindIPTLine(
         INDEX_INC(HATPointedIndex);
         iterations++;
     }
-    if (iterations > SIZE_OF_IPT)
-    {
-        //the page is not in the IPT, i.e. not in the MM
-        ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: FALSE\n");
-        return FALSE;
-    }
+    //the page is not in the IPT, i.e. not in the MM
+    ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: FALSE\n");
+    return FALSE;
+
 }
 
 bool IPT_FindFrame(
@@ -164,11 +162,14 @@ bool IPT_FindEmptyFrame(OUT MMFI* frame)
     bool* frameArry = calloc(SIZE_OF_IPT, sizeof(bool));
     for(i;i<SIZE_OF_IPT; i++)
         frameArry[i] = FALSE;
-    for (i;i<SIZE_OF_IPT; i++)
-        frameArry[IPT[i]->frame] = TRUE;
+
+    for (i=0;i<SIZE_OF_IPT; i++)
+        if(IPT[i] != NULL)
+            frameArry[IPT[i]->frame] = TRUE;
 
     i=0;
-    while (!frameArry[i] || i<SIZE_OF_IPT) i++;
+    while (frameArry[i] && i<SIZE_OF_IPT)
+        i++;
 
     if (i>=SIZE_OF_IPT)
     {

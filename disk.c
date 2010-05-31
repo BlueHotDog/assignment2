@@ -7,10 +7,22 @@ bool DISK_Init()
     ASSERT_PRINT("Entering:DISK_Init\n");
     Disk = calloc(NumOfPagesInDisk,sizeof(Page));
     int i=0;
-    for(i;i<NumOfPagesInDisk;i++)
-    {
-        Disk[i] = i + '0';
-    }
+    for(i=0;i<NumOfPagesInDisk;i++)
+        Disk[i] = calloc(PageSize,sizeof(char));
+
+    int j=0;
+    for(i=0;i<NumOfPagesInDisk;i++)
+        for(j=0;j<PageSize;j++)
+        {
+            Disk[i][j] = '0'+(i+1)*j;
+        }
+
+    //temp!
+    for(i=0;i<NumOfPagesInDisk;i++)
+        for(j=0;j<PageSize;j++)
+            printf("%c",Disk[i][j]);
+
+
     if(Disk==NULL)
         return FALSE;
     return TRUE;
