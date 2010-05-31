@@ -32,7 +32,7 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
         QUEUES_WriteToPRM(comm);
         WAIT_FOR_PCB(address.processID);
     }
-    Page toReturn = MM[res];
+    Page toReturn = MM_ReadPage(res);
     READERSWRITERS_UnlockDataRead();
     return toReturn;
     ASSERT_PRINT("Exiting:MMU_ReadAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
@@ -56,7 +56,7 @@ bool MMU_WriteToAddress(MemoryAddress_t address,Page* value) {
         QUEUES_WriteToPRM(comm);
         WAIT_FOR_PCB(address.processID);
     }
-    MM[res] = *value;
+    MM_WritePage(*value,res);
     READERSWRITERS_UnlockDataRead();
     return TRUE;
     ASSERT_PRINT("Exiting:MMU_WriteToAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);

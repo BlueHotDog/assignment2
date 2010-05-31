@@ -16,8 +16,8 @@ bool HAT_Init() {
 
 int HAT_PRIVATE_Hash(MemoryAddress_t memoryAddress) {
     ASSERT_PRINT("Entering:HAT_PRIVATE_Hash(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
-    return (memoryAddress.processID+1 * memoryAddress.pageNumber+1) % NumOfPagesInMM;
     ASSERT_PRINT("Exiting:HAT_PRIVATE_Hash(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
+    return (memoryAddress.processID+1 * memoryAddress.pageNumber+1) % NumOfPagesInMM;
 }
 
 IPT_t_p HAT_GetEntry(MemoryAddress_t memoryAddress) {
@@ -27,6 +27,6 @@ IPT_t_p HAT_GetEntry(MemoryAddress_t memoryAddress) {
     {
         HAT[index] = index;
     }
-    return IPT[index];
     ASSERT_PRINT("Exiting:HAT_GetEntry(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
+    return IPT[index];
 }

@@ -20,6 +20,12 @@
 #include "globaldefs.h"
 #include "datatypes.h"
 #include "messagequeues.h"
+#include "ipt.h"
+#include "pcb.h"
+#include "disk.h"
+#include "hat.h"
+#include "mm.h"
+#include "disk.h"
 
 static bool PRM_shouldClose = FALSE;
 pthread_t PRM;

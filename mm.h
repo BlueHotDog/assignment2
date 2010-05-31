@@ -11,10 +11,12 @@
 #include "datatypes.h"
 #include "globaldefs.h"
 
-MM_t MM;
+static MM_t MM;
 
 bool MM_Init();
 
+Page MM_ReadPage(int pageNum);
+void MM_WritePage(Page data,int pageNum);
 
 #endif	/* _MM_H */
 

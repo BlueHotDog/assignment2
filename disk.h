@@ -10,8 +10,9 @@
 
 #include "datatypes.h"
 #include "globaldefs.h"
+#include "freelist.h"
 
-Disk_t Disk;
+static Disk_t Disk;
 
 //initializes the disk data-type
 //return true on success, false otherwise
@@ -22,9 +23,10 @@ bool DISK_AllocateSpace(unsigned int start,unsigned int end);
 bool DISK_DeAllocateSpace(unsigned int start,unsigned int end);
 //returns the Page to the PRM
 Page DISK_ReadPage(int pageNum);
+
 //Writes the data to the pageNumber returns true if all went well, false otherwise.
 bool DISK_WritePage(Page data,int pageNum);
-
+void DISK_PrintContent();
 
 
 #endif	/* _DISK_H */

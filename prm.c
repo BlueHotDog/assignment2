@@ -1,9 +1,5 @@
 #include "prm.h"
-#include "ipt.h"
-#include "pcb.h"
 #include "disk.h"
-#include "hat.h"
-#include "mm.h"
 
 bool PRM_Init() {
     ASSERT_PRINT("Entering:PRM_Create()\n");
@@ -74,12 +70,9 @@ void* PRM_Main() {
                     mem.processID = process;
                     int HATPointedIndex = HAT_PRIVATE_Hash(mem);
                     IPT_Add(HATPointedIndex, process, pageNumber, frame);//add a line to the IPT
-                    MM[frame] = Disk[disk_index];
+                    MM_WritePage(DISK_ReadPage(disk_index),frame);
+                    DISK_PrintContent();
                     int i=frame;
-                    for(i;i<PageSize;i++)
-                    {
-                        printf("%c",MM[i]);
-                    }
                 }
                 sem_post(&PROCESSES_mutex[1][command->params[1]]);
             }
@@ -110,9 +103,9 @@ bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine)
     {
         PID process = IPTOldFrameLine->processID;
         LPN pageNumber = IPTOldFrameLine->pageNumber;
-        Disk[process + pageNumber] = MM[oldFramePage];
+        DISK_WritePage(MM_ReadPage(oldFramePage),process + pageNumber);
     }
-    MM[oldFramePage] = Disk[diskPageIndex];
+    MM_WritePage(DISK_ReadPage(diskPageIndex),oldFramePage);
     ASSERT_PRINT("Exiting:IPT_Replace() with return value: TRUE\n");
     return TRUE;
 }

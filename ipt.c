@@ -209,7 +209,7 @@ bool IPT_Replace(
         return FALSE;
 
     IPT_t_p newIPTLine;
-    if(IPT_CreateIPT_t_p(inProcessID,inPageNumber,inFrame,newIPTLine))
+    if(IPT_CreateIPT_t_p(inProcessID,inPageNumber,inFrame,&newIPTLine))
     {
         ASSERT_PRINT("Exiting:IPT_Replace() - Cannot allocate memory for IPT line\n");
         return FALSE;

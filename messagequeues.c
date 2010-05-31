@@ -117,7 +117,6 @@ bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
             PRMQueue->head = toInsert;
         sem_post(&PRM_mutex); // leave critical section
         sem_post(&PRM_full); // increment the full semaphore
-        sem_post(&PRM_mutex);
 }
 
 QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
