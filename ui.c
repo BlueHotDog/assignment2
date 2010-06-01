@@ -31,7 +31,6 @@ void UI_ParseCommand(const string * const comm) {
         int i = 0;
         scanf("%d %d %d %d", &vAddr, &id, &offset, &amount);
         UI_HandleLoopRead(vAddr, id, offset + i, 1);
-
     } else if (strcmp(*comm, "write") == 0) {
         //write vAddr id s
         int vAddr = -1;
@@ -41,6 +40,8 @@ void UI_ParseCommand(const string * const comm) {
         UI_HandleWrite(vAddr, id, val);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
+    } else if(strcmp(*comm,"printHat")==0) {
+        UI_HandlePrintHat();
     }
 }
 
@@ -62,10 +63,6 @@ void UI_HandleCreateProcess() {
         printf("%d\n", id);
     else
         printf("Error creating process\n");
-
-}
-
-void UI_HandleDelProcess(PID processID) {
 
 }
 
@@ -138,5 +135,16 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
 }
 
 void UI_HandleLoopWrite(int vAddr, PID processID, char c, int off, unsigned int amount) {
+    ASSERT_PRINT("Entering: UI_HandleLoopWrite(vAddr:%d, processID:%d,char:%c,off:%d,amount:%d)\n", vAddr, processID, c,off,amount);
+    int i=0;
+    for (i; i < amount; i++)
+        UI_HandleWrite(vAddr + i * off, processID, &c);
+    ASSERT_PRINT("Exiting: UI_HandleLoopWrite(vAddr:%d, processID:%d,char:%c,off:%d,amount:%d)\n", vAddr, processID, c,off,amount);
+}
 
+void UI_HandlePrintHat()
+{
+    ASSERT_PRINT("Entering: UI_HandlePrintHat()\n");
+    HAT_Print();
+    ASSERT_PRINT("Exiting: UI_HandlePrintHat()\n");
 }

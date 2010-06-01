@@ -31,5 +31,7 @@ bool HAT_Init();
 int HAT_PRIVATE_Hash(MemoryAddress_t memoryAddress);
 
 IPT_t_p HAT_GetEntry(MemoryAddress_t memoryAddress);
+
+void HAT_Print();
 #endif	/* _HAT_H */
 
