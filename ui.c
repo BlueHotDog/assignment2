@@ -65,16 +65,13 @@ void UI_HandleCreateProcess() {
 
 }
 
-void UI_HandleWrite(int vAddr, PID processID, string s) {
-
-}
-
 void UI_HandleDelProcess(PID processID) {
 
 }
 
 void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
     ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
+
     MemoryAddress_t addr;
     addr.pageNumber = vAddr;
     addr.processID = processID;
@@ -127,11 +124,13 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
     QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
 
     comm->command = ProcessWriteToAddress;
-    comm->params = calloc(2, sizeof (int));
+    comm->params = calloc(1, sizeof (int));
+    comm->stringParams =calloc(1,sizeof(string));
     comm->params[0] = addr.pageNumber;
-    comm->params[1] = (int) s;
-    comm->paramsAmount = 2;
-
+    comm->stringParams[0] = s;
+    comm->paramsAmount = 1;
+    comm->stringParamsAmount = 1;
+    
     QUEUES_WriteToProcess(processID, comm);
 
     ASSERT_PRINT("Exiting: UI_HandleWrite(vAddr:%d, processID:%d, content:%s)\n", vAddr, processID, s);
