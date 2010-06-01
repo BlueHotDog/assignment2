@@ -83,9 +83,10 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
         QueueCommand_t_p comm = malloc(sizeof(QueueCommand_t));
 
         comm->command = ProcessReadAddress;
-        comm->params = calloc(1,sizeof(int));
+        comm->params = calloc(2,sizeof(int));
         comm->params[0] = addr.pageNumber;
-        comm->paramsAmount = 1;
+        comm->params[1] = amount;
+        comm->paramsAmount = 2;
 
         QUEUES_WriteToProcess(processID,comm);
     }
