@@ -31,15 +31,15 @@ void UI_ParseCommand(const string * const comm) {
         int offset = -1;
         int i=0;
         scanf("%d %d %d %d", &vAddr, &id,&offset, &amount);
-        for(i;i<amount;i++)
-            UI_HandleRead(vAddr,id,offset+i,1);
+        UI_HandleLoopRead(vAddr,id,offset+i,1);
+      
     } else if(strcmp(*comm,"write")==0)
     {
         //write vAddr id s
         int vAddr = -1;
         int id = -1;
         string val=0;
-        scanf("%d %d %s", &vAddr, &id,&val);
+        scanf("%d %d %s", &vAddr, &id,val);
         UI_HandleWrite(vAddr,id,val);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
@@ -93,5 +93,8 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
 }
 
 void UI_HandleLoopRead(int vAddr, PID processID, int offset, unsigned int amount) {
-
+/*
+      for(i;i<amount;i++)
+            UI_HandleRead(vAddr,id,offset+i,1);
+*/
 }
