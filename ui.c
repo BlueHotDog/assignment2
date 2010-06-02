@@ -140,3 +140,52 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
 void UI_HandleLoopWrite(int vAddr, PID processID, char c, int off, unsigned int amount) {
 
 }
+
+void UI_HanldePrintMM() {
+    ASSERT_PRINT("Entering: UI_HanldePrintMM\n");
+    int i=0;
+    for(i; i<NumOfPagesInMM; i++)
+    {
+        printf("page %d) ",i);
+        Page page = MM_ReadPage(i);
+        int j=0;
+        for(j=0; j<PageSize; j++)
+            printf("%c",page[j]);
+        printf("\n");
+    }
+    ASSERT_PRINT("Exiting: UI_HanldePrintMM\n");
+}
+
+void UI_HandlePrintMMUTable() { //"(pid, pageNum, dirty bit, aging reference bit, next, prev)"
+    ASSERT_PRINT("Entering: UI_HandlePrintMMUTable\n");
+    int i=0;
+    for (i;i<SIZE_OF_IPT; i++)
+    {
+        if(IPT[i])
+            printf("(pid=%d, pageNum=%d, dirty bit=%d, aging reference bit, next=%d, prev=%d\n)",
+                    IPT[i]->processID,IPT[i]->pageNumber,IPT[i]->dirtyBit, IPT[i]->next,IPT[i]->prev);
+        else
+            printf("(free)\n");
+    }
+    ASSERT_PRINT("Exiting: UI_HandlePrintMMUTable\n");
+}
+
+
+void UI_HandlePrintHat() {
+  /*  ASSERT_PRINT("Entering: UI_HandlePrintHat()\n");
+    int i=0;
+    for (i;i<NumOfPagesInMM; i++)
+    {
+        if(HAT[i])
+        {
+            printf("HAT %d entry\n:",i);
+            HAT_PRIVATE_Hash();
+            printf("(pid=%d, pageNum=%d, dirty bit=%d, aging reference bit, next=%d, prev=%d\n)",
+                    IPT[i]->processID,IPT[i]->pageNumber,IPT[i]->dirtyBit, IPT[i]->next,IPT[i]->prev);
+        }
+        else
+            printf("(free)\n");
+    }
+    ASSERT_PRINT("Exiting: UI_HandlePrintHat()\n");*/
+}
+ 
