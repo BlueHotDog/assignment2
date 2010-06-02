@@ -54,11 +54,12 @@ bool IPT_Add(
         return TRUE;
     }
 
-    int iterations = 0;
     bool foundFrame = FALSE;
     while (!foundFrame) {
-        while (IPT[HATPointedIndex] != NULL || iterations <= SIZE_OF_IPT) {
-            INDEX_INC(HATPointedIndex);
+        int iterations = 0;
+        int temp = HATPointedIndex;
+        while (IPT[temp] != NULL || iterations <= SIZE_OF_IPT) {
+            INDEX_INC(temp);
             iterations++;
         }
         if (iterations > SIZE_OF_IPT) {
