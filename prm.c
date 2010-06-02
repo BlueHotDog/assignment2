@@ -71,7 +71,7 @@ void* PRM_Main() {
                     int HATPointedIndex = HAT_PRIVATE_Hash(mem);
                     IPT_Add(HATPointedIndex, process, pageNumber, frame);//add a line to the IPT
                     MM_WritePage(DISK_ReadPage(disk_index),frame);
-                    DISK_PrintContent();
+                    //DISK_PrintContent();
                     int i=frame;
                 }
                 DONE_WITH_PCB(command->params[1]);

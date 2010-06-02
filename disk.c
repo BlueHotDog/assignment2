@@ -28,8 +28,13 @@ void DISK_PrintContent() {
     int j = 0;
     ASSERT_PRINT("Disk content:\n");
     for (i = 0; i < NumOfPagesInDisk; i++)
+    {
         for (j = 0; j < PageSize; j++)
             printf("%c|", Disk[i][j]);
+        printf("\n");
+        if((i+1)%NumOfProcessPages==0)
+            printf("\n");
+    }
     ASSERT_PRINT("End disk content\n");
 }
 
