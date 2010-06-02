@@ -28,8 +28,13 @@ void DISK_PrintContent() {
     int j = 0;
     ASSERT_PRINT("Disk content:\n");
     for (i = 0; i < NumOfPagesInDisk; i++)
+    {
         for (j = 0; j < PageSize; j++)
             printf("%c|", Disk[i][j]);
+        printf("\n");
+            if((i+1)%NumOfProcessPages == 0)
+            printf("\n");
+    }
     ASSERT_PRINT("End disk content\n");
 }
 
@@ -60,9 +65,9 @@ bool DISK_DeAllocateSpace(unsigned int start, unsigned int end) {
 }
 
 Page DISK_ReadPage(int pageNum) {
-    ASSERT_PRINT("Entering:DISK_DeAllocateSpace(pageNum:%d)\n", pageNum);
+    ASSERT_PRINT("Entering:DISK_ReadPage(pageNum:%d)\n", pageNum);
 
-    ASSERT_PRINT("Exiting:DISK_DeAllocateSpace(pageNum:%d)\n", pageNum);
+    ASSERT_PRINT("Exiting:DISK_ReadPage(pageNum:%d)\n", pageNum);
     return Disk[pageNum];
 }
 

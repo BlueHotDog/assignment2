@@ -15,10 +15,11 @@ void* PROCESS_RUN(void* pcb) {
                 Page res = MMU_ReadAddress(mem);
                 int i=0;
                 for(i;i<comm->params[1];i++)
-                    printf("%c\n\n\n",res[i]);
+                    printf("%c",res[i]);
             }
                 break;
         }
+        printf("\n");
         free(comm->params);
         free(comm);
     }
