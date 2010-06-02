@@ -11,7 +11,7 @@
 #include "globaldefs.h"
 #include "datatypes.h"
 
-#define INDEX_INC(i) ((i+1)%NumOfPagesInMM)
+#define INDEX_INC(i) (i=((i+1)%NumOfPagesInMM))
 #define SIZE_OF_IPT NumOfPagesInMM
 
 IPT_t_p* IPT;

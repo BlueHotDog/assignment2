@@ -44,7 +44,7 @@ bool IPT_Add(
 {
     ASSERT_PRINT("Entering:IPT_Add()\n");
     IPT_t_p newIPTLine;
-    ASSERT(IPT_CreateIPT_t_p(processID, pageNumber, frame, &newIPTLine));
+    IPT_CreateIPT_t_p(processID, pageNumber, frame, &newIPTLine);
     IPT_t_p pointer = IPT[HATPointedIndex];
     if (pointer == NULL) //the field was never invoked.
     {
