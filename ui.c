@@ -6,11 +6,10 @@ void* UI_Main() {
     string command = calloc(MAX_INPUT_LENGTH, sizeof (char));
     int t = 0;
     while (!UI_ShouldUIThreadClose) {
-        fprintf(outFile,">");
-        if(fscanf(inFile,"%s", command)!=EOF)
+        fprintf(outFile, ">");
+        if (fscanf(inFile, "%s", command) != EOF)
             UI_ParseCommand(&command);
-        else
-        {
+        else {
             fclose(inFile);
             inFile = stdin;
 
@@ -27,7 +26,7 @@ void UI_ParseCommand(const string * const comm) {
         int vAddr = -1;
         int id = -1;
         int amount = -1;
-        fscanf(inFile,"%d %d %d", &vAddr, &id, &amount);
+        fscanf(inFile, "%d %d %d", &vAddr, &id, &amount);
         UI_HandleRead(vAddr, id, amount);
     } else if (strcmp(*comm, "loopRead") == 0) {
         //loopRead vAddr id off amount
@@ -36,14 +35,14 @@ void UI_ParseCommand(const string * const comm) {
         int amount = -1;
         int offset = -1;
         int i = 0;
-        fscanf(inFile,"%d %d %d %d", &vAddr, &id, &offset, &amount);
+        fscanf(inFile, "%d %d %d %d", &vAddr, &id, &offset, &amount);
         UI_HandleLoopRead(vAddr, id, offset + i, 1);
     } else if (strcmp(*comm, "write") == 0) {
         //write vAddr id s
         int vAddr = -1;
         int id = -1;
         string val = 0;
-        fscanf(inFile,"%d %d %s", &vAddr, &id, val);
+        fscanf(inFile, "%d %d %s", &vAddr, &id, val);
         UI_HandleWrite(vAddr, id, val);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
@@ -55,9 +54,11 @@ void UI_ParseCommand(const string * const comm) {
         UI_HandleNoMonitor();
     } else if (strcmp(*comm, "batchFile") == 0) {
         string file = calloc(60, sizeof (char));
-        fscanf(inFile,"%s", file);
+        fscanf(inFile, "%s", file);
         UI_HandleBatchFile(file);
         free(file);
+    } else if (strcmp(*comm, "printMM") == 0) {
+        UI_HandlePrintMM();
     }
 }
 
@@ -76,9 +77,9 @@ void UI_HandleCreateProcess() {
     ASSERT_PRINT("Entering: UI_HandleCreateProcess\n");
     int id = PROCESS_CREATE();
     if (id != -1)
-        fprintf(outFile,"%d\n", id);
+        fprintf(outFile, "%d\n", id);
     else
-        fprintf(outFile,"Error creating process\n");
+        fprintf(outFile, "Error creating process\n");
 
 }
 
@@ -180,10 +181,31 @@ void UI_HandleNoMonitor() {
 void UI_HandleBatchFile(string filename) {
     ASSERT_PRINT("Entering: UI_HandleBatchFile(file:%s)\n", filename);
     //FILE* f; // create a new file pointer
-    
-    if ((inFile = fopen(filename,"r")) == NULL) { // open a file
-        fprintf(outFile,"could not open file"); // print an error
+
+    if ((inFile = fopen(filename, "r")) == NULL) { // open a file
+        fprintf(outFile, "could not open file"); // print an error
         exit(1);
     }
     ASSERT_PRINT("Exiting: UI_HandleBatchFile(file:%s)\n", filename);
+}
+
+void UI_HandlePrintMM() {
+    ASSERT_PRINT("Entering: UI_HanldePrintMM()\n");
+    int i = 0;
+    int j = 0;
+    Page* res = calloc(PageSize, sizeof (char));
+    for (i = 0; i < NumOfPagesInMM; i++) {
+
+        *res = MM_ReadPage(i);
+        printf("%d) ", i);
+        if (*res != NULL) {
+            for (j = 0; j < PageSize; j++) {
+                fprintf(outFile, "%c|", (*res)[j]);
+            }
+        } else
+            printf("NULL");
+
+        fprintf(outFile, "\n");
+    }
+    ASSERT_PRINT("Exiting: UI_HanldePrintMM()\n");
 }
