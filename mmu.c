@@ -30,7 +30,7 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
         comm->paramsAmount = 2;
 
         QUEUES_WriteToPRM(comm);
-        WAIT_FOR_PCB(address.processID);
+        WAIT_FOR_PRM(address.processID);
     }
     Page toReturn = MM_ReadPage(res); //May be an error here, need some mutex to protect agains RACE conditions..
     READERSWRITERS_UnlockDataRead();
@@ -54,7 +54,7 @@ bool MMU_WriteToAddress(MemoryAddress_t address,Page* value) {
         comm->paramsAmount = 2;
 
         QUEUES_WriteToPRM(comm);
-        WAIT_FOR_PCB(address.processID);
+        WAIT_FOR_PRM(address.processID);
     }
     MM_WritePage(*value,res);
     READERSWRITERS_UnlockDataRead();

@@ -39,16 +39,16 @@ void HAT_Print()
         int j=0;
         
         if(HAT[i] == 0)
-            printf("\nHAT[%d])Null",i);
+            fprintf(outFile,"\nHAT[%d])Null",i);
         else
         {
             IPT_t_p entery = IPT[HAT[i]];
-            printf("\nHAT[%d])",i);
+            fprintf(outFile,"\nHAT[%d])",i);
             while(entery!=NULL)
             {
-                printf("PID:%d,PageNumber:%d,Frame:%d,Dirty:%s,Reference:%s ",entery->processID,entery->pageNumber,entery->frame,(entery->dirtyBit)?"true":"false",(entery->referenceBit)?"true":"false");
+                fprintf(outFile,"PID:%d,PageNumber:%d,Frame:%d,Dirty:%s,Reference:%s ",entery->processID,entery->pageNumber,entery->frame,(entery->dirtyBit)?"true":"false",(entery->referenceBit)?"true":"false");
                 if(entery->next!=NULL)
-                    printf("-->");
+                    fprintf(outFile,"-->");
                 entery = entery->next;
             }
         }

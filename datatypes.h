@@ -20,6 +20,13 @@
 #define MAX_MESSAGE_SIZE 50
 #define MAX_MESSAGES_IN_QUEUE 10
 
+
+//bool monitor = FALSE;
+
+FILE* outFile;
+FILE* inFile;
+
+#define MONITOR(expr...)  ((monitor==TRUE)?fprintf(outFile,expr): __ASSERT_VOID_CAST (0))
 typedef unsigned int PID;  //process id
 typedef unsigned int LPN;  //logical page number
 typedef unsigned int MMFI; //MM frame index

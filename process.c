@@ -26,7 +26,7 @@ void* PROCESS_RUN(void* pcb) {
                         int temp = (amount < PageSize) ? amount : PageSize;
                         for (ii; ii < temp; ii++) {
                             toPrint[indexInRes] = res[ii];
-                            // printf("%c|", res[ii]);
+                            // fprintf(outFile,"%c|", res[ii]);
                             indexInRes++;
 
                         }
@@ -35,7 +35,7 @@ void* PROCESS_RUN(void* pcb) {
 
                 }
                 toPrint[indexInRes] = 0;
-                printf("%s\n", toPrint);
+                fprintf(outFile,"%s\n", toPrint);
                 DISK_PrintContent();
             }
                 break;
@@ -50,14 +50,14 @@ int PROCESS_CREATE() {
     do {
         int start = FREELIST_Get();
         if (start == -1) {
-            printf("Error, unable to find space for new thread...\n");
+            fprintf(outFile,"Error, unable to find space for new thread...\n");
             break;
         }
         DISK_AllocateSpace(start, start + NumOfProcessPages);
         int id = PCB_GetFreeProcessID();
         if (id == -1) {
             DISK_DeAllocateSpace(start, start + NumOfProcessPages);
-            printf("Error, unable to find free process id...\n");
+            fprintf(outFile,"Error, unable to find free process id...\n");
             break;
         }
         PCB_t_p pcb = PCB_AllocateProcess(id, start, start + NumOfProcessPages);

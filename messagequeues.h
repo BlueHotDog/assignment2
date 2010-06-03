@@ -11,16 +11,16 @@
 #include "datatypes.h"
 #include <semaphore.h>
 
-#define WAIT_FOR_PCB(pid) (sem_wait(&PROCESSES_mutex[1][pid]))
-#define DONE_WITH_PCB(pid) (sem_post(&PROCESSES_mutex[1][pid]))
+#define WAIT_FOR_PRM(pid) (sem_wait(&PROCESSES_mutex[1][pid]))
+#define DONE_WITH_PRM(pid) (sem_post(&PROCESSES_mutex[1][pid]))
 
 int BufferSize;
-sem_t** PROCESSES_mutex;              // Controls access to critical section
-sem_t* PROCESSES_empty;     // counts number of empty buffer slots
-sem_t* PROCESSES_full;               // counts number of full buffer slots
-sem_t PRM_mutex;              // Controls access to critical section
-sem_t PRM_empty;     // counts number of empty buffer slots
-sem_t PRM_full;               // counts number of full buffer slots
+sem_t** PROCESSES_mutex;                // Controls access to critical section
+sem_t* PROCESSES_empty;                 // counts number of empty buffer slots
+sem_t* PROCESSES_full;                  // counts number of full buffer slots
+sem_t PRM_mutex;                        // Controls access to critical section
+sem_t PRM_empty;                        // counts number of empty buffer slots
+sem_t PRM_full;                         // counts number of full buffer slots
 
 //Queues declaration
 Queue_t_p* ProcessQueues;

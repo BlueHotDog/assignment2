@@ -16,6 +16,8 @@
 
 #define MAX_INPUT_LENGTH 50
 
+
+
 pthread_t UI_Thread;
 static volatile bool UI_ShouldUIThreadClose = FALSE;
 void* UI_Main();

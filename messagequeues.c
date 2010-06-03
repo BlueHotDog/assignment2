@@ -16,21 +16,21 @@ QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue) {
 }
 
 void QUEUES_PrintCommand(QueueCommand_t_p command) {
-    printf("command:");
+    fprintf(outFile,"command:");
     switch (command->command) {
         case PRMReadAddress:
-            printf("PRMReadAddress");
+            fprintf(outFile,"PRMReadAddress");
             break;
         case PRMWriteToAddress:
-            printf("PRMWriteToAddress");
+            fprintf(outFile,"PRMWriteToAddress");
             break;
     }
-    printf("\n");
-    printf("paramsAmount:%d\n", command->paramsAmount);
-    printf("params:\n");
+    fprintf(outFile,"\n");
+    fprintf(outFile,"paramsAmount:%d\n", command->paramsAmount);
+    fprintf(outFile,"params:\n");
     int i = 0;
     for (i = 0; i < command->paramsAmount; i++)
-        printf("%d\n", command->params[i]);
+        fprintf(outFile,"%d\n", command->params[i]);
 }
 
 bool QUEUES_Init() {

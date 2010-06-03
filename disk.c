@@ -30,10 +30,10 @@ void DISK_PrintContent() {
     for (i = 0; i < NumOfPagesInDisk; i++)
     {
         for (j = 0; j < PageSize; j++)
-            printf("%c|", Disk[i][j]);
-        printf("\n");
+            fprintf(outFile,"%c|", Disk[i][j]);
+        fprintf(outFile,"\n");
         if((i+1)%NumOfProcessPages==0)
-            printf("\n");
+            fprintf(outFile,"\n");
     }
     ASSERT_PRINT("End disk content\n");
 }
@@ -43,7 +43,7 @@ bool DISK_AllocateSpace(unsigned int start, unsigned int end) {
     int i = start;
     for (i; i < end; i++) {
         if (FreeList[i].isFree == FALSE) {
-            printf("Error allocating space for process\n");
+            fprintf(outFile,"Error allocating space for process\n");
             return FALSE;
         }
         //Disk[i] = calloc(PageSize, sizeof (char));

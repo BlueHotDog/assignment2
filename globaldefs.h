@@ -28,14 +28,14 @@ typedef char* string;
 #define ASSERT_ALWAYS(expr)							\
       ((expr)								\
        ? __ASSERT_VOID_CAST (0)						\
-       : exit(printf("=========assertion failed on line:%d\t file:%s\n",__LINE__,__FILE__)))
+       : exit(fprintf(outFile,"=========assertion failed on line:%d\t file:%s\n",__LINE__,__FILE__)))
 #ifdef DEBUG
 #define ASSERT(expr)							\
       ((expr)								\
        ? __ASSERT_VOID_CAST (0)						\
-       : exit(printf("=========assertion failed on line:%d\t file:%s\n",__LINE__,__FILE__)))
+       : exit(fprintf(outFile,"=========assertion failed on line:%d\t file:%s\n",__LINE__,__FILE__)))
 #define ASSERT_RUN(expr) (expr)
-#define ASSERT_PRINT(expr...)  (printf(expr))
+#define ASSERT_PRINT(expr...)  (fprintf(outFile,expr))
 #else
 #define ASSERT(expr)        __ASSERT_VOID_CAST (0)
 #define ASSERT_RUN(expr)    __ASSERT_VOID_CAST (0)

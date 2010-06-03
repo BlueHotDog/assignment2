@@ -74,7 +74,7 @@ void* PRM_Main() {
                     //DISK_PrintContent();
                     int i=frame;
                 }
-                DONE_WITH_PCB(command->params[1]);
+                DONE_WITH_PRM(command->params[1]);
             }
             break;
         }
