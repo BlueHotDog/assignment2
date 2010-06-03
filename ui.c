@@ -37,13 +37,22 @@ void UI_ParseCommand(const string * const comm) {
         int i = 0;
         fscanf(inFile, "%d %d %d %d", &vAddr, &id, &offset, &amount);
         UI_HandleLoopRead(vAddr, id, offset + i, 1);
+    } else if (strcmp(*comm, "readToFile") == 0) { //readToFile vAddr id amount filename
+        int vAddr = 0;
+        int id = 0;
+        int amount = 0;
+        string fileName = calloc(60, sizeof (char));
+        fscanf(inFile, "%d %d %d %60s", &vAddr, &id, &amount, fileName);
+        UI_HandleReadToFile(vAddr, id, amount, fileName);
+        free(fileName);
     } else if (strcmp(*comm, "write") == 0) {
         //write vAddr id s
         int vAddr = -1;
         int id = -1;
-        string val = 0;
-        fscanf(inFile, "%d %d %s", &vAddr, &id, val);
-        UI_HandleWrite(vAddr, id, val);
+        string fileName = calloc(60, sizeof (char));
+        fscanf(inFile, "%d %d %60s", &vAddr, &id, fileName);
+        UI_HandleWrite(vAddr, id, fileName);
+        free(fileName);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
     } else if (strcmp(*comm, "printHat") == 0) {
@@ -94,8 +103,12 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
 
     comm->command = ProcessReadAddress;
     comm->params = calloc(2, sizeof (int));
+    comm->voidParams = calloc(1, sizeof (void*));
     comm->params[0] = addr.pageNumber;
     comm->params[1] = amount;
+
+    comm->voidParams[0] = outFile;
+    comm->voidParamsAmount = 1;
     comm->paramsAmount = 2;
     QUEUES_WriteToProcess(processID, comm);
     ASSERT_PRINT("Exiting: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
@@ -103,16 +116,15 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
 
 void UI_HandleLoopRead(int vAddr, PID processID, int offset, unsigned int amount) {
     int i = 0;
-    for (i; i < amount; i++)
+    for (i; i < amount; i++) {
         UI_HandleRead(vAddr + i * offset, processID, 1);
+    }
 }
 
 void UI_HandleReadToFile(int vAddr, PID processID, unsigned int amount, string filename) {
     ASSERT_PRINT("Entering: UI_HandleReadToFile(vAddr:%d,processID:%d,amount:%d,fileName:%s)\n", vAddr, processID, amount, filename);
-
-    if ((outFile = fopen(filename, "w")) != NULL) {
+    if ((outFile = fopen(filename, "w+")) != NULL) {
         UI_HandleRead(vAddr, processID, amount);
-        fclose(outFile);
         outFile = stdout;
     }
     ASSERT_PRINT("Exiting: UI_HandleReadToFile(vAddr:%d,processID:%d,amount:%d,fileName:%s)\n", vAddr, processID, amount, filename);
@@ -120,12 +132,14 @@ void UI_HandleReadToFile(int vAddr, PID processID, unsigned int amount, string f
 
 void UI_HandleLoopReadToFile(int vAddr, PID processID, int off, unsigned int amount, string filename) {
     ASSERT_PRINT("Entering: UI_HandleLoopReadToFile(vAddr:%d,processID:%d, off:%d, amount:%d, fileName:%s)\n", vAddr, processID, off, amount, filename);
-    if ((outFile = fopen(filename, "w")) != NULL) {
-        UI_HandleLoopRead(vAddr, processID, off, amount);
-        fclose(outFile);
-        outFile = stdout;
-    }
 
+    int i = 0;
+    for (i; i < amount; i++) {
+        if ((outFile = fopen(filename, "w")) != NULL) {
+            UI_HandleRead(vAddr + i * off, processID, 1);
+            outFile = stdout;
+        }
+    }
     ASSERT_PRINT("Exiting: UI_HandleLoopReadToFile(vAddr:%d,processID:%d, off:%d, amount:%d, fileName:%s)\n", vAddr, processID, off, amount, filename);
 }
 

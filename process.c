@@ -11,6 +11,7 @@ void* PROCESS_RUN(void* pcb) {
             {
                 int vAddr = comm->params[0];
                 int amount = comm->params[1];
+                FILE* toWrite = comm->voidParams[0];
                 int timesToRun = (amount / PageSize) + ((amount % PageSize > 0) ? 1 : 0);
                 int i = 0;
                 int indexInRes = 0;
@@ -35,11 +36,14 @@ void* PROCESS_RUN(void* pcb) {
 
                 }
                 toPrint[indexInRes] = 0;
-                fprintf(outFile,"%s\n", toPrint);
+                fprintf(toWrite,"%s\n", toPrint);
+                fclose(toWrite);
                 DISK_PrintContent();
             }
                 break;
         }
+        free(comm->stringParams);
+        free(comm->voidParams);
         free(comm->params);
         free(comm);
     }
