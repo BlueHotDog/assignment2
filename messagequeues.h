@@ -13,7 +13,7 @@
 
 #define WAIT_FOR_PCB(pid) (sem_wait(&PROCESSES_mutex[1][pid]))
 #define DONE_WITH_PCB(pid) (sem_post(&PROCESSES_mutex[1][pid]))
-
+ 
 int BufferSize;
 sem_t** PROCESSES_mutex;              // Controls access to critical section
 sem_t* PROCESSES_empty;     // counts number of empty buffer slots

@@ -154,7 +154,7 @@ void UI_HanldePrintMM() {
         printf("\n");
     }
     ASSERT_PRINT("Exiting: UI_HanldePrintMM\n");
-}
+} 
 
 void UI_HandlePrintMMUTable() { //"(pid, pageNum, dirty bit, aging reference bit, next, prev)"
     ASSERT_PRINT("Entering: UI_HandlePrintMMUTable\n");

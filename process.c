@@ -26,7 +26,7 @@ void* PROCESS_RUN(void* pcb) {
 }
 
 int PROCESS_CREATE() {
-    ASSERT_PRINT("Entering: PROCESS_CREATE\n");
+    ASSERT_PRINT("Entering: PROCESS_CREATE\n"); 
     do {
         int start = FREELIST_Get();
         if (start == -1) {

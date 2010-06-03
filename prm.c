@@ -22,7 +22,7 @@ void* PRM_Main() {
         ASSERT_PRINT("PRM trying to read from queue /PRM\n");
         QueueCommand_t_p command = QUEUES_ReadPRM();
         QUEUES_PrintCommand(command);
-        switch(command->command)
+        switch(command->command) 
         {
             case PRMSegmentationFault: //params[0]=pageNumber, params[1]=ProcessID
             {
