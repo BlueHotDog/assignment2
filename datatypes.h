@@ -72,8 +72,10 @@ typedef struct queueCommandStruct {
     enum Commands command;
     int* params; //params array
     char** stringParams;
+    void** voidParams;
     int paramsAmount;
     int stringParamsAmount;
+    int voidParamsAmount;
 } QueueCommand_t,*QueueCommand_t_p;
 
 typedef struct queueItemStruct {

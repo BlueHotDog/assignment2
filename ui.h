@@ -83,7 +83,7 @@ void UI_HandleLoopWrite(int vAddr,PID processID,char c,int off,unsigned int amou
  */
 void UI_HandleHitRate();
 //prints the MM.
-void UI_HanldePrintMM();
+void UI_HandlePrintMM();
 /*
  * prints the IPT, entry by entry.
  * Each entry should be displayed in form
