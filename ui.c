@@ -80,7 +80,7 @@ void UI_ParseCommand(const string * const comm) {
         UI_HandleNoMonitor();
     } else if (strcmp(*comm, "batchFile") == 0) {
         string file = calloc(60, sizeof (char));
-        fscanf(inFile, "%s", file);
+        fscanf(inFile, "%60s", file);
         UI_HandleBatchFile(file);
         free(file);
     } else if (strcmp(*comm, "printMM") == 0) {
