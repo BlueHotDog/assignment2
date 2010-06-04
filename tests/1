@@ -1,0 +1,42 @@
+hitRate //should be 0
+printRegisters//every thing should be 00000000000000000000000000000
+createProcess
+createProcess
+createProcess
+createProcess
+createProcess//will not create
+createProcess//will not create
+delProcess 2
+createProcess//should be process 2
+hitRate //should be 0
+write 4 1 12345//should not write 5
+read 4 1 5//should read 1234
+loopRead 4 1 1 4//should read 1234
+readTofile 4 1 4 p1_output1.txt//should read 1234 to p1_output.txt
+loopReadToFile 4 1 1 4 p1_output2.txt//should read 1234 to p1_output.txt
+write 0 2 amitgeves//should write amitgeve
+read 0 2 8//should read amitgeve
+Write 0 0 88888888//should write 88888888
+loopRead 0 0 2 4//should read 8888
+loopReadToFile 0 0 2 4 p0_output.txt//should read 8888 to p0_output.txt
+hitRate //i dont know what it should be..
+printDisk//all bytes should be with initialize value because the free page list is still not empty. 
+printMMUTable
+printHat
+delProcess 0
+printDisk //the first two pages in the disk should be null
+printMMUTable //all the lines of process 0 should be empty
+printHat
+createProcess //should be 0
+delProcess 0
+delProcess 3
+delProcess 2
+delProcess 1
+printDisk //should be empty
+printMMUTable //should be empty
+printHat //should be empty
+noMonitor
+createProcess//should be zero
+write 0 0 geves//should not print things from MMU
+read 0 0 5//should print geves
+exit//should finish all the jobs before closing the program
