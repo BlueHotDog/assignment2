@@ -231,14 +231,13 @@ void UI_HandlePrintMMUTable() {
     for(i=0; i<SIZE_OF_IPT; i++)
     {
         if(IPT[i])
-            fprintf(outFile,"%d) (pid=%d, pageNum=%d, dirty bit=%d, aging reference bit=?, next=%d, prev=%d)\n",
-                    i,IPT[i]->processID,IPT[i]->pageNumber, IPT[i]->dirtyBit,IPT[i]->next, IPT[i]->prev);
+            fprintf(outFile,"%d) (pid=%d, pageNum=%d, dirty bit=%d, aging reference bit=?)\n",i,IPT[i]->processID,IPT[i]->pageNumber, IPT[i]->dirtyBit);
         else
             fprintf(outFile,"%d) (free)\n",i);
 
     }
     ASSERT_PRINT("Exiting: UI_HandleBatchFile()\n");
-
+}
 void UI_HandlePrintMM() {
     ASSERT_PRINT("Entering: UI_HanldePrintMM()\n");
     int i = 0;

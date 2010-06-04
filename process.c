@@ -47,6 +47,11 @@ void* PROCESS_RUN(void* pcb) {
                 DISK_PrintContent();
             }
                 break;
+            case ProcessWriteToAddress:
+            {
+
+            }
+            break;
         }
         free(comm->stringParams);
         free(comm->voidParams);
