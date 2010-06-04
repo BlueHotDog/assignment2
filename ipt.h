@@ -92,5 +92,9 @@ bool IPT_Replace(
         LPN inPageNumber,
         MMFI frame);
 
+/*
+ * fine line by frame index and update it's dirty bit.
+ * */
+void IPT_UpdateDirtyBit(MMFI frame, int dirtyBit);
 #endif	/* _IPT_ */
 

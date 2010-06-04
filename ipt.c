@@ -71,7 +71,7 @@ bool IPT_Add(
     pointer->prev = newIPTLine;
     newIPTLine->prev = 0;
     IPT[temp] = newIPTLine;
-    HAT[HATPointedIndex] = temp;
+    HAT[HATPointedIndex] = newIPTLine;
     totalPagesInIPT++;
     ASSERT_PRINT("Exiting:IPT_Add()\n");
     return TRUE;
@@ -189,6 +189,14 @@ bool IPT_FindLineByFrame(MMFI frame, OUT int *line)
         }
     ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: FALSE\n");
     return TRUE;
+}
+
+void IPT_UpdateDirtyBit(MMFI frame, int dirtyBit)
+{
+    int lineIndex = -1;
+    if(IPT_FindLineByFrame(frame,&lineIndex) == FALSE)
+        ASSERT(1==2);
+    IPT[lineIndex]->dirtyBit = dirtyBit;
 }
 
 bool IPT_Replace(

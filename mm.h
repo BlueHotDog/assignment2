@@ -16,7 +16,7 @@ static MM_t MM;
 bool MM_Init();
 
 Page MM_ReadPage(int pageNum);
-void MM_WritePage(Page data,int pageNum);
+void MM_WritePage(Page data,int pageNum, int bitsToWrite, int dirtyBit);
 
 #endif	/* _MM_H */
 

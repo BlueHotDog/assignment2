@@ -70,7 +70,9 @@ void* PRM_Main() {
                     mem.processID = process;
                     int HATPointedIndex = HAT_PRIVATE_Hash(mem);
                     IPT_Add(HATPointedIndex, process, pageNumber, frame);//add a line to the IPT
-                    MM_WritePage(DISK_ReadPage(disk_index),frame);
+                    Page page = calloc(PageSize, sizeof(char));
+                    DISK_ReadPage(disk_index, &page);
+                    MM_WritePage(page,frame, PageSize, 0);
                 }
                 DONE_WITH_PRM(command->params[1]);
             }
@@ -103,7 +105,10 @@ bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine)
         LPN pageNumber = IPTOldFrameLine->pageNumber;
         DISK_WritePage(MM_ReadPage(oldFramePage),process + pageNumber);
     }
-    MM_WritePage(DISK_ReadPage(diskPageIndex),oldFramePage);
+
+    Page page = calloc(PageSize,sizeof(char));
+    DISK_ReadPage(diskPageIndex, &page);
+    MM_WritePage(page,oldFramePage, PageSize, 0);
     ASSERT_PRINT("Exiting:IPT_Replace() with return value: TRUE\n");
     return TRUE;
 }

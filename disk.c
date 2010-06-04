@@ -64,11 +64,12 @@ bool DISK_DeAllocateSpace(unsigned int start, unsigned int end) {
     ASSERT_PRINT("Exiting:DISK_DeAllocateSpace(%d,%d)\n", start, end);
 }
 
-Page DISK_ReadPage(int pageNum) {
+void DISK_ReadPage(int pageNum, OUT Page* pageToReturn) {
     ASSERT_PRINT("Entering:DISK_ReadPage(pageNum:%d)\n", pageNum);
-
+    int i=0;
+    for(i=0; i<PageSize; i++)
+        (*pageToReturn)[i] = Disk[pageNum][i];
     ASSERT_PRINT("Exiting:DISK_ReadPage(pageNum:%d)\n", pageNum);
-    return Disk[pageNum];
 }
 
 //Writes the data to the pageNumber returns true if all went well, false otherwise.
