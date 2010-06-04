@@ -30,3 +30,29 @@ IPT_t_p HAT_GetEntry(MemoryAddress_t memoryAddress) {
     ASSERT_PRINT("Exiting:HAT_GetEntry(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
     return IPT[index];
 }
+
+void HAT_Print()
+{
+    ASSERT_PRINT("Entering: HAT_Print()\n");
+    int i=0;
+    for (i = 0; i < NumOfPagesInMM; i++) {
+        int j=0;
+        
+        if(HAT[i] == 0)
+            fprintf(outFile,"\nHAT[%d])Null",i);
+        else
+        {
+            IPT_t_p entery = HAT[i];
+            fprintf(outFile,"\nHAT[%d])",i);
+            while(entery!=NULL)
+            {
+                fprintf(outFile,"PID:%d,PageNumber:%d,Frame:%d,Dirty:%s,Reference:%s ",entery->processID,entery->pageNumber,entery->frame,(entery->dirtyBit)?"true":"false",(entery->referenceBit)?"true":"false");
+                if(entery->next!=NULL)
+                    fprintf(outFile,"-->");
+                entery = entery->next;
+            }
+            fprintf(outFile,"\n");
+        }
+    }
+    ASSERT_PRINT("Exiting: HAT_Print()\n");
+}

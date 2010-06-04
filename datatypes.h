@@ -20,6 +20,13 @@
 #define MAX_MESSAGE_SIZE 50
 #define MAX_MESSAGES_IN_QUEUE 10
 
+
+//bool monitor = FALSE;
+
+FILE* outFile;
+FILE* inFile;
+
+#define MONITOR(expr...)  ((monitor==TRUE)?fprintf(outFile,expr): __ASSERT_VOID_CAST (0))
 typedef unsigned int PID;  //process id
 typedef unsigned int LPN;  //logical page number
 typedef unsigned int MMFI; //MM frame index
@@ -37,7 +44,7 @@ typedef struct iptStruct {
 
 
 typedef char* Page;
-typedef int* HAT_t; //HAT is just an array of IPT enteries
+typedef IPT_t_p* HAT_t; //HAT is just an array of IPT enteries
 
 typedef Page* Disk_t;
 typedef Page* MM_t;
@@ -65,8 +72,10 @@ typedef struct queueCommandStruct {
     enum Commands command;
     int* params; //params array
     char** stringParams;
+    void** voidParams;
     int paramsAmount;
     int stringParamsAmount;
+    int voidParamsAmount;
 } QueueCommand_t,*QueueCommand_t_p;
 
 typedef struct queueItemStruct {

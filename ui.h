@@ -16,6 +16,8 @@
 
 #define MAX_INPUT_LENGTH 50
 
+
+
 pthread_t UI_Thread;
 static volatile bool UI_ShouldUIThreadClose = FALSE;
 void* UI_Main();
@@ -81,7 +83,7 @@ void UI_HandleLoopWrite(int vAddr,PID processID,char c,int off,unsigned int amou
  */
 void UI_HandleHitRate();
 //prints the MM.
-void UI_HanldePrintMM();
+void UI_HandlePrintMM();
 /*
  * prints the IPT, entry by entry.
  * Each entry should be displayed in form

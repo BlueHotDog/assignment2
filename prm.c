@@ -71,9 +71,8 @@ void* PRM_Main() {
                     int HATPointedIndex = HAT_PRIVATE_Hash(mem);
                     IPT_Add(HATPointedIndex, process, pageNumber, frame);//add a line to the IPT
                     MM_WritePage(DISK_ReadPage(disk_index),frame);
-                    int i=frame;
                 }
-                DONE_WITH_PCB(command->params[1]);
+                DONE_WITH_PRM(command->params[1]);
             }
             break;
         }
@@ -85,7 +84,7 @@ void* PRM_Main() {
 
 MMFI PRM_FindOldestPage()
 {
-    return 1;
+    return 0;
 }
 
 bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine)

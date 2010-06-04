@@ -54,21 +54,22 @@ void readConfigFromFile(string fileName) {
 }
 
 void printConfigInfo() {
-    printf("MaxNumOfProcesses = %u\n", MaxNumOfProcesses);
-    printf("PageSize = %u\n", PageSize);
-    printf("NumOfPagesInMM = %u\n", NumOfPagesInMM);
-    printf("NumOfPagesInDisk = %u\n", NumOfPagesInDisk);
-    printf("NumOfProcessPages = %u\n", NumOfProcessPages);
-    printf("ShiftClock = %u\n", ShiftClock);
+    fprintf(outFile, "MaxNumOfProcesses = %u\n", MaxNumOfProcesses);
+    fprintf(outFile, "PageSize = %u\n", PageSize);
+    fprintf(outFile, "NumOfPagesInMM = %u\n", NumOfPagesInMM);
+    fprintf(outFile, "NumOfPagesInDisk = %u\n", NumOfPagesInDisk);
+    fprintf(outFile, "NumOfProcessPages = %u\n", NumOfProcessPages);
+    fprintf(outFile, "ShiftClock = %u\n", ShiftClock);
 }
 
 void printUsage() {
-    printf("Incorrect usage, please user:\n sim config_file_name");
+    fprintf(outFile, "Incorrect usage, please user:\n sim config_file_name");
 
 }
 
 void init() {
     bool ReturnVal = FALSE;
+
     ASSERT_PRINT("===Starting init===\n");
 
     ASSERT_PRINT("Init FreeList...\n");
@@ -114,6 +115,8 @@ void init() {
 
 int main(int argc, char** argv) {
     void* status;
+    inFile = stdin;
+    outFile = stdout;
 #ifdef DEBUG
     readConfigFromFile("config");
     printConfigInfo();

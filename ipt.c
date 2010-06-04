@@ -44,39 +44,34 @@ bool IPT_Add(
 {
     ASSERT_PRINT("Entering:IPT_Add()\n");
     IPT_t_p newIPTLine;
-    ASSERT(IPT_CreateIPT_t_p(processID, pageNumber, frame, &newIPTLine));
+    IPT_CreateIPT_t_p(processID, pageNumber, frame, &newIPTLine);
     IPT_t_p pointer = IPT[HATPointedIndex];
     if (pointer == NULL) //the field was never invoked. 
     {
         newIPTLine->prev = 0;
         newIPTLine->next = 0;
         IPT[HATPointedIndex] = newIPTLine;
+        HAT[HATPointedIndex] = newIPTLine;
+        totalPagesInIPT++;
         return TRUE;
     }
 
-    int iterations = 0;
     bool foundFrame = FALSE;
-    while (!foundFrame) {
-        while (IPT[HATPointedIndex] != NULL || iterations <= SIZE_OF_IPT) {
-            INDEX_INC(HATPointedIndex);
-            iterations++;
-        }
-        if (iterations > SIZE_OF_IPT) {
-            //throw "segmentation fault - full MM" to the PRM
-            QueueCommand_t_p command = malloc(sizeof (QueueCommand_t));
-            command->params = calloc(2, sizeof (int));
-            command->params[0] = processID;
-            command->params[1] = pageNumber;
-            command->paramsAmount = 2;
-            command->command = PRMSegmentationFaultMMIsFull;
-            QUEUES_WriteToPRM(command);
-        } else
-            foundFrame = TRUE;
+    int iterations = 0;
+    int temp = HATPointedIndex;
+    while (IPT[temp] != NULL && iterations <= SIZE_OF_IPT) {
+        INDEX_INC(temp);
+        iterations++;
     }
-    newIPTLine->next = pointer->next;
-    pointer->next = newIPTLine;
-    newIPTLine->prev = pointer;
-    IPT[HATPointedIndex] = newIPTLine;
+    if (iterations > SIZE_OF_IPT) {
+        return FALSE;
+    } else
+        foundFrame = TRUE;
+    newIPTLine->next = pointer;
+    pointer->prev = newIPTLine;
+    newIPTLine->prev = 0;
+    IPT[temp] = newIPTLine;
+    HAT[HATPointedIndex] = temp;
     totalPagesInIPT++;
     ASSERT_PRINT("Exiting:IPT_Add()\n");
     return TRUE;
