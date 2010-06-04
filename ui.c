@@ -45,6 +45,15 @@ void UI_ParseCommand(const string * const comm) {
         fscanf(inFile, "%d %d %d %60s", &vAddr, &id, &amount, fileName);
         UI_HandleReadToFile(vAddr, id, amount, fileName);
         free(fileName);
+    } else if (strcmp(*comm, "loopReadToFile") == 0) { //loopReadToFile vAddr id off amount filename
+        int vAddr = -1;
+        int id = -1;
+        int amount = -1;
+        int offset = -1;
+        string filename = calloc(60, sizeof (char));
+        fscanf(inFile, "%d %d %d %d %60s", &vAddr, &id, &offset, &amount, filename);
+        UI_HandleLoopReadToFile(vAddr, id, offset, amount, filename);
+        free(filename);
     } else if (strcmp(*comm, "write") == 0) {
         //write vAddr id s
         int vAddr = -1;
@@ -53,6 +62,14 @@ void UI_ParseCommand(const string * const comm) {
         fscanf(inFile, "%d %d %60s", &vAddr, &id, fileName);
         UI_HandleWrite(vAddr, id, fileName);
         free(fileName);
+    } else if (strcmp(*comm, "loopWrite") == 0) { //loopWrite vAddr id c off amount
+        int vAddr = -1;
+        int id = -1;
+        char c;
+        int offset = -1;
+        int amount = -1;
+        fscanf(inFile, "%d %d %c %d %d", &vAddr, &id,&c,&offset,&amount);
+        UI_HandleLoopWrite(vAddr,id,c,offset,amount);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
     } else if (strcmp(*comm, "printHat") == 0) {
@@ -103,12 +120,14 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
 
     comm->command = ProcessReadAddress;
     comm->params = calloc(2, sizeof (int));
-    comm->voidParams = calloc(1, sizeof (void*));
+
     comm->params[0] = addr.pageNumber;
     comm->params[1] = amount;
-
-    comm->voidParams[0] = outFile;
-    comm->voidParamsAmount = 1;
+    if (outFile != stdout) {
+        comm->voidParams = calloc(1, sizeof (void*));
+        comm->voidParams[0] = outFile;
+        comm->voidParamsAmount = 1;
+    }
     comm->paramsAmount = 2;
     QUEUES_WriteToProcess(processID, comm);
     ASSERT_PRINT("Exiting: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
