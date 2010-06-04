@@ -18,7 +18,7 @@ CFLAGS = $(BASICOPTS)
 TARGETDIR_Assignment2=dist/Debug/GNU-Linux-x86
 
 
-all: $(TARGETDIR_Assignment2)/assignment2.git3
+all: $(TARGETDIR_Assignment2)/assignment2
 
 ## Target: Assignment2
 CPPFLAGS_Assignment2 = \
@@ -37,6 +37,7 @@ OBJS_Assignment2 =  \
 	$(TARGETDIR_Assignment2)/messagequeues.o \
 	$(TARGETDIR_Assignment2)/hat.o \
 	$(TARGETDIR_Assignment2)/readerswriters.o \
+	$(TARGETDIR_Assignment2)/aging.o \
 	$(TARGETDIR_Assignment2)/ipt.o
 SYSLIBS_Assignment2 = -lpthread -lrt
 USERLIBS_Assignment2 = $(SYSLIBS_Assignment2) 
@@ -45,7 +46,7 @@ LDLIBS_Assignment2 = $(USERLIBS_Assignment2)
 
 
 # Link or archive
-$(TARGETDIR_Assignment2)/assignment2.git3: $(TARGETDIR_Assignment2) $(OBJS_Assignment2) $(DEPLIBS_Assignment2)
+$(TARGETDIR_Assignment2)/assignment2: $(TARGETDIR_Assignment2) $(OBJS_Assignment2) $(DEPLIBS_Assignment2)
 	$(LINK.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ $(OBJS_Assignment2) $(LDLIBS_Assignment2)
 
 
@@ -58,6 +59,9 @@ $(TARGETDIR_Assignment2)/readerswriters.o: $(TARGETDIR_Assignment2) readerswrite
 
 $(TARGETDIR_Assignment2)/ui.o: $(TARGETDIR_Assignment2) ui.c
 	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ ui.c
+
+$(TARGETDIR_Assignment2)/aging.o: $(TARGETDIR_Assignment2) aging.c
+	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ aging.c
 
 $(TARGETDIR_Assignment2)/prm.o: $(TARGETDIR_Assignment2) prm.c
 	$(COMPILE.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ prm.c
@@ -109,6 +113,7 @@ clean:
 		$(TARGETDIR_Assignment2)/messagequeues.o \
 		$(TARGETDIR_Assignment2)/hat.o \
 		$(TARGETDIR_Assignment2)/readerswriters.o \
+		$(TARGETDIR_Assignment2)/aging.o \
 		$(TARGETDIR_Assignment2)/ipt.o
 	rm -f -r $(TARGETDIR_Assignment2)
 

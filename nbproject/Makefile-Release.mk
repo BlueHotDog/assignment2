@@ -38,10 +38,11 @@ OBJECTFILES= \
 	${OBJECTDIR}/messagequeues.o \
 	${OBJECTDIR}/ui.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/ipt.o \
 	${OBJECTDIR}/tests.o \
+	${OBJECTDIR}/ipt.o \
 	${OBJECTDIR}/freelist.o \
 	${OBJECTDIR}/disk.o \
+	${OBJECTDIR}/aging.o \
 	${OBJECTDIR}/pcb.o \
 	${OBJECTDIR}/process.o \
 	${OBJECTDIR}/mm.o
@@ -105,15 +106,15 @@ ${OBJECTDIR}/main.o: nbproject/Makefile-${CND_CONF}.mk main.c
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.c
 
-${OBJECTDIR}/ipt.o: nbproject/Makefile-${CND_CONF}.mk ipt.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/ipt.o ipt.c
-
 ${OBJECTDIR}/tests.o: nbproject/Makefile-${CND_CONF}.mk tests.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/tests.o tests.c
+
+${OBJECTDIR}/ipt.o: nbproject/Makefile-${CND_CONF}.mk ipt.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/ipt.o ipt.c
 
 ${OBJECTDIR}/freelist.o: nbproject/Makefile-${CND_CONF}.mk freelist.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -124,6 +125,11 @@ ${OBJECTDIR}/disk.o: nbproject/Makefile-${CND_CONF}.mk disk.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/disk.o disk.c
+
+${OBJECTDIR}/aging.o: nbproject/Makefile-${CND_CONF}.mk aging.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/aging.o aging.c
 
 ${OBJECTDIR}/pcb.o: nbproject/Makefile-${CND_CONF}.mk pcb.c 
 	${MKDIR} -p ${OBJECTDIR}

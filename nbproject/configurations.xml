@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>aging.h</itemPath>
       <itemPath>datatypes.h</itemPath>
       <itemPath>disk.h</itemPath>
       <itemPath>freelist.h</itemPath>
@@ -26,6 +27,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>aging.c</itemPath>
       <itemPath>disk.c</itemPath>
       <itemPath>freelist.c</itemPath>
       <itemPath>hat.c</itemPath>

@@ -18,6 +18,7 @@
 #include "mmu.h"
 #include "mm.h"
 #include "readerswriters.h"
+#include "aging.h"
 
 void readConfigFromFile(string fileName) {
     const int lineLength = 100;
@@ -72,6 +73,10 @@ void init() {
 
     ASSERT_PRINT("===Starting init===\n");
 
+    ASSERT_PRINT("Init Aging Deamon...\n");
+    ReturnVal = AGING_Init();
+    ASSERT(ReturnVal != FALSE);
+    
     ASSERT_PRINT("Init FreeList...\n");
     ReturnVal = FREELIST_Init();
     ASSERT(ReturnVal != FALSE);
