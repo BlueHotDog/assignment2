@@ -53,7 +53,6 @@ bool MMU_WriteToAddress(MemoryAddress_t address,Page value, int bitsToWrite) {
         comm->paramsAmount = 2;
 
         QUEUES_WriteToPRM(comm);
-        WAIT_FOR_PRM(address.processID);
     }
     MM_WritePage(value,res, bitsToWrite, 1);
     READERSWRITERS_UnlockDataRead();

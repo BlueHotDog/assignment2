@@ -76,6 +76,9 @@ void DISK_ReadPage(int pageNum, OUT Page* pageToReturn) {
 
 bool DISK_WritePage(Page data, int pageNum) {
     ASSERT_PRINT("Entering:DISK_WritePage(pageNum:%d)\n", pageNum);
-    Disk[pageNum] = data;
+    ASSERT(strlen(data) == PageSize);
+    int i=0;
+    for(i; i<PageSize; i++)
+        Disk[pageNum][i] = data[i];
     ASSERT_PRINT("Exiting:DISK_WritePage(pageNum:%d)\n", pageNum);
 }

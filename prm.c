@@ -103,7 +103,7 @@ bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine)
     {
         PID process = IPTOldFrameLine->processID;
         LPN pageNumber = IPTOldFrameLine->pageNumber;
-        DISK_WritePage(MM_ReadPage(oldFramePage),process + pageNumber);
+        DISK_WritePage(MM_ReadPage(oldFramePage),process*NumOfProcessPages + pageNumber);
     }
 
     Page page = calloc(PageSize,sizeof(char));
