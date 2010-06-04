@@ -22,7 +22,7 @@ bool DISK_AllocateSpace(unsigned int start,unsigned int end);
 //Removes the relevant PCB block
 bool DISK_DeAllocateSpace(unsigned int start,unsigned int end);
 //returns the Page to the PRM
-Page DISK_ReadPage(int pageNum);
+void DISK_ReadPage(int pageNum, OUT Page* pageToReturn);
 
 //Writes the data to the pageNumber returns true if all went well, false otherwise.
 bool DISK_WritePage(Page data,int pageNum);

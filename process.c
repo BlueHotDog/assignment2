@@ -49,9 +49,26 @@ void* PROCESS_RUN(void* pcb) {
                 break;
             case ProcessWriteToAddress:
             {
-
+                int vAddr = comm->params[0];
+                int amount = comm->params[1];
+                string stringToWtrite = comm->stringParams[0];
+                int timesToRun = (amount / PageSize) + ((amount % PageSize > 0) ? 1 : 0);
+                int i = 0;
+                for (i = 0; i < timesToRun; i++) {
+                    if (vAddr + i < NumOfProcessPages) {
+                        MemoryAddress_t mem;
+                        mem.processID = local_pcb->processID;
+                        mem.pageNumber = vAddr + i;
+                        int bitsToWrite = ((i+1)*PageSize < amount)? PageSize : (amount - ((timesToRun-1) * PageSize));
+                        Page pageToWrite = calloc(bitsToWrite, sizeof(Page));
+                        int charIndex = 0;
+                        for(charIndex=0; charIndex<bitsToWrite; charIndex++)
+                            pageToWrite[charIndex] = stringToWtrite[i*PageSize + charIndex];
+                        MMU_WriteToAddress(mem, pageToWrite, bitsToWrite);
+                    }
+                }
+                DISK_PrintContent();
             }
-            break;
         }
         free(comm->stringParams);
         free(comm->voidParams);
@@ -61,7 +78,7 @@ void* PROCESS_RUN(void* pcb) {
 }
 
 int PROCESS_CREATE() {
-    ASSERT_PRINT("Entering: PROCESS_CREATE\n");
+    ASSERT_PRINT("Entering: PROCESS_CREATE\n"); 
     do {
         int start = FREELIST_Get();
         if (start == -1) {

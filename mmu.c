@@ -37,7 +37,7 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
     ASSERT_PRINT("Exiting:MMU_ReadAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
 }
 
-bool MMU_WriteToAddress(MemoryAddress_t address,Page* value) {
+bool MMU_WriteToAddress(MemoryAddress_t address,Page value, int bitsToWrite) {
     ASSERT_PRINT("Entering:MMU_WriteToAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
     MMFI res;
     READERSWRITERS_LockDataRead();
@@ -53,9 +53,8 @@ bool MMU_WriteToAddress(MemoryAddress_t address,Page* value) {
         comm->paramsAmount = 2;
 
         QUEUES_WriteToPRM(comm);
-        WAIT_FOR_PRM(address.processID);
     }
-    MM_WritePage(*value,res);
+    MM_WritePage(value,res, bitsToWrite, 1);
     READERSWRITERS_UnlockDataRead();
     return TRUE;
     ASSERT_PRINT("Exiting:MMU_WriteToAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);

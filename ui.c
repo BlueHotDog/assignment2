@@ -54,14 +54,14 @@ void UI_ParseCommand(const string * const comm) {
         fscanf(inFile, "%d %d %d %d %60s", &vAddr, &id, &offset, &amount, filename);
         UI_HandleLoopReadToFile(vAddr, id, offset, amount, filename);
         free(filename);
-    } else if (strcmp(*comm, "write") == 0) {
+    } else if (strcmp(*comm, "write") == 0 || strcmp(*comm, "w") == 0) {
         //write vAddr id s
         int vAddr = -1;
         int id = -1;
-        string fileName = calloc(60, sizeof (char));
-        fscanf(inFile, "%d %d %60s", &vAddr, &id, fileName);
-        UI_HandleWrite(vAddr, id, fileName);
-        free(fileName);
+        string str = calloc(60, sizeof (char));
+        fscanf(inFile, "%d %d %60s", &vAddr, &id, str);
+        UI_HandleWrite(vAddr, id, str);
+        free(str);
     } else if (strcmp(*comm, "loopWrite") == 0) { //loopWrite vAddr id c off amount
         int vAddr = -1;
         int id = -1;
@@ -174,11 +174,15 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
     QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
 
     comm->command = ProcessWriteToAddress;
-    comm->params = calloc(1, sizeof (int));
+    comm->params = calloc(2, sizeof (int));
     comm->stringParams = calloc(1, sizeof (string));
     comm->params[0] = addr.pageNumber;
-    comm->stringParams[0] = s;
-    comm->paramsAmount = 1;
+    comm->params[1] = strlen(s);
+    comm->stringParams[0] = calloc(strlen(s),sizeof(char));
+    int i=0;
+    for(i=0; i<strlen(s);i++)
+        comm->stringParams[0][i] = s[i];
+    comm->paramsAmount = 2;
     comm->stringParamsAmount = 1;
 
     QUEUES_WriteToProcess(processID, comm);

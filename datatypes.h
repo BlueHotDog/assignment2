@@ -44,7 +44,7 @@ typedef struct iptStruct {
 
 
 typedef char* Page;
-typedef int* HAT_t; //HAT is just an array of IPT enteries
+typedef IPT_t_p* HAT_t; //HAT is just an array of IPT enteries
 
 typedef Page* Disk_t;
 typedef Page* MM_t;

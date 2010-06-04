@@ -22,7 +22,7 @@ void* PRM_Main() {
         ASSERT_PRINT("PRM trying to read from queue /PRM\n");
         QueueCommand_t_p command = QUEUES_ReadPRM();
         QUEUES_PrintCommand(command);
-        switch(command->command)
+        switch(command->command) 
         {
             case PRMSegmentationFault: //params[0]=pageNumber, params[1]=ProcessID
             {
@@ -70,9 +70,10 @@ void* PRM_Main() {
                     mem.processID = process;
                     int HATPointedIndex = HAT_PRIVATE_Hash(mem);
                     IPT_Add(HATPointedIndex, process, pageNumber, frame);//add a line to the IPT
-                    MM_WritePage(DISK_ReadPage(disk_index),frame);
-                    //DISK_PrintContent();
-                    int i=frame;
+
+                    Page page = calloc(PageSize, sizeof(char));
+                    DISK_ReadPage(disk_index, &page);
+                    MM_WritePage(page,frame, PageSize, 0);
                 }
                 DONE_WITH_PRM(command->params[1]);
             }
@@ -86,7 +87,7 @@ void* PRM_Main() {
 
 MMFI PRM_FindOldestPage()
 {
-    return 1;
+    return 0;
 }
 
 bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine)
@@ -103,9 +104,12 @@ bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine)
     {
         PID process = IPTOldFrameLine->processID;
         LPN pageNumber = IPTOldFrameLine->pageNumber;
-        DISK_WritePage(MM_ReadPage(oldFramePage),process + pageNumber);
+        DISK_WritePage(MM_ReadPage(oldFramePage),process*NumOfProcessPages + pageNumber);
     }
-    MM_WritePage(DISK_ReadPage(diskPageIndex),oldFramePage);
+
+    Page page = calloc(PageSize,sizeof(char));
+    DISK_ReadPage(diskPageIndex, &page);
+    MM_WritePage(page,oldFramePage, PageSize, 0);
     ASSERT_PRINT("Exiting:IPT_Replace() with return value: TRUE\n");
     return TRUE;
 }

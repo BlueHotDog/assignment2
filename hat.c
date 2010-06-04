@@ -42,7 +42,7 @@ void HAT_Print()
             fprintf(outFile,"\nHAT[%d])Null",i);
         else
         {
-            IPT_t_p entery = IPT[HAT[i]];
+            IPT_t_p entery = HAT[i];
             fprintf(outFile,"\nHAT[%d])",i);
             while(entery!=NULL)
             {
@@ -51,6 +51,7 @@ void HAT_Print()
                     fprintf(outFile,"-->");
                 entery = entery->next;
             }
+            fprintf(outFile,"\n");
         }
     }
     ASSERT_PRINT("Exiting: HAT_Print()\n");
