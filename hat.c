@@ -25,7 +25,7 @@ IPT_t_p HAT_GetEntry(MemoryAddress_t memoryAddress) {
     int index = HAT_PRIVATE_Hash(memoryAddress);
     if(HAT[index]==0)
     {
-        HAT[index] = index;
+        HAT[index] = IPT[index];
     }
     ASSERT_PRINT("Exiting:HAT_GetEntry(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
     return IPT[index];
