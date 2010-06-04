@@ -49,6 +49,8 @@ void UI_ParseCommand(const string * const comm) {
         UI_SignalUIThreadToStop();
     } else if (strcmp(*comm, "printHat") == 0) {
         UI_HandlePrintHat();
+    } else if (strcmp(*comm, "printMMU") == 0) {
+        UI_HandlePrintMMUTable();
     } else if (strcmp(*comm, "monitor") == 0) {
         UI_HandleMonitor();
     } else if (strcmp(*comm, "noMonitor") == 0) {
@@ -186,4 +188,19 @@ void UI_HandleBatchFile(string filename) {
         exit(1);
     }
     ASSERT_PRINT("Exiting: UI_HandleBatchFile(file:%s)\n", filename);
+}
+
+void UI_HandlePrintMMUTable() {
+    ASSERT_PRINT("Entering: UI_HandleBatchFile()\n");
+    int i=0;
+    for(i=0; i<SIZE_OF_IPT; i++)
+    {
+        if(IPT[i])
+            fprintf(outFile,"%d) (pid=%d, pageNum=%d, dirty bit=%d, aging reference bit=?, next=%d, prev=%d)\n",
+                    i,IPT[i]->processID,IPT[i]->pageNumber, IPT[i]->dirtyBit,IPT[i]->next, IPT[i]->prev);
+        else
+            fprintf(outFile,"%d) (free)\n",i);
+
+    }
+    ASSERT_PRINT("Exiting: UI_HandleBatchFile()\n");
 }

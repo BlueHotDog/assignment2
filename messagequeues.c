@@ -52,6 +52,9 @@ bool QUEUES_Init() {
         sem_init(&PROCESSES_full[i], 0, 0); // counts number of full buffer slots
     }
 
+    for (i = 0; i < MaxNumOfProcesses; i++) 
+        sem_init(&PROCESSES_mutex[1][i], 0, 0);
+
     sem_init(&PRM_mutex, 0, 1); // Controls access to critical section
     sem_init(&PRM_empty, 0, BufferSize); // counts number of empty buffer slots
     sem_init(&PRM_full, 0, 0); // counts number of full buffer slots
@@ -116,6 +119,7 @@ bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
         PRMQueue->head = toInsert;
     sem_post(&PRM_mutex); // leave critical section
     sem_post(&PRM_full); // increment the full semaphore
+    WAIT_FOR_PRM(command->params[1]);
 }
 
 QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages

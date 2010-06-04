@@ -55,29 +55,21 @@ bool IPT_Add(
     }
 
     bool foundFrame = FALSE;
-    while (!foundFrame) {
-        int iterations = 0;
-        int temp = HATPointedIndex;
-        while (IPT[temp] != NULL || iterations <= SIZE_OF_IPT) {
-            INDEX_INC(temp);
-            iterations++;
-        }
-        if (iterations > SIZE_OF_IPT) {
-            //throw "segmentation fault - full MM" to the PRM
-            QueueCommand_t_p command = malloc(sizeof (QueueCommand_t));
-            command->params = calloc(2, sizeof (int));
-            command->params[0] = processID;
-            command->params[1] = pageNumber;
-            command->paramsAmount = 2;
-            command->command = PRMSegmentationFaultMMIsFull;
-            QUEUES_WriteToPRM(command);
-        } else
-            foundFrame = TRUE;
+    int iterations = 0;
+    int temp = HATPointedIndex;
+    while (IPT[temp] != NULL && iterations <= SIZE_OF_IPT) {
+        INDEX_INC(temp);
+        iterations++;
     }
-    newIPTLine->next = pointer->next;
-    pointer->next = newIPTLine;
-    newIPTLine->prev = pointer;
-    IPT[HATPointedIndex] = newIPTLine;
+    if (iterations > SIZE_OF_IPT) {
+        return FALSE;
+    } else
+        foundFrame = TRUE;
+    newIPTLine->next = pointer;
+    pointer->prev = newIPTLine;
+    newIPTLine->prev = 0;
+    IPT[temp] = newIPTLine;
+    HAT[HATPointedIndex] = temp;
     totalPagesInIPT++;
     ASSERT_PRINT("Exiting:IPT_Add()\n");
     return TRUE;

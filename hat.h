@@ -25,7 +25,7 @@
 #include "datatypes.h"
 #include "ipt.h"
 
-static HAT_t HAT;
+HAT_t HAT;
 
 bool HAT_Init();
 int HAT_PRIVATE_Hash(MemoryAddress_t memoryAddress);

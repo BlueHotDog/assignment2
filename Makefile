@@ -18,7 +18,7 @@ CFLAGS = $(BASICOPTS)
 TARGETDIR_Assignment2=dist/Debug/GNU-Linux-x86
 
 
-all: $(TARGETDIR_Assignment2)/assignment2
+all: $(TARGETDIR_Assignment2)/assignment2.git3
 
 ## Target: Assignment2
 CPPFLAGS_Assignment2 = \
@@ -45,7 +45,7 @@ LDLIBS_Assignment2 = $(USERLIBS_Assignment2)
 
 
 # Link or archive
-$(TARGETDIR_Assignment2)/assignment2: $(TARGETDIR_Assignment2) $(OBJS_Assignment2) $(DEPLIBS_Assignment2)
+$(TARGETDIR_Assignment2)/assignment2.git3: $(TARGETDIR_Assignment2) $(OBJS_Assignment2) $(DEPLIBS_Assignment2)
 	$(LINK.c) $(CFLAGS_Assignment2) $(CPPFLAGS_Assignment2) -o $@ $(OBJS_Assignment2) $(LDLIBS_Assignment2)
 
 
