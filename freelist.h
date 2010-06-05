@@ -19,5 +19,6 @@ void FREELIST_DeAllocate();
 //returns the start of an untaken page, or -1 if none;
 int FREELIST_Get();
 void FREELIST_SetTaken(unsigned int index);
+void FREELIST_SetNotTaken(unsigned int index);
 #endif	/* _FREELIST_H */
 

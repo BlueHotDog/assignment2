@@ -63,6 +63,7 @@ volatile unsigned int ShiftClock;
 enum Commands {
     ProcessReadAddress,
     ProcessWriteToAddress,
+    ProcessClose,
     PRMReadAddress,
     PRMWriteToAddress,
     PRMSegmentationFault,

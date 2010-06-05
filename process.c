@@ -4,7 +4,7 @@
 void* PROCESS_RUN(void* pcb) {
     PCB_t_p local_pcb = (PCB_t_p) pcb;
 
-    while (!PROCESS_ShouldClose) {
+    while (TRUE) {
         QueueCommand_t_p comm = QUEUES_ReadProcess(local_pcb->processID);
         switch (comm->command) {
             case ProcessReadAddress:
@@ -59,26 +59,73 @@ void* PROCESS_RUN(void* pcb) {
                         MemoryAddress_t mem;
                         mem.processID = local_pcb->processID;
                         mem.pageNumber = vAddr + i;
-                        int bitsToWrite = ((i+1)*PageSize < amount)? PageSize : (amount - ((timesToRun-1) * PageSize));
-                        Page pageToWrite = calloc(bitsToWrite, sizeof(Page));
+                        int bitsToWrite = ((i + 1) * PageSize < amount) ? PageSize : (amount - ((timesToRun - 1) * PageSize));
+                        Page pageToWrite = calloc(bitsToWrite, sizeof (Page));
                         int charIndex = 0;
-                        for(charIndex=0; charIndex<bitsToWrite; charIndex++)
-                            pageToWrite[charIndex] = stringToWtrite[i*PageSize + charIndex];
+                        for (charIndex = 0; charIndex < bitsToWrite; charIndex++)
+                            pageToWrite[charIndex] = stringToWtrite[i * PageSize + charIndex];
                         MMU_WriteToAddress(mem, pageToWrite, bitsToWrite);
                     }
                 }
                 DISK_PrintContent();
             }
+            break;
+            case ProcessClose:
+            {
+                free(comm->stringParams);
+                free(comm->voidParams);
+                free(comm->params);
+                free(comm);
+                break;
+            }
+            break;
         }
         free(comm->stringParams);
         free(comm->voidParams);
         free(comm->params);
         free(comm);
     }
+    PROCESS_DeInit(local_pcb->processID);
+}
+
+void PROCESS_DeInit(PID id) {
+    ASSERT_PRINT("Entering: PROCESS_DeInit(id:%d)\n",id);
+    int i=0;
+    //Cleaning the HAT
+    for(i=0;i<NumOfPagesInMM;i++)
+    {
+        if(HAT[i]!=NULL && HAT[i]->processID==id)
+        {
+            IPT_t_p temp = HAT[i];
+            if(HAT[i]->prev!=NULL)
+                HAT[i]->prev = HAT[i]->next;
+            if(HAT[i]->next!=NULL)
+                HAT[i] = HAT[i]->next;
+            temp->processID = -1;
+            free(temp);
+            HAT[i] = NULL;
+        }
+    }
+    //Cleaning the IPT
+    for(i=0;i<NumOfPagesInMM;i++)
+    {
+        if(IPT[i]!=NULL && IPT[i]->processID==id)
+        {
+            if(IPT[i]->prev!=NULL)
+                IPT[i]->prev = IPT[i]->next;
+            IPT[i]->processID = -1;
+            free(IPT[i]);
+        }
+    }
+
+    FREELIST_SetNotTaken(PCBArray[id].start);
+    PCB_GetByProcessID(id)->active = FALSE;
+    //should remove from memory all info..
+    ASSERT_PRINT("Exiting: PROCESS_DeInit(id:%d)\n",id);
 }
 
 int PROCESS_CREATE() {
-    ASSERT_PRINT("Entering: PROCESS_CREATE\n"); 
+    ASSERT_PRINT("Entering: PROCESS_CREATE\n");
     do {
         int start = FREELIST_Get();
         if (start == -1) {
@@ -100,9 +147,11 @@ int PROCESS_CREATE() {
     return -1;
 }
 
+/*
 void PROCESS_STOP() {
     PROCESS_ShouldClose = TRUE;
 }
+*/
 
 bool PROCESS_Read(PID processID, int vAddr, int amount) {
     int i = vAddr;
