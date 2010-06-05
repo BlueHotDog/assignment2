@@ -72,6 +72,10 @@ void UI_ParseCommand(const string * const comm) {
         UI_HandleLoopWrite(vAddr,id,c,offset,amount);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
+    } else if (strcmp(*comm,"delProcess")) { //void UI_HandleDelProcess(PID processID);
+        int id = -1;
+        fscanf(inFile,"%d",&id);
+        UI_HandleDelProcess(id);
     } else if (strcmp(*comm, "printHat") == 0) {
         UI_HandlePrintHat();
     } else if (strcmp(*comm, "printMMU") == 0) {
@@ -110,7 +114,22 @@ void UI_HandleCreateProcess() {
         fprintf(outFile, "Error creating process\n");
 
 }
+void UI_HandleDelProcess(PID processID)
+{
+    ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n",processID);
 
+    QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
+    comm->command = ProcessClose;
+    if (outFile != stdout) {
+        comm->voidParams = calloc(1, sizeof (void*));
+        comm->voidParams[0] = outFile;
+        comm->voidParamsAmount = 1;
+    }
+    comm->paramsAmount = 0;
+    QUEUES_WriteToProcess(processID, comm);
+    pthread_join(PCB_GetByProcessID(processID)->processThread,NULL);
+    ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
+}
 void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
     ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
 
