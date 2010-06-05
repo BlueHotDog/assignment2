@@ -1,0 +1,6 @@
+MaxNumOfProcesses = 10
+PageSize = 4
+NumOfPagesInMM = 2
+NumOfPagesInDisk = 40
+NumOfProcessPages = 4 
+ShiftClock = 2

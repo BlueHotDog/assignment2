@@ -1,0 +1,8 @@
+createProcess
+write 0 0 @
+read 0 0 1
+loopWrite 1 0 X 1 100
+loopRead 0 0 1 1000
+loopWrite 1 0 ~ 2 100
+loopRead 0 0 1 1000
+delProcess 0 
