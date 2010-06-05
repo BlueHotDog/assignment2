@@ -10,10 +10,11 @@
 
 #include "datatypes.h"
 #include "globaldefs.h"
+#include "aging.h"
 
-static MM_t MM;
-sem_t MM_Counter_Mutex;
-static int MM_Access_Counter;
+static MM_t     MM;
+sem_t           MM_Counter_Mutex;
+static int      MM_Access_Counter;
 
 bool MM_Init();
 

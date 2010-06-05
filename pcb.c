@@ -56,6 +56,10 @@ PCB_t_p PCB_GetByProcessID(PID id)
     int i=0;
     for(i=0;i<MaxNumOfProcesses;i++)
         if(PCBArray[i].processID == id)
+        {
+            ASSERT_PRINT("Exiting:PCB_GetByProcessID(%d)->%d\n",id,i);
             return &PCBArray[i];
+        }
+    ASSERT_PRINT("Exiting:PCB_GetByProcessID(%d)->NULL\n",id);
     return NULL;
 }

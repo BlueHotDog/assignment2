@@ -191,7 +191,7 @@ bool IPT_FindLineByFrame(MMFI frame, OUT int *line)
     return TRUE;
 }
 
-void IPT_UpdateDirtyBit(MMFI frame, int dirtyBit)
+void IPT_UpdateDirtyBit(MMFI frame, bool dirtyBit)
 {
     int lineIndex = -1;
     if(IPT_FindLineByFrame(frame,&lineIndex) == FALSE)
@@ -199,7 +199,7 @@ void IPT_UpdateDirtyBit(MMFI frame, int dirtyBit)
     IPT[lineIndex]->dirtyBit = dirtyBit;
 }
 
-void IPT_UpdateReferencetyBit(MMFI frame, int referenceBit)
+void IPT_UpdateReferencetyBit(MMFI frame, bool referenceBit)
 {
     int lineIndex = -1;
     if(IPT_FindLineByFrame(frame,&lineIndex) == FALSE)

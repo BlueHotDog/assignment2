@@ -72,7 +72,7 @@ void UI_ParseCommand(const string * const comm) {
         UI_HandleLoopWrite(vAddr,id,c,offset,amount);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
-    } else if (strcmp(*comm,"delProcess")) { //void UI_HandleDelProcess(PID processID);
+    } else if (strcmp(*comm,"delProcess")==0) { //void UI_HandleDelProcess(PID processID);
         int id = -1;
         fscanf(inFile,"%d",&id);
         UI_HandleDelProcess(id);
@@ -128,6 +128,7 @@ void UI_HandleDelProcess(PID processID)
     comm->paramsAmount = 0;
     QUEUES_WriteToProcess(processID, comm);
     pthread_join(PCB_GetByProcessID(processID)->processThread,NULL);
+    printf("aaa");
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
 }
 void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
