@@ -12,7 +12,7 @@
 #include "globaldefs.h"
 
 static MM_t MM;
-pthread_mutex_t MM_Counter_Mutex;
+sem_t MM_Counter_Mutex;
 static int MM_Access_Counter;
 
 bool MM_Init();

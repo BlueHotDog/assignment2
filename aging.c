@@ -1,3 +1,4 @@
+#include <semaphore.h>
 
 #include "aging.h"
 
@@ -6,12 +7,11 @@ bool AGING_Init() {
     ASSERT_PRINT("Entering:AGING_Init()\n");
     if (pthread_create(&Aging, NULL, AGING_Main, NULL) != 0)
         return FALSE;
-
     Aging_Registers = calloc(NumOfPagesInMM, sizeof (unsigned int));
     int i = 0;
     for (i = 0; i < NumOfPagesInMM; i++)
         Aging_Registers[i] = 0;
-    pthread_mutex_init(&Aging_mutex, NULL);
+    sem_init(&Aging_mutex, 0, 0);
     ASSERT_PRINT("Exiting:AGING_Init()\n");
     return TRUE;
 }
@@ -33,14 +33,14 @@ void* AGING_Main() {
     int i = 0;
     unsigned int m = ((unsigned int) - 1 >> 1) + 1; //a number with its msb set to 1
     while (!AGING_ShouldClose) {
-        pthread_mutex_lock(&Aging_mutex);
+        sem_wait(&Aging_mutex);
         for (i = 0; i < NumOfPagesInMM; i++) {
             Aging_Registers[i] >>= 1;
-            if (IPT[i]->referenceBit == TRUE)
+            if (IPT[i] != NULL && IPT[i]->referenceBit == TRUE)
                 Aging_Registers[i] |= m;
         }
-        pthread_mutex_unlock(&Aging_mutex);
-        pthread_mutex_unlock(&MM_Counter_Mutex);
+        sem_post(&Aging_mutex);
+        sem_post(&MM_Counter_Mutex);
     }
     AGING_DeInit();
     ASSERT_PRINT("Exiting:AGING_Main()\n");

@@ -93,8 +93,14 @@ bool IPT_Replace(
         MMFI frame);
 
 /*
- * fine line by frame index and update it's dirty bit.
+ * find line by frame index and update it's dirty bit.
  * */
 void IPT_UpdateDirtyBit(MMFI frame, int dirtyBit);
+
+/*
+ * find line by frame index and update it's reference bit.
+ * */
+void IPT_UpdateReferencetyBit(MMFI frame, int referenceBit);
+
 #endif	/* _IPT_ */
 
