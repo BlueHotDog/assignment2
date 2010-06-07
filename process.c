@@ -92,7 +92,6 @@ void* PROCESS_RUN(void* pcb) {
 
     }
     PROCESS_DeInit(local_pcb->processID);
-    return NULL;
 }
 
 void PROCESS_DeInit(PID id) {

@@ -73,10 +73,6 @@ void init() {
 
     ASSERT_PRINT("===Starting init===\n");
 
-    ASSERT_PRINT("Init Aging Deamon...\n");
-    ReturnVal = AGING_Init();
-    ASSERT(ReturnVal != FALSE);
-    
     ASSERT_PRINT("Init FreeList...\n");
     ReturnVal = FREELIST_Init();
     ASSERT(ReturnVal != FALSE);
@@ -113,6 +109,10 @@ void init() {
     ReturnVal = READERSWRITERS_Init();
     ASSERT(ReturnVal != FALSE);
 
+    ASSERT_PRINT("Init Aging Deamon...\n");
+    ReturnVal = AGING_Init();
+    ASSERT(ReturnVal != FALSE);
+    
     ASSERT_PRINT("Creating UI Thread...\n");
     ReturnVal = UI_CreateUIThread();
     ASSERT(ReturnVal != FALSE);

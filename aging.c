@@ -2,7 +2,6 @@
 
 #include "aging.h"
 
-
 bool AGING_Init() {
     ASSERT_PRINT("Entering:AGING_Init()\n");
     if (pthread_create(&Aging, NULL, AGING_Main, NULL) != 0)
@@ -34,13 +33,15 @@ void* AGING_Main() {
     unsigned int m = ((unsigned int) - 1 >> 1) + 1; //a number with its msb set to 1
     while (!AGING_ShouldClose) {
         pthread_mutex_lock(&Aging_mutex);
-        ASSERT_PRINT("Aging deamon kicks in...\n");
-        for (i = 0; i < NumOfPagesInMM; i++) {
-            Aging_Registers[i] >>= 1;
-            if (IPT[i] != NULL && IPT[i]->referenceBit == TRUE)
-                Aging_Registers[i] |= m;
-            if(IPT[i]!=NULL)
-                IPT_UpdateReferencetyBit(IPT[i]->frame,FALSE);
+        if (IPT != NULL) {
+            ASSERT_PRINT("Aging deamon kicks in...\n");
+            for (i = 0; i < NumOfPagesInMM; i++) {
+                Aging_Registers[i] >>= 1;
+                if (IPT[i] != NULL && IPT[i]->referenceBit == TRUE)
+                    Aging_Registers[i] |= m;
+                if (IPT[i] != NULL)
+                    IPT_UpdateReferencetyBit(IPT[i]->frame, FALSE);
+            }
         }
         ASSERT_PRINT("Aging deamon finished...\n");
         pthread_mutex_unlock(&MM_Counter_Mutex);
