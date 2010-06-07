@@ -32,7 +32,7 @@ void MM_MemoryReference()
 {
     ASSERT_PRINT("Entering: MM_MemoryReference()\n");
     pthread_mutex_lock(&MM_Counter_Mutex);
-    MM_Access_Counter++;
+    ASSERT_PRINT("=================================Counter Value:%d===============================\n",++MM_Access_Counter);
     if(MM_Access_Counter%ShiftClock==0)
         pthread_mutex_unlock(&Aging_mutex);
     else
