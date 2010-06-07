@@ -17,6 +17,7 @@ void MMU_Close() {
 Page MMU_ReadAddress(MemoryAddress_t address) {
     ASSERT_PRINT("Entering:MMU_ReadAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
     MMFI res;
+
     READERSWRITERS_LockDataRead();
     IPT_t_p addr = HAT_GetEntry(address);
     int hashIndex = HAT_PRIVATE_Hash(address);
@@ -40,6 +41,7 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
 bool MMU_WriteToAddress(MemoryAddress_t address,Page value, int bitsToWrite) {
     ASSERT_PRINT("Entering:MMU_WriteToAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
     MMFI res;
+
     READERSWRITERS_LockDataRead();
     IPT_t_p addr = HAT_GetEntry(address);
     int hashIndex = HAT_PRIVATE_Hash(address);

@@ -34,12 +34,15 @@ void* AGING_Main() {
     unsigned int m = ((unsigned int) - 1 >> 1) + 1; //a number with its msb set to 1
     while (!AGING_ShouldClose) {
         sem_wait(&Aging_mutex);
+        ASSERT_PRINT("Aging deamon kicks in...\n");
         for (i = 0; i < NumOfPagesInMM; i++) {
             Aging_Registers[i] >>= 1;
             if (IPT[i] != NULL && IPT[i]->referenceBit == TRUE)
                 Aging_Registers[i] |= m;
+            if(IPT[i]!=NULL)
+                IPT_UpdateReferencetyBit(IPT[i]->frame,FALSE);
         }
-        sem_post(&Aging_mutex);
+        ASSERT_PRINT("Aging deamon finished...\n");
         sem_post(&MM_Counter_Mutex);
     }
     AGING_DeInit();

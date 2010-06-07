@@ -1,7 +1,4 @@
-
 #include "mm.h"
-#include "aging.h"
-
 bool MM_Init()
 {
     MM = calloc(NumOfPagesInDisk,sizeof(Page));
@@ -38,6 +35,8 @@ void MM_MemoryReference()
     MM_Access_Counter++;
     if(MM_Access_Counter%ShiftClock==0)
         sem_post(&Aging_mutex);
+    else
+        sem_post(&MM_Counter_Mutex);
     //The Aging deamon will unlock the MM_Counter_Mutex, so that we wont have a race issue
     ASSERT_PRINT("Exiting: MM_MemoryReference()\n");
 }

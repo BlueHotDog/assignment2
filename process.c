@@ -3,7 +3,7 @@
 
 void* PROCESS_RUN(void* pcb) {
     PCB_t_p local_pcb = (PCB_t_p) pcb;
-
+    bool close = FALSE;
     while (TRUE) {
         QueueCommand_t_p comm = QUEUES_ReadProcess(local_pcb->processID);
         switch (comm->command) {
@@ -29,6 +29,7 @@ void* PROCESS_RUN(void* pcb) {
                         int ii = 0;
                         int temp = (amount < PageSize) ? amount : PageSize;
                         for (ii; ii < temp; ii++) {
+                            MM_MemoryReference();
                             toPrint[indexInRes] = res[ii];
                             // fprintf(outFile,"%c|", res[ii]);
                             indexInRes++;
@@ -60,46 +61,54 @@ void* PROCESS_RUN(void* pcb) {
                         mem.processID = local_pcb->processID;
                         mem.pageNumber = vAddr + i;
                         int bitsToWrite = ((i + 1) * PageSize < amount) ? PageSize : (amount - ((timesToRun - 1) * PageSize));
+                        free(comm->stringParams);
+                        free(comm->voidParams);
+                        free(comm->params);
+                        free(comm);
                         Page pageToWrite = calloc(bitsToWrite, sizeof (Page));
                         int charIndex = 0;
-                        for (charIndex = 0; charIndex < bitsToWrite; charIndex++)
+                        for (charIndex = 0; charIndex < bitsToWrite; charIndex++) {
+                            MM_MemoryReference();
                             pageToWrite[charIndex] = stringToWtrite[i * PageSize + charIndex];
+                        }
                         MMU_WriteToAddress(mem, pageToWrite, bitsToWrite);
                     }
                 }
                 DISK_PrintContent();
             }
-            break;
+                break;
             case ProcessClose:
             {
                 free(comm->stringParams);
                 free(comm->voidParams);
                 free(comm->params);
                 free(comm);
+                close = TRUE;
                 break;
             }
-            break;
         }
+        if (close)
+            break;
         free(comm->stringParams);
         free(comm->voidParams);
         free(comm->params);
         free(comm);
+
     }
     PROCESS_DeInit(local_pcb->processID);
+    return NULL;
 }
 
 void PROCESS_DeInit(PID id) {
-    ASSERT_PRINT("Entering: PROCESS_DeInit(id:%d)\n",id);
-    int i=0;
+    ASSERT_PRINT("Entering: PROCESS_DeInit(id:%d)\n", id);
+    int i = 0;
     //Cleaning the HAT
-    for(i=0;i<NumOfPagesInMM;i++)
-    {
-        if(HAT[i]!=NULL && HAT[i]->processID==id)
-        {
+    for (i = 0; i < NumOfPagesInMM; i++) {
+        if (HAT[i] != NULL && HAT[i]->processID == id) {
             IPT_t_p temp = HAT[i];
-            if(HAT[i]->prev!=NULL)
+            if (HAT[i]->prev != NULL)
                 HAT[i]->prev = HAT[i]->next;
-            if(HAT[i]->next!=NULL)
+            if (HAT[i]->next != NULL)
                 HAT[i] = HAT[i]->next;
             temp->processID = -1;
             free(temp);
@@ -107,11 +116,9 @@ void PROCESS_DeInit(PID id) {
         }
     }
     //Cleaning the IPT
-    for(i=0;i<NumOfPagesInMM;i++)
-    {
-        if(IPT[i]!=NULL && IPT[i]->processID==id)
-        {
-            if(IPT[i]->prev!=NULL)
+    for (i = 0; i < NumOfPagesInMM; i++) {
+        if (IPT[i] != NULL && IPT[i]->processID == id) {
+            if (IPT[i]->prev != NULL)
                 IPT[i]->prev = IPT[i]->next;
             IPT[i]->processID = -1;
             free(IPT[i]);
@@ -121,7 +128,8 @@ void PROCESS_DeInit(PID id) {
     FREELIST_SetNotTaken(PCBArray[id].start);
     PCB_GetByProcessID(id)->active = FALSE;
     //should remove from memory all info..
-    ASSERT_PRINT("Exiting: PROCESS_DeInit(id:%d)\n",id);
+    ASSERT_PRINT("Exiting: PROCESS_DeInit(id:%d)\n", id);
+    //pthread_exit(NULL);
 }
 
 int PROCESS_CREATE() {
@@ -151,7 +159,7 @@ int PROCESS_CREATE() {
 void PROCESS_STOP() {
     PROCESS_ShouldClose = TRUE;
 }
-*/
+ */
 
 bool PROCESS_Read(PID processID, int vAddr, int amount) {
     int i = vAddr;
