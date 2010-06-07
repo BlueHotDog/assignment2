@@ -11,7 +11,7 @@ bool AGING_Init() {
     int i = 0;
     for (i = 0; i < NumOfPagesInMM; i++)
         Aging_Registers[i] = 0;
-    sem_init(&Aging_mutex, 0, 0);
+    pthread_mutex_init(&Aging_mutex, 0);
     ASSERT_PRINT("Exiting:AGING_Init()\n");
     return TRUE;
 }
@@ -33,7 +33,7 @@ void* AGING_Main() {
     int i = 0;
     unsigned int m = ((unsigned int) - 1 >> 1) + 1; //a number with its msb set to 1
     while (!AGING_ShouldClose) {
-        sem_wait(&Aging_mutex);
+        pthread_mutex_lock(&Aging_mutex);
         ASSERT_PRINT("Aging deamon kicks in...\n");
         for (i = 0; i < NumOfPagesInMM; i++) {
             Aging_Registers[i] >>= 1;
@@ -43,7 +43,7 @@ void* AGING_Main() {
                 IPT_UpdateReferencetyBit(IPT[i]->frame,FALSE);
         }
         ASSERT_PRINT("Aging deamon finished...\n");
-        sem_post(&MM_Counter_Mutex);
+        pthread_mutex_unlock(&MM_Counter_Mutex);
     }
     AGING_DeInit();
     ASSERT_PRINT("Exiting:AGING_Main()\n");

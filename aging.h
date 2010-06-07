@@ -17,7 +17,7 @@
 
 static volatile bool AGING_ShouldClose = FALSE;
 pthread_t Aging;
-sem_t Aging_mutex;
+pthread_mutex_t Aging_mutex;
 
 unsigned int* Aging_Registers;
 
