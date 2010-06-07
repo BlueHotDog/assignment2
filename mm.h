@@ -13,7 +13,7 @@
 #include "aging.h"
 
 static MM_t     MM;
-sem_t           MM_Counter_Mutex;
+pthread_mutex_t MM_Counter_Mutex;
 static int      MM_Access_Counter;
 
 bool MM_Init();
