@@ -4,13 +4,14 @@
 
 bool AGING_Init() {
     ASSERT_PRINT("Entering:AGING_Init()\n");
-    if (pthread_create(&Aging, NULL, AGING_Main, NULL) != 0)
-        return FALSE;
+
     Aging_Registers = calloc(NumOfPagesInMM, sizeof (unsigned int));
     int i = 0;
     for (i = 0; i < NumOfPagesInMM; i++)
         Aging_Registers[i] = 0;
     pthread_mutex_init(&Aging_mutex, 0);
+    if (pthread_create(&Aging, NULL, AGING_Main, NULL) != 0)
+        return FALSE;
     ASSERT_PRINT("Exiting:AGING_Init()\n");
     return TRUE;
 }
