@@ -61,10 +61,6 @@ void* PROCESS_RUN(void* pcb) {
                         mem.processID = local_pcb->processID;
                         mem.pageNumber = vAddr + i;
                         int bitsToWrite = ((i + 1) * PageSize < amount) ? PageSize : (amount - ((timesToRun - 1) * PageSize));
-                        free(comm->stringParams);
-                        free(comm->voidParams);
-                        free(comm->params);
-                        free(comm);
                         Page pageToWrite = calloc(bitsToWrite, sizeof (Page));
                         int charIndex = 0;
                         for (charIndex = 0; charIndex < bitsToWrite; charIndex++) {
