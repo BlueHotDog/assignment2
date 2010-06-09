@@ -17,7 +17,7 @@ static volatile bool PROCESS_ShouldClose = FALSE;
 void* PROCESS_RUN(void* pcb);
 int PROCESS_CREATE();
 //void PROCESS_STOP();
-bool PROCESS_Read(PID processID,int vAddr, int amount);
+//bool PROCESS_Read(PID processID,int vAddr, int amount);
 void PROCESS_DeInit(PID id);
 #endif	/* _PROCESS_H */
 

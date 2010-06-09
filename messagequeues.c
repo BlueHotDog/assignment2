@@ -68,6 +68,7 @@ bool QUEUES_Init() {
     }
     for (i = 0; i < MaxNumOfProcesses; i++) {
         ProcessQueues[i] = malloc(sizeof (Queue_t));
+        ProcessQueues[i]->head = NULL;
         if (ProcessQueues[i] == 0) {
             ASSERT_PRINT("Error While creating ProcessQueues[%d]\n", i);
             return FALSE;
@@ -75,7 +76,6 @@ bool QUEUES_Init() {
     }
 
     PRMQueue = malloc(sizeof (Queue_t));
-
     if ((PRMQueue) == 0) {
         ASSERT_PRINT("Error While creating MMUQueue or PRMQueue\n");
         return FALSE;
@@ -92,10 +92,10 @@ bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) //non blocki
     sem_wait(&PROCESSES_empty[processID]); // decrement the empty semaphore
     sem_wait(&PROCESSES_mutex[0][processID]); // enter critical section
     QueueItem_t_p lastItem = QUEUES_GetLastItem(ProcessQueues[processID]);
-    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
+    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t));
 
     toInsert->command = command;
-    toInsert->next = NULL;
+    toInsert->next = 0;
     if (lastItem != NULL)
         lastItem->next = toInsert;
     else
@@ -109,7 +109,7 @@ bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
     sem_wait(&PRM_empty); // decrement the empty semaphore
     sem_wait(&PRM_mutex); // enter critical section
     QueueItem_t_p lastItem = QUEUES_GetLastItem(PRMQueue);
-    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t_p));
+    QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t));
     //sleep(1);
     toInsert->command = command;
     toInsert->next = NULL;
@@ -120,6 +120,8 @@ bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
     sem_post(&PRM_mutex); // leave critical section
     sem_post(&PRM_full); // increment the full semaphore
     WAIT_FOR_PRM(command->params[1]);
+    free(toInsert->command->params);
+    free(toInsert->command);
 }
 
 QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
@@ -147,4 +149,27 @@ QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
     sem_post(&PRM_mutex); // leave critical section
     sem_post(&PRM_empty); // increment the empty semaphore
     return ans; // consume the item
+}
+
+void QUEUES_DeInitPRM()
+{
+
+}
+void QUEUES_DeInitProcess(PID processID)
+{
+    while(ProcessQueues[processID]->head!=NULL)
+    {
+        QueueItem_t_p item = ProcessQueues[processID]->head;
+        ProcessQueues[processID]->head = ProcessQueues[processID]->head->next;
+        free(item);
+    }
+    free(ProcessQueues[processID]);
+}
+void QUEUES_DeInitMMU()
+{
+
+}
+void QUEUES_DeInit()
+{
+    
 }

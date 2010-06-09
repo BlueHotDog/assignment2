@@ -45,7 +45,7 @@ void* PROCESS_RUN(void* pcb) {
                     fclose(toWrite);
                 }
 
-                DISK_PrintContent();
+                ASSERT(DISK_PrintContent());
             }
                 break;
             case ProcessWriteToAddress:
@@ -70,14 +70,17 @@ void* PROCESS_RUN(void* pcb) {
                         MMU_WriteToAddress(mem, pageToWrite, bitsToWrite);
                     }
                 }
-                DISK_PrintContent();
+                ASSERT(DISK_PrintContent());
             }
                 break;
             case ProcessClose:
             {
-                free(comm->stringParams);
-                free(comm->voidParams);
-                free(comm->params);
+                if (comm->stringParamsAmount > 0)
+                    free(comm->stringParams);
+                if (comm->voidParamsAmount > 0)
+                    free(comm->voidParams);
+                if (comm->paramsAmount > 0)
+                    free(comm->params);
                 free(comm);
                 close = TRUE;
                 break;
@@ -85,9 +88,12 @@ void* PROCESS_RUN(void* pcb) {
         }
         if (close)
             break;
-        free(comm->stringParams);
-        free(comm->voidParams);
-        free(comm->params);
+        if (comm->stringParamsAmount > 0)
+            free(comm->stringParams);
+        if (comm->voidParamsAmount > 0)
+            free(comm->voidParams);
+        if (comm->paramsAmount > 0)
+            free(comm->params);
         free(comm);
 
     }
@@ -98,6 +104,7 @@ void PROCESS_DeInit(PID id) {
     ASSERT_PRINT("Entering: PROCESS_DeInit(id:%d)\n", id);
     int i = 0;
     //Cleaning the HAT
+/*
     for (i = 0; i < NumOfPagesInMM; i++) {
         if (HAT[i] != NULL && HAT[i]->processID == id) {
             IPT_t_p temp = HAT[i];
@@ -110,6 +117,7 @@ void PROCESS_DeInit(PID id) {
             HAT[i] = NULL;
         }
     }
+*/
     //Cleaning the IPT
     for (i = 0; i < NumOfPagesInMM; i++) {
         if (IPT[i] != NULL && IPT[i]->processID == id) {
@@ -156,9 +164,11 @@ void PROCESS_STOP() {
 }
  */
 
+/*
 bool PROCESS_Read(PID processID, int vAddr, int amount) {
     int i = vAddr;
     for (i; i < (vAddr + amount); i++) {
 
     }
 }
+*/

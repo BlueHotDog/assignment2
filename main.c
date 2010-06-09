@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
     void* status;
     inFile = stdin;
     outFile = stdout;
-#ifdef DEBUG
+#ifndef DEBUG
     readConfigFromFile("config");
     printConfigInfo();
 #else
@@ -134,6 +134,7 @@ int main(int argc, char** argv) {
 #endif
     init();
     pthread_join(UI_Thread, status);
-
+    FREELIST_DeAllocate();
+    free(PRMQueue);
     return (EXIT_SUCCESS);
 }

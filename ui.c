@@ -125,10 +125,14 @@ void UI_HandleDelProcess(PID processID)
         comm->voidParams[0] = outFile;
         comm->voidParamsAmount = 1;
     }
+    else
+    {
+        comm->voidParamsAmount = 0;
+    }
+    comm->stringParamsAmount = 0;
     comm->paramsAmount = 0;
     QUEUES_WriteToProcess(processID, comm);
     pthread_join(PCB_GetByProcessID(processID)->processThread,NULL);
-    printf("aaa");
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
 }
 void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
@@ -150,6 +154,11 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
         comm->voidParams[0] = outFile;
         comm->voidParamsAmount = 1;
     }
+    else
+    {
+        comm->voidParamsAmount = 0;
+    }
+    comm->stringParamsAmount = 0;
     comm->paramsAmount = 2;
     QUEUES_WriteToProcess(processID, comm);
     ASSERT_PRINT("Exiting: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);

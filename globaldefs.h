@@ -21,7 +21,7 @@ typedef char* string;
 
 
 //=========================Debugging functions===============================
-#define DEBUG
+//#define DEBUG
 
 //DEBUGGING
 #define __ASSERT_VOID_CAST (void)

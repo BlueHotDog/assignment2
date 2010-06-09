@@ -46,5 +46,10 @@ QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue);
 
 void QUEUES_PrintCommand(QueueCommand_t_p command);
 
+void QUEUES_DeInitPRM();
+void QUEUES_DeInitProcess(PID processID);
+void QUEUES_DeInitMMU();
+void QUEUES_DeInit();
+
 #endif	/* _MESSAGEQUEUES_H */
 
