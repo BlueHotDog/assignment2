@@ -204,7 +204,8 @@ void IPT_UpdateReferencetyBit(MMFI frame, bool referenceBit)
     int lineIndex = -1;
     if(IPT_FindLineByFrame(frame,&lineIndex) == FALSE)
         ASSERT(1==2);
-    IPT[lineIndex]->referenceBit = referenceBit;
+    if(lineIndex != -1) //if printMM than it is possible to access empty IPT ref.
+        IPT[lineIndex]->referenceBit = referenceBit;
 }
 
 bool IPT_Replace(

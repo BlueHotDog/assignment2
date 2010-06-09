@@ -87,7 +87,15 @@ void* PRM_Main() {
 
 MMFI PRM_FindOldestPage()
 {
-    return 0;
+    MMFI oldestIndex = 0;
+    unsigned int smallest = Aging_Registers[0];
+    int i=0;
+    for(i=0; i<NumOfPagesInMM; i++)
+    {
+        if(Aging_Registers[i] < smallest)
+            oldestIndex = i;
+    }
+    return oldestIndex;
 }
 
 bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine)
