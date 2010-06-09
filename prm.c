@@ -38,6 +38,7 @@ void* PRM_Main() {
                     {
                         ASSERT(1==2);
                     }
+                    Aging_Registers[oldFrame] = 0;
                     PRM_ReplaceMMFrameWithDiskFrame(diskIndex, IPT[line]);
                     MemoryAddress_t mem;
                     mem.processID = process;
@@ -87,8 +88,8 @@ MMFI PRM_FindOldestPage()
 {
     MMFI oldestIndex = 0;
     unsigned int smallest = Aging_Registers[0];
-    int i=0;
-    for(i=0; i<NumOfPagesInMM; i++)
+    int i=1;
+    for(i=1; i<NumOfPagesInMM; i++)
     {
         if(Aging_Registers[i] < smallest)
         {
@@ -96,6 +97,7 @@ MMFI PRM_FindOldestPage()
             smallest = Aging_Registers[i];
         }
     }
+    printf("oldest index: %d\n",oldestIndex);
     return oldestIndex;
 }
 

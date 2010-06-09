@@ -91,6 +91,8 @@ void UI_ParseCommand(const string * const comm) {
         free(file);
     } else if (strcmp(*comm, "printMM") == 0) {
         UI_HandlePrintMM();
+    } else if (strcmp(*comm, "printReg") == 0) {
+        UI_HandlePrintRegisters();
     }
 }
 
@@ -290,4 +292,20 @@ void UI_HandlePrintMM() {
         fprintf(outFile, "\n");
     }
     ASSERT_PRINT("Exiting: UI_HanldePrintMM()\n");
+}
+
+void UI_HandlePrintRegisters()
+{
+    int i=0;
+    int j=0;
+    for(j;j<NumOfPagesInMM; j++)
+    {
+        printf("%u) ",j);
+        for (i=31; i>=0; i--)
+        {
+            int bit = ((Aging_Registers[j] >> i) & 1);
+            printf("%d",bit);
+        }
+        printf("\t%d\n",Aging_Registers[j]);
+    }
 }

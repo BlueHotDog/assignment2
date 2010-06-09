@@ -39,7 +39,9 @@ void* AGING_Main() {
             for (i = 0; i < NumOfPagesInMM; i++) {
                 Aging_Registers[i] >>= 1;
                 if (IPT[i] != NULL && IPT[i]->referenceBit == TRUE)
-                    Aging_Registers[i] |= m;
+                {
+                    Aging_Registers[IPT[i]->frame] |= m;
+                }
                 if (IPT[i] != NULL)
                     IPT_UpdateReferencetyBit(IPT[i]->frame, FALSE);
             }

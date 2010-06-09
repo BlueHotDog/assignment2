@@ -173,6 +173,7 @@ bool IPT_FindEmptyFrame(OUT MMFI* frame)
         return FALSE;
     }
     *frame = i;
+    printf("Exiting:IPT_FindEmptyFrame() with return value: TRUE, frame = %d\n",*frame);
     ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: TRUE, frame = %d\n",*frame);
     return TRUE;
 }
