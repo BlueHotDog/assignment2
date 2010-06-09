@@ -93,7 +93,9 @@ MMFI PRM_FindOldestPage()
     for(i=0; i<NumOfPagesInMM; i++)
     {
         if(Aging_Registers[i] < smallest)
+        {
             oldestIndex = i;
+            smallest = Aging_Registers[i];
     }
     return oldestIndex;
 }
