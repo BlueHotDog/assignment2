@@ -46,6 +46,6 @@ void MM_DeInit()
 {
     int i=0;
     for(i;i<NumOfPagesInMM;i++)
-        if(MM[i]!=NULL)
-            free(MM[i]);
+        free(MM[i]);
+    free(MM);
 }

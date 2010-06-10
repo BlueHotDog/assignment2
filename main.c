@@ -113,7 +113,7 @@ void init() {
     ASSERT_PRINT("Init Aging Deamon...\n");
     ReturnVal = AGING_Init();
     ASSERT(ReturnVal != FALSE);
-    
+
     ASSERT_PRINT("Creating UI Thread...\n");
     ReturnVal = UI_CreateUIThread();
     ASSERT(ReturnVal != FALSE);
@@ -136,11 +136,17 @@ int main(int argc, char** argv) {
 #endif
     init();
     pthread_join(UI_Thread, status);
-
+    int i = 0;
+/*
+    for (i; i < MaxNumOfProcesses; i++) {
+        if(PCBArray[i].processThread)
+            pthread_join(PCBArray[i].processThread,NULL);
+    }
+*/
     //closing AGING deamon
     AGING_Close();
     pthread_mutex_unlock(&Aging_mutex);
-    pthread_join(Aging,NULL);
+    pthread_join(Aging, NULL);
 
     FREELIST_DeAllocate();
 
@@ -148,11 +154,14 @@ int main(int argc, char** argv) {
     PRM_Close();
     sem_post(&PRM_full); // decrement the full semaphore
     sem_post(&PRM_mutex); // enter critical section
-    pthread_join(PRM,NULL);
-    
+    pthread_join(PRM, NULL);
+
     QUEUES_DeInit();
     MM_DeInit();
     fclose(inFile);
     fclose(outFile);
+
+    DISK_DeInit();
+    MM_DeInit();
     return (EXIT_SUCCESS);
 }

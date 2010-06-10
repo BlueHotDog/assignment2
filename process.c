@@ -83,42 +83,53 @@ void* PROCESS_RUN(void* pcb) {
         }
         if (close)
             break;
-       QUEUES_FreeCommand(comm);
+        QUEUES_FreeCommand(comm);
 
     }
+    //
+    //pthread_mutex_lock(&Aging_mutex);
+    //sem_wait(&PRM_mutex);
+    pthread_mutex_lock(&MM_Counter_Mutex);
     PROCESS_DeInit(local_pcb->processID);
+    pthread_mutex_unlock(&MM_Counter_Mutex);
+    //pthread_mutex_unlock(&Aging_mutex);
+    //sem_post(&PRM_mutex);
+    // // leave critical section
 }
 
 void PROCESS_DeInit(PID id) {
     ASSERT_PRINT("Entering: PROCESS_DeInit(id:%d)\n", id);
+
     int i = 0;
     //Cleaning the HAT
-/*
-    for (i = 0; i < NumOfPagesInMM; i++) {
-        if (HAT[i] != NULL && HAT[i]->processID == id) {
-            IPT_t_p temp = HAT[i];
-            if (HAT[i]->prev != NULL)
-                HAT[i]->prev = HAT[i]->next;
-            if (HAT[i]->next != NULL)
-                HAT[i] = HAT[i]->next;
-            temp->processID = -1;
-            free(temp);
-            HAT[i] = NULL;
+    /*
+        for (i = 0; i < NumOfPagesInMM; i++) {
+            if (HAT[i] != NULL && HAT[i]->processID == id) {
+                IPT_t_p temp = HAT[i];
+                if (HAT[i]->prev != NULL)
+                    HAT[i]->prev = HAT[i]->next;
+                if (HAT[i]->next != NULL)
+                    HAT[i] = HAT[i]->next;
+                temp->processID = -1;
+                free(temp);
+                HAT[i] = NULL;
+            }
         }
-    }
-*/
+     */
     //Cleaning the IPT
     for (i = 0; i < NumOfPagesInMM; i++) {
         if (IPT[i] != NULL && IPT[i]->processID == id) {
             if (IPT[i]->prev != NULL)
                 IPT[i]->prev = IPT[i]->next;
             IPT[i]->processID = -1;
-            free(IPT[i]);
+            IPT[i] = NULL;
+            //free(IPT[i]);
         }
     }
 
     FREELIST_SetNotTaken(PCBArray[id].start);
     PCB_GetByProcessID(id)->active = FALSE;
+
     //should remove from memory all info..
     ASSERT_PRINT("Exiting: PROCESS_DeInit(id:%d)\n", id);
     //pthread_exit(NULL);
@@ -135,7 +146,14 @@ int PROCESS_CREATE() {
         DISK_AllocateSpace(start, start + NumOfProcessPages);
         int id = PCB_GetFreeProcessID();
         if (id == -1) {
-            DISK_DeAllocateSpace(start, start + NumOfProcessPages);
+            int i = start;
+            for (i; i < start + NumOfProcessPages; i++) {
+                if (FreeList[i].isFree == TRUE) {
+                    fprintf(outFile, "Error allocating space for process\n");
+                }
+            }
+            FREELIST_SetNotTaken(start);
+            //DISK_DeAllocateSpace(start, start + NumOfProcessPages);
             fprintf(outFile, "Error, unable to find free process id...\n");
             break;
         }
@@ -160,4 +178,4 @@ bool PROCESS_Read(PID processID, int vAddr, int amount) {
 
     }
 }
-*/
+ */

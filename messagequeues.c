@@ -1,5 +1,6 @@
 #include "messagequeues.h"
 #include "pcb.h"
+#include "prm.h"
 
 QueueItem_t_p QUEUES_GetLastItem(Queue_t_p queue) {
     //ASSERT_PRINT("Entering:QUEUES_GetLastItem\n");
@@ -146,14 +147,16 @@ QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
 QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
 {
     //printf("reading PRM...\n");
-    QueueCommand_t_p ans;
+    QueueCommand_t_p ans = 0;
     sem_wait(&PRM_full); // decrement the full semaphore
     sem_wait(&PRM_mutex); // enter critical section
-    QueueItem_t_p pointer = PRMQueue->head;
-    PRMQueue->head = pointer->next;
-    ans = pointer->command;
-    free(pointer);
-    ASSERT(ans != 0);
+    if (PRMQueue != NULL && PRMQueue->head != NULL) {
+        QueueItem_t_p pointer = PRMQueue->head;
+        PRMQueue->head = pointer->next;
+        ans = pointer->command;
+        free(pointer);
+        ASSERT(ans != 0);
+    }
     sem_post(&PRM_mutex); // leave critical section
     sem_post(&PRM_empty); // increment the empty semaphore
     return ans; // consume the item
@@ -191,23 +194,22 @@ void QUEUES_DeInitProcess(PID processID) {
 }
 
 void QUEUES_DeInitMMU() {
-/*
-    while (MMUQueue->head != NULL) {
-        QueueItem_t_p item = MMUQueue->head;
-        MMUQueue->head = MMUQueue->head->next;
-        QUEUES_FreeCommand(item->command);
-        free(item);
-    }
-    free(MMUQueue);
-*/
+    /*
+        while (MMUQueue->head != NULL) {
+            QueueItem_t_p item = MMUQueue->head;
+            MMUQueue->head = MMUQueue->head->next;
+            QUEUES_FreeCommand(item->command);
+            free(item);
+        }
+        free(MMUQueue);
+     */
 }
 
 void QUEUES_DeInit() {
 
     //QUEUES_DeInitMMU();
-    int i=0;
-    for(i=0;i<MaxNumOfProcesses;i++)
-    {
+    int i = 0;
+    for (i = 0; i < MaxNumOfProcesses; i++) {
         QUEUES_DeInitProcess(i);
         DONE_WITH_PRM(i);
     }

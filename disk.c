@@ -17,7 +17,7 @@ bool DISK_Init() {
             Disk[i][j] = 48 + (((i + 1) * j) % 42);
         }
 
-    DISK_PrintContent();
+    ASSERT(DISK_PrintContent());
     if (Disk == NULL)
         return FALSE;
     return TRUE;
@@ -81,4 +81,10 @@ bool DISK_WritePage(Page data, int pageNum) {
     for(i; i<PageSize; i++)
         Disk[pageNum][i] = data[i];
     ASSERT_PRINT("Exiting:DISK_WritePage(pageNum:%d)\n", pageNum);
+}
+
+void DISK_DeInit()
+{
+    DISK_DeAllocateSpace(0,NumOfPagesInDisk);
+    free(Disk);
 }
