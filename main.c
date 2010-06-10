@@ -135,6 +135,7 @@ int main(int argc, char** argv) {
     init();
     pthread_join(UI_Thread, status);
     AGING_Close();
+    pthread_mutex_unlock(&Aging_mutex);
     pthread_join(Aging,NULL);
     FREELIST_DeAllocate();
     QUEUES_DeInit();

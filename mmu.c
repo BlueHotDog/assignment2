@@ -1,6 +1,5 @@
 #include "mmu.h"
 
-
 bool MMU_Init() {
     ASSERT_PRINT("Entering:MMU_Create()\n");
 
@@ -29,6 +28,8 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
         comm->params[0] = address.pageNumber;
         comm->params[1] = address.processID;
         comm->paramsAmount = 2;
+        comm->stringParamsAmount = 0;
+        comm->voidParamsAmount = 0;
 
         QUEUES_WriteToPRM(comm);
     }
@@ -38,7 +39,7 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
     ASSERT_PRINT("Exiting:MMU_ReadAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
 }
 
-bool MMU_WriteToAddress(MemoryAddress_t address,Page value, int bitsToWrite) {
+bool MMU_WriteToAddress(MemoryAddress_t address, Page value, int bitsToWrite) {
     ASSERT_PRINT("Entering:MMU_WriteToAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
     MMFI res;
 
@@ -53,10 +54,11 @@ bool MMU_WriteToAddress(MemoryAddress_t address,Page value, int bitsToWrite) {
         comm->params[0] = address.pageNumber;
         comm->params[1] = address.processID;
         comm->paramsAmount = 2;
-
+        comm->stringParamsAmount = 0;
+        comm->voidParamsAmount = 0;
         QUEUES_WriteToPRM(comm);
     }
-    MM_WritePage(value,res, bitsToWrite, 1);
+    MM_WritePage(value, res, bitsToWrite, 1);
     READERSWRITERS_UnlockDataRead();
     return TRUE;
     ASSERT_PRINT("Exiting:MMU_WriteToAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
