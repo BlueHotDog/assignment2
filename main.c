@@ -19,6 +19,7 @@
 #include "mm.h"
 #include "readerswriters.h"
 #include "aging.h"
+#include "prm.h"
 
 void readConfigFromFile(string fileName) {
     const int lineLength = 100;
@@ -125,6 +126,7 @@ int main(int argc, char** argv) {
 #ifndef DEBUG
     readConfigFromFile("config");
     printConfigInfo();
+    UI_HandleBatchFile("batch");
 #else
     if (argc != 2) {
         printUsage();
@@ -134,11 +136,23 @@ int main(int argc, char** argv) {
 #endif
     init();
     pthread_join(UI_Thread, status);
+
+    //closing AGING deamon
     AGING_Close();
     pthread_mutex_unlock(&Aging_mutex);
     pthread_join(Aging,NULL);
+
     FREELIST_DeAllocate();
+
+    //closing PRM
+    PRM_Close();
+    sem_post(&PRM_full); // decrement the full semaphore
+    sem_post(&PRM_mutex); // enter critical section
+    pthread_join(PRM,NULL);
+    
     QUEUES_DeInit();
     MM_DeInit();
+    fclose(inFile);
+    fclose(outFile);
     return (EXIT_SUCCESS);
 }

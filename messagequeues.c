@@ -107,9 +107,11 @@ bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) //non blocki
 
 bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
 {
+    //printf("writing to PRM...\n");
     sem_wait(&PRM_empty); // decrement the empty semaphore
     sem_wait(&PRM_mutex); // enter critical section
     QueueItem_t_p lastItem = QUEUES_GetLastItem(PRMQueue);
+
     QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t));
     //sleep(1);
     toInsert->command = command;
@@ -118,9 +120,12 @@ bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking
         lastItem->next = toInsert;
     else
         PRMQueue->head = toInsert;
+    int id = command->params[1]; //solves race
     sem_post(&PRM_mutex); // leave critical section
     sem_post(&PRM_full); // increment the full semaphore
-    WAIT_FOR_PRM(command->params[1]);
+
+    WAIT_FOR_PRM(id);
+
     //QUEUES_FreeCommand(toInsert->command);
 }
 
@@ -140,6 +145,7 @@ QueueCommand_t_p QUEUES_ReadProcess(PID processID) //blocking if no messages
 
 QueueCommand_t_p QUEUES_ReadPRM() //blocking if no messages
 {
+    //printf("reading PRM...\n");
     QueueCommand_t_p ans;
     sem_wait(&PRM_full); // decrement the full semaphore
     sem_wait(&PRM_mutex); // enter critical section
@@ -170,6 +176,7 @@ void QUEUES_FreeCommand(QueueCommand_t_p comm) {
         free(comm->voidParams);
     if (comm->paramsAmount > 0)
         free(comm->params);
+    //printf("freeing command\n");
     free(comm);
 }
 
@@ -196,13 +203,15 @@ void QUEUES_DeInitMMU() {
 }
 
 void QUEUES_DeInit() {
-    QUEUES_DeInitPRM();
+
     //QUEUES_DeInitMMU();
     int i=0;
     for(i=0;i<MaxNumOfProcesses;i++)
     {
         QUEUES_DeInitProcess(i);
+        DONE_WITH_PRM(i);
     }
+    QUEUES_DeInitPRM();
     free(ProcessQueues);
     free(PROCESSES_mutex[1]);
     free(PROCESSES_mutex[0]);

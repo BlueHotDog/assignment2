@@ -146,9 +146,9 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
 
     comm->command = ProcessReadAddress;
     comm->params = calloc(2, sizeof (int));
-
     comm->params[0] = addr.pageNumber;
     comm->params[1] = amount;
+
     if (outFile != stdout) {
         comm->voidParams = calloc(1, sizeof (void*));
         comm->voidParams[0] = outFile;
@@ -160,6 +160,8 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
     }
     comm->stringParamsAmount = 0;
     comm->paramsAmount = 2;
+
+    //printf("sending command...\n");
     QUEUES_WriteToProcess(processID, comm);
     ASSERT_PRINT("Exiting: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
 }

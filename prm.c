@@ -46,12 +46,12 @@ void* PRM_Main() {
                     if(!IPT_Remove(HATPointedIndex,IPT[line]->processID,IPT[line]->pageNumber))
                     {
                         ASSERT(1==2);
-                        return;
+                        exit(-1);
                     }
                     if(!IPT_Add(HATPointedIndex,process,pageNumber,oldFrame))
                     {
                         ASSERT(1==2);
-                        return;
+                        exit(-1);
                     }
 
                 }
@@ -64,6 +64,7 @@ void* PRM_Main() {
                     if((frame = IPT_FindEmptyFrame())==-1)//find empty spot in the MM using the IPT
                     {
                         ASSERT(1==2);
+                        exit(-1);
                     }
                     MemoryAddress_t mem;
                     mem.pageNumber = pageNumber;
@@ -75,10 +76,12 @@ void* PRM_Main() {
                     DISK_ReadPage(disk_index, &page);
                     MM_WritePage(page,frame, PageSize, 0);
                 }
-                DONE_WITH_PRM(command->params[1]);
+                
             }
             break;
         }
+        DONE_WITH_PRM(command->params[1]);
+        QUEUES_FreeCommand(command);
     }
     ASSERT_PRINT("Exiting:PRM_Main()\n");
 }

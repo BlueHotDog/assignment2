@@ -22,6 +22,7 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
     int hashIndex = HAT_PRIVATE_Hash(address);
     while (IPT_FindFrame(hashIndex, address.processID, address.pageNumber, &res) == FALSE) {
         ASSERT_PRINT("segmentation fault...\n");
+
         QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
         comm->command = PRMSegmentationFault;
         comm->params = calloc(2, sizeof (int));

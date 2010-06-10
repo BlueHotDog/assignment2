@@ -2,15 +2,12 @@ c
 c
 c
 c
-c
-c
-c
-c
 loopRead 0 0 1 60
 loopRead 0 1 1 60
 loopRead 0 2 1 60
 loopRead 0 3 1 60
-loopRead 0 4 1 60
-loopRead 0 5 1 60
-loopRead 0 6 1 60
-
+delProcess 0
+delProcess 1
+delProcess 2
+delProcess 3
+exit
