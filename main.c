@@ -119,7 +119,7 @@ void init() {
 }
 
 int main(int argc, char** argv) {
-    void* status;
+    void* status = NULL;
     inFile = stdin;
     outFile = stdout;
 #ifndef DEBUG
@@ -134,7 +134,10 @@ int main(int argc, char** argv) {
 #endif
     init();
     pthread_join(UI_Thread, status);
+    AGING_Close();
+    pthread_join(Aging,NULL);
     FREELIST_DeAllocate();
-    free(PRMQueue);
+    QUEUES_DeInit();
+    MM_DeInit();
     return (EXIT_SUCCESS);
 }

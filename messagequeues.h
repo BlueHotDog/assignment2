@@ -50,6 +50,6 @@ void QUEUES_DeInitPRM();
 void QUEUES_DeInitProcess(PID processID);
 void QUEUES_DeInitMMU();
 void QUEUES_DeInit();
-
+void QUEUES_FreeCommand(QueueCommand_t_p comm);
 #endif	/* _MESSAGEQUEUES_H */
 

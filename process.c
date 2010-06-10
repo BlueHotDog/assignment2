@@ -41,6 +41,7 @@ void* PROCESS_RUN(void* pcb) {
                 }
                 toPrint[indexInRes] = 0;
                 fprintf(toWrite, "%s\n", toPrint);
+                free(toPrint);
                 if (comm->voidParamsAmount == 1) {
                     fclose(toWrite);
                 }
@@ -75,26 +76,14 @@ void* PROCESS_RUN(void* pcb) {
                 break;
             case ProcessClose:
             {
-                if (comm->stringParamsAmount > 0)
-                    free(comm->stringParams);
-                if (comm->voidParamsAmount > 0)
-                    free(comm->voidParams);
-                if (comm->paramsAmount > 0)
-                    free(comm->params);
-                free(comm);
+                QUEUES_FreeCommand(comm);
                 close = TRUE;
                 break;
             }
         }
         if (close)
             break;
-        if (comm->stringParamsAmount > 0)
-            free(comm->stringParams);
-        if (comm->voidParamsAmount > 0)
-            free(comm->voidParams);
-        if (comm->paramsAmount > 0)
-            free(comm->params);
-        free(comm);
+       QUEUES_FreeCommand(comm);
 
     }
     PROCESS_DeInit(local_pcb->processID);

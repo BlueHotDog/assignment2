@@ -25,6 +25,7 @@ void MM_WritePage(Page data,int pageNum, int bitsToWrite, int dirtyBit)
         MM[pageNum][i] = data[i];
     IPT_UpdateDirtyBit(pageNum, dirtyBit);
     IPT_UpdateReferencetyBit(pageNum, 1);
+    free(data);
     ASSERT_PRINT("Exiting: MM_WritePage(pageNum:%d)\n",pageNum);
 }
 
@@ -39,4 +40,12 @@ void MM_MemoryReference()
         pthread_mutex_unlock(&MM_Counter_Mutex);
     //The Aging deamon will unlock the MM_Counter_Mutex, so that we wont have a race issue
     ASSERT_PRINT("Exiting: MM_MemoryReference()\n");
+}
+
+void MM_DeInit()
+{
+    int i=0;
+    for(i;i<NumOfPagesInMM;i++)
+        if(MM[i]!=NULL)
+            free(MM[i]);
 }

@@ -151,7 +151,7 @@ bool IPT_Remove(
     return TRUE;
 }
 
-bool IPT_FindEmptyFrame(OUT MMFI* frame)
+int IPT_FindEmptyFrame()
 {
     ASSERT_PRINT("Entering:IPT_FindEmptyFrame()\n");
     int i=0;
@@ -170,11 +170,12 @@ bool IPT_FindEmptyFrame(OUT MMFI* frame)
     if (i>=SIZE_OF_IPT)
     {
         ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: FALSE\n");
-        return FALSE;
+        return -1;
     }
-    *frame = i;
-    ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: TRUE, frame = %d\n",*frame);
-    return TRUE;
+    //*frame = i; //WTF?!
+    free(frameArry);
+    ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: TRUE, frame = %d\n",i);
+    return i;
 }
 
 bool IPT_FindLineByFrame(MMFI frame, OUT int *line)

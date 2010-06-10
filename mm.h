@@ -22,5 +22,7 @@ Page MM_ReadPage(int pageNum);
 void MM_WritePage(Page data,int pageNum, int bitsToWrite, int dirtyBit);
 void MM_MemoryReference();
 
+void MM_DeInit();
+
 #endif	/* _MM_H */
 

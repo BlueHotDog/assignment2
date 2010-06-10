@@ -67,7 +67,7 @@ bool IPT_Remove(
  * and searching for an empty spot.
  * return false if there is no empty spot.
  * */
-bool IPT_FindEmptyFrame(OUT MMFI* frame);
+int IPT_FindEmptyFrame();
 
 /*
  * search the IPT for entry with frame value equal to given frame.

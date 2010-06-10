@@ -61,7 +61,7 @@ void* PRM_Main() {
                     LPN pageNumber = command->params[0];
                     int disk_index = PCBArray[process].start + pageNumber;
                     MMFI frame = -1;
-                    if(!IPT_FindEmptyFrame(&frame))//find empty spot in the MM using the IPT
+                    if((frame = IPT_FindEmptyFrame())==-1)//find empty spot in the MM using the IPT
                     {
                         ASSERT(1==2);
                     }
