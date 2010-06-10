@@ -61,7 +61,7 @@ void* PROCESS_RUN(void* pcb) {
                         MemoryAddress_t mem;
                         mem.processID = local_pcb->processID;
                         mem.pageNumber = vAddr + i;
-                        int bitsToWrite = ((i + 1) * PageSize < amount) ? PageSize : (amount - ((timesToRun - 1) * PageSize));
+                        int bitsToWrite = ((i + 1) * PageSize < amount) ? PageSize : (amount - ((timesToRun - 1) * PageSize)); //maybe the leak is from here!?
                         Page pageToWrite = calloc(bitsToWrite, sizeof (Page));
                         int charIndex = 0;
                         for (charIndex = 0; charIndex < bitsToWrite; charIndex++) {
@@ -122,8 +122,8 @@ void PROCESS_DeInit(PID id) {
             if (IPT[i]->prev != NULL)
                 IPT[i]->prev = IPT[i]->next;
             IPT[i]->processID = -1;
-            IPT[i] = NULL;
             //free(IPT[i]);
+            //IPT[i] = NULL;
         }
     }
 

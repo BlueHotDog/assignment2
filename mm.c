@@ -19,7 +19,10 @@ void MM_WritePage(Page data,int pageNum, int bitsToWrite, int dirtyBit)
 {
     ASSERT_PRINT("Entering: MM_WritePage(pageNum:%d)\n",pageNum);
     if(MM[pageNum] == NULL)
+    {
         MM[pageNum] = calloc(PageSize,sizeof(char));
+        memset(MM[pageNum],0,sizeof(MM[pageNum]));
+    }
     int i=0;
     for(i=0; i<bitsToWrite; i++)
         MM[pageNum][i] = data[i];

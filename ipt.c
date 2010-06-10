@@ -16,24 +16,24 @@ bool IPT_Init()
     return TRUE;
 }
 
-bool IPT_CreateIPT_t_p(
+IPT_t_p IPT_CreateIPT_t_p(
         PID processID,
         LPN pageNumber,
-        MMFI frame,
-        OUT IPT_t_p *newIPTLine)
+        MMFI frame)
 {
     ASSERT_PRINT("Entering:IPT_CreateIPT_t_p()\n");
-    if (!(*newIPTLine = malloc(sizeof (IPT_t))))
+    IPT_t_p newIPTLine;
+    if (!(newIPTLine = malloc(sizeof (IPT_t))))
         return FALSE;
 
-    (*newIPTLine)->dirtyBit = 0;
-    (*newIPTLine)->frame = frame;
-    (*newIPTLine)->next = NULL;
-    (*newIPTLine)->pageNumber = pageNumber;
-    (*newIPTLine)->processID = processID;
-    (*newIPTLine)->referenceBit = 0;
+    (newIPTLine)->dirtyBit = 0;
+    (newIPTLine)->frame = frame;
+    (newIPTLine)->next = NULL;
+    (newIPTLine)->pageNumber = pageNumber;
+    (newIPTLine)->processID = processID;
+    (newIPTLine)->referenceBit = 0;
     ASSERT_PRINT("Exiting:IPT_CreateIPT_t_p()\n");
-    return TRUE;
+    return newIPTLine;
 }
 
 bool IPT_Add(
@@ -44,7 +44,7 @@ bool IPT_Add(
 {
     ASSERT_PRINT("Entering:IPT_Add()\n");
     IPT_t_p newIPTLine;
-    IPT_CreateIPT_t_p(processID, pageNumber, frame, &newIPTLine);
+    newIPTLine = IPT_CreateIPT_t_p(processID, pageNumber, frame);
     IPT_t_p pointer = IPT[HATPointedIndex];
     if (pointer == NULL) //the field was never invoked. 
     {
@@ -170,7 +170,7 @@ int IPT_FindEmptyFrame()
     if (i>=SIZE_OF_IPT)
     {
         ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: FALSE\n");
-        return -1;
+        i=-1;
     }
     //*frame = i; //WTF?!
     free(frameArry);
@@ -222,12 +222,14 @@ bool IPT_Replace(
     if(!IPT_FindIPTLine(0,outProcessID,outPageNumber, &line))
         return FALSE;
 
+/* YANIV.. why do you do this? i couldnt understand...
     IPT_t_p newIPTLine;
     if(IPT_CreateIPT_t_p(inProcessID,inPageNumber,inFrame,&newIPTLine))
     {
         ASSERT_PRINT("Exiting:IPT_Replace() - Cannot allocate memory for IPT line\n");
         return FALSE;
     }
+*/
     IPT_t_p lineToDelete = IPT[line];
     IPT[line] = NULL;
     MemoryAddress_t mem;

@@ -24,11 +24,10 @@ bool IPT_Init();
  * return false if allocation failed.
  * the returned value is at newIPTLine, not allocated by the calling method.
  * */
-bool IPT_CreateIPT_t_p(
+IPT_t_p IPT_CreateIPT_t_p(
             PID processID,
             LPN pageNumber,
-            MMFI frame, 
-            OUT IPT_t_p *newIPTLine);
+            MMFI frame);
 
 /*
  * update prev and next of newIPTLine and add to IPT table.

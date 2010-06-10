@@ -162,6 +162,12 @@ int main(int argc, char** argv) {
     fclose(outFile);
 
     DISK_DeInit();
-    MM_DeInit();
+    PCB_Free();
+    for (i = 0; i < NumOfPagesInMM; i++) {
+        //if(IPT[i]!=NULL)
+            free(IPT[i]);
+    }
+    free(IPT);
+    free(HAT);
     return (EXIT_SUCCESS);
 }
