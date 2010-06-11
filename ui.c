@@ -20,6 +20,7 @@ void* UI_Main() {
 
 void UI_ParseCommand(const string * const comm) {
     ASSERT_PRINT("Entering: UI_ParseCommand(%s)\n", *comm);
+    printf("Command:%s\n",*comm);
     if (strcmp(*comm, "createProcess") == 0 || strcmp(*comm, "c") == 0) {
         UI_HandleCreateProcess();
     } else if (strcmp(*comm, "read") == 0 || strcmp(*comm, "r") == 0) {
@@ -68,13 +69,13 @@ void UI_ParseCommand(const string * const comm) {
         char c;
         int offset = -1;
         int amount = -1;
-        fscanf(inFile, "%d %d %c %d %d", &vAddr, &id,&c,&offset,&amount);
-        UI_HandleLoopWrite(vAddr,id,c,offset,amount);
+        fscanf(inFile, "%d %d %c %d %d", &vAddr, &id, &c, &offset, &amount);
+        UI_HandleLoopWrite(vAddr, id, c, offset, amount);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
-    } else if (strcmp(*comm,"delProcess")==0) { //void UI_HandleDelProcess(PID processID);
+    } else if (strcmp(*comm, "delProcess") == 0) { //void UI_HandleDelProcess(PID processID);
         int id = -1;
-        fscanf(inFile,"%d",&id);
+        fscanf(inFile, "%d", &id);
         UI_HandleDelProcess(id);
     } else if (strcmp(*comm, "printHat") == 0) {
         UI_HandlePrintHat();
@@ -91,8 +92,10 @@ void UI_ParseCommand(const string * const comm) {
         free(file);
     } else if (strcmp(*comm, "printMM") == 0) {
         UI_HandlePrintMM();
-    } else if(strcmp(*comm,"hitRate")==0) {
+    } else if (strcmp(*comm, "hitRate") == 0) {
         UI_HandleHitRate();
+    } else if (strcmp(*comm, "printRegisters") == 0) {
+        UI_HandlePrintRegisters();
     }
 }
 
@@ -116,9 +119,9 @@ void UI_HandleCreateProcess() {
         fprintf(outFile, "Error creating process\n");
 
 }
-void UI_HandleDelProcess(PID processID)
-{
-    ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n",processID);
+
+void UI_HandleDelProcess(PID processID) {
+    ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
 
     QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
     comm->command = ProcessClose;
@@ -126,17 +129,16 @@ void UI_HandleDelProcess(PID processID)
         comm->voidParams = calloc(1, sizeof (void*));
         comm->voidParams[0] = outFile;
         comm->voidParamsAmount = 1;
-    }
-    else
-    {
+    } else {
         comm->voidParamsAmount = 0;
     }
     comm->stringParamsAmount = 0;
     comm->paramsAmount = 0;
     QUEUES_WriteToProcess(processID, comm);
-    pthread_join(PCB_GetByProcessID(processID)->processThread,NULL);
+    pthread_join(PCB_GetByProcessID(processID)->processThread, NULL);
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
 }
+
 void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
     ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
 
@@ -155,9 +157,7 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
         comm->voidParams = calloc(1, sizeof (void*));
         comm->voidParams[0] = outFile;
         comm->voidParamsAmount = 1;
-    }
-    else
-    {
+    } else {
         comm->voidParamsAmount = 0;
     }
     comm->stringParamsAmount = 0;
@@ -211,9 +211,9 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
     comm->stringParams = calloc(1, sizeof (string));
     comm->params[0] = addr.pageNumber;
     comm->params[1] = strlen(s);
-    comm->stringParams[0] = calloc(strlen(s),sizeof(char));
-    int i=0;
-    for(i=0; i<strlen(s);i++)
+    comm->stringParams[0] = calloc(strlen(s), sizeof (char));
+    int i = 0;
+    for (i = 0; i < strlen(s); i++)
         comm->stringParams[0][i] = s[i];
     comm->paramsAmount = 2;
     comm->stringParamsAmount = 1;
@@ -261,20 +261,19 @@ void UI_HandleBatchFile(string filename) {
     ASSERT_PRINT("Exiting: UI_HandleBatchFile(file:%s)\n", filename);
 }
 
-
 void UI_HandlePrintMMUTable() {
     ASSERT_PRINT("Entering: UI_HandleBatchFile()\n");
-    int i=0;
-    for(i=0; i<SIZE_OF_IPT; i++)
-    {
-        if(IPT[i])
-            fprintf(outFile,"%d) (pid=%d, pageNum=%d, dirty bit=%d, aging reference bit=?)\n",i,IPT[i]->processID,IPT[i]->pageNumber, IPT[i]->dirtyBit);
+    int i = 0;
+    for (i = 0; i < SIZE_OF_IPT; i++) {
+        if (IPT[i])
+            fprintf(outFile, "%d) (pid=%d, pageNum=%d, dirty bit=%d, aging reference bit=?)\n", i, IPT[i]->processID, IPT[i]->pageNumber, IPT[i]->dirtyBit);
         else
-            fprintf(outFile,"%d) (free)\n",i);
+            fprintf(outFile, "%d) (free)\n", i);
 
     }
     ASSERT_PRINT("Exiting: UI_HandleBatchFile()\n");
 }
+
 void UI_HandlePrintMM() {
     ASSERT_PRINT("Entering: UI_HanldePrintMM()\n");
     int i = 0;
@@ -296,9 +295,19 @@ void UI_HandlePrintMM() {
     ASSERT_PRINT("Exiting: UI_HanldePrintMM()\n");
 }
 
-void UI_HandleHitRate()
-{
-        ASSERT_PRINT("Entering: UI_HandleHitRate()\n");
-        printf("%f\n",(MM_Access_Counter==0 || MM_Hit_Counter==0)?0:((double)MM_Hit_Counter/(double)MM_Access_Counter));
-        ASSERT_PRINT("Exiting: UI_HandleHitRate()\n");
+void UI_HandleHitRate() {
+    ASSERT_PRINT("Entering: UI_HandleHitRate()\n");
+    printf("%f\n", (MM_Access_Counter == 0 || MM_Hit_Counter == 0) ? 0 : ((double) MM_Hit_Counter / (double) MM_Access_Counter));
+    ASSERT_PRINT("Exiting: UI_HandleHitRate()\n");
+}
+
+void UI_HandlePrintRegisters() {
+    ASSERT_PRINT("Entering: UI_HandlePrintRegisters()\n");
+    //pthread_mutex_lock(&Aging_mutex); //so that the aging algorithm wont kick in
+    int i = 0;
+    for (i; i < NumOfPagesInMM; i++)
+        printf("%x", Aging_Registers[i]);
+    printf("\n");
+    //pthread_mutex_unlock(&Aging_mutex);
+    ASSERT_PRINT("Exiting: UI_HandlePrintRegisters()\n");
 }
