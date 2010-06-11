@@ -56,11 +56,12 @@ void* PROCESS_RUN(void* pcb) {
                 string stringToWtrite = comm->stringParams[0];
                 int timesToRun = (amount / PageSize) + ((amount % PageSize > 0) ? 1 : 0);
                 int i = 0;
+                //FUCK FUCK FUCK! vAddr is not the PAGE number.. its the byte number!!!! fuck!
                 for (i = 0; i < timesToRun; i++) {
-                    if (vAddr + i < NumOfProcessPages) {
+                    if (vAddr + i < NumOfProcessPages*PageSize) {
                         MemoryAddress_t mem;
                         mem.processID = local_pcb->processID;
-                        mem.pageNumber = vAddr + i;
+                        mem.pageNumber = (vAddr + i)/PageSize; // need to fix this.. this should be the actual address!!!!
                         int bitsToWrite = ((i + 1) * PageSize < amount) ? PageSize : (amount - ((timesToRun - 1) * PageSize)); //maybe the leak is from here!?
                         Page pageToWrite = calloc(bitsToWrite, sizeof (Page));
                         int charIndex = 0;

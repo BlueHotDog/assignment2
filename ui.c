@@ -219,7 +219,7 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
     comm->stringParamsAmount = 1;
     comm->voidParamsAmount = 0;
     QUEUES_WriteToProcess(processID, comm);
-
+    printf("OK");
     ASSERT_PRINT("Exiting: UI_HandleWrite(vAddr:%d, processID:%d, content:%s)\n", vAddr, processID, s);
 }
 
