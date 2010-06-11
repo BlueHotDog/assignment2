@@ -299,6 +299,6 @@ void UI_HandlePrintMM() {
 void UI_HandleHitRate()
 {
         ASSERT_PRINT("Entering: UI_HandleHitRate()\n");
-        printf("%f\n",(MM_Access_Counter==0)?0:((double)MM_Hit_Counter/(double)MM_Access_Counter));
+        printf("%f\n",(MM_Access_Counter==0 || MM_Hit_Counter==0)?0:((double)MM_Hit_Counter/(double)MM_Access_Counter));
         ASSERT_PRINT("Exiting: UI_HandleHitRate()\n");
 }

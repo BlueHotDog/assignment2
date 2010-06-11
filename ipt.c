@@ -178,34 +178,32 @@ int IPT_FindEmptyFrame()
     return i;
 }
 
-bool IPT_FindLineByFrame(MMFI frame, OUT int *line)
+int IPT_FindLineByFrame(MMFI frame)
 {
     ASSERT_PRINT("Entering:IPT_FindLineByFrame()\n");
     int i=0;
-    for (i;i<SIZE_OF_IPT; i++)
+    int line = -1;
+    for (i;i<SIZE_OF_IPT && line==-1; i++)
         if(IPT[i] != NULL && IPT[i]->frame == frame)
         {
-            *line = i;
+            line = i;
             ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: TRUE, line = %d\n",*line);
-            return TRUE;
         }
     ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: FALSE\n");
-    return TRUE;
+    return line;
 }
 
 void IPT_UpdateDirtyBit(MMFI frame, bool dirtyBit)
 {
     int lineIndex = -1;
-    if(IPT_FindLineByFrame(frame,&lineIndex) == FALSE)
-        ASSERT(1==2);
+    lineIndex = IPT_FindLineByFrame(frame);
     IPT[lineIndex]->dirtyBit = dirtyBit;
 }
 
 void IPT_UpdateReferencetyBit(MMFI frame, bool referenceBit)
 {
     int lineIndex = -1;
-    if(IPT_FindLineByFrame(frame,&lineIndex) == FALSE)
-        ASSERT(1==2);
+    lineIndex = IPT_FindLineByFrame(frame);
     if(lineIndex != -1) //if printMM than it is possible to access empty IPT ref.
         IPT[lineIndex]->referenceBit = referenceBit;
 }

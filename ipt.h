@@ -73,9 +73,8 @@ int IPT_FindEmptyFrame();
  * return true if found such entry
  * return false oherwize.
  * */
-bool IPT_FindLineByFrame(
-        MMFI frame,
-        OUT int *line);
+int IPT_FindLineByFrame(
+        MMFI frame);
 
 /*
  * search the IPT for line folding outProcessID and outPageNumber,
