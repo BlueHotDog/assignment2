@@ -91,6 +91,8 @@ void UI_ParseCommand(const string * const comm) {
         free(file);
     } else if (strcmp(*comm, "printMM") == 0) {
         UI_HandlePrintMM();
+    } else if(strcmp(*comm,"hitRate")==0) {
+        UI_HandleHitRate();
     }
 }
 
@@ -215,7 +217,7 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
         comm->stringParams[0][i] = s[i];
     comm->paramsAmount = 2;
     comm->stringParamsAmount = 1;
-
+    comm->voidParamsAmount = 0;
     QUEUES_WriteToProcess(processID, comm);
 
     ASSERT_PRINT("Exiting: UI_HandleWrite(vAddr:%d, processID:%d, content:%s)\n", vAddr, processID, s);
@@ -292,4 +294,11 @@ void UI_HandlePrintMM() {
         fprintf(outFile, "\n");
     }
     ASSERT_PRINT("Exiting: UI_HanldePrintMM()\n");
+}
+
+void UI_HandleHitRate()
+{
+        ASSERT_PRINT("Entering: UI_HandleHitRate()\n");
+        printf("%f\n",(MM_Access_Counter==0)?0:((double)MM_Hit_Counter/(double)MM_Access_Counter));
+        ASSERT_PRINT("Exiting: UI_HandleHitRate()\n");
 }

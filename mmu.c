@@ -20,9 +20,10 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
     READERSWRITERS_LockDataRead();
     IPT_t_p addr = HAT_GetEntry(address);
     int hashIndex = HAT_PRIVATE_Hash(address);
+    bool wasInLoop = FALSE;
     while (IPT_FindFrame(hashIndex, address.processID, address.pageNumber, &res) == FALSE) {
         ASSERT_PRINT("segmentation fault...\n");
-
+        wasInLoop = TRUE;
         QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
         comm->command = PRMSegmentationFault;
         comm->params = calloc(2, sizeof (int));
@@ -34,6 +35,8 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
 
         QUEUES_WriteToPRM(comm);
     }
+    if (!wasInLoop)
+        MM_Hit();
     Page toReturn = MM_ReadPage(res); //May be an error here, need some mutex to protect agains RACE conditions..
     READERSWRITERS_UnlockDataRead();
     return toReturn;
@@ -47,8 +50,10 @@ bool MMU_WriteToAddress(MemoryAddress_t address, Page value, int bitsToWrite) {
     READERSWRITERS_LockDataRead();
     IPT_t_p addr = HAT_GetEntry(address);
     int hashIndex = HAT_PRIVATE_Hash(address);
+    bool wasInLoop = FALSE;
     while (IPT_FindFrame(hashIndex, address.processID, address.pageNumber, &res) == FALSE) {
         ASSERT_PRINT("segmentation fault...\n");
+        wasInLoop = TRUE;
         QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
         comm->command = PRMSegmentationFault;
         comm->params = calloc(2, sizeof (int));
@@ -59,6 +64,8 @@ bool MMU_WriteToAddress(MemoryAddress_t address, Page value, int bitsToWrite) {
         comm->voidParamsAmount = 0;
         QUEUES_WriteToPRM(comm);
     }
+    if (!wasInLoop)
+        MM_Hit();
     MM_WritePage(value, res, bitsToWrite, 1);
     READERSWRITERS_UnlockDataRead();
     return TRUE;

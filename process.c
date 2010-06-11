@@ -65,6 +65,7 @@ void* PROCESS_RUN(void* pcb) {
                         Page pageToWrite = calloc(bitsToWrite, sizeof (Page));
                         int charIndex = 0;
                         for (charIndex = 0; charIndex < bitsToWrite; charIndex++) {
+                            
                             MM_MemoryReference();
                             pageToWrite[charIndex] = stringToWtrite[i * PageSize + charIndex];
                         }
