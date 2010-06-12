@@ -13,7 +13,7 @@ void MMU_Close() {
     ASSERT_PRINT("Exiting:MMU_Close()\n");
 }
 
-Page MMU_ReadAddress(MemoryAddress_t address) {
+char MMU_ReadAddress(MemoryAddress_t address, int bitIndex) {
     ASSERT_PRINT("Entering:MMU_ReadAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
     MMFI res;
 
@@ -39,7 +39,7 @@ Page MMU_ReadAddress(MemoryAddress_t address) {
         MM_Hit();
     Page toReturn = MM_ReadPage(res); //May be an error here, need some mutex to protect agains RACE conditions..
     READERSWRITERS_UnlockDataRead();
-    return toReturn;
+    return toReturn[bitIndex % PageSize];
     ASSERT_PRINT("Exiting:MMU_ReadAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
 }
 

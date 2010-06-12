@@ -23,7 +23,7 @@ pthread_t MMU;
 bool MMU_Init();
 void MMU_Close();
 
-Page MMU_ReadAddress(MemoryAddress_t address);
+char MMU_ReadAddress(MemoryAddress_t address, int bitIndex);
 bool MMU_WriteToAddress(MemoryAddress_t address,Page value, int bitsToWrite, int startingFrom);
 
 
