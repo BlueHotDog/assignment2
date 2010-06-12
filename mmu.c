@@ -45,7 +45,7 @@ char MMU_ReadAddress(MemoryAddress_t address, int bitIndex) {
 
 bool MMU_WriteToAddress(MemoryAddress_t address, Page value, int bitsToWrite, int startingFrom) {
     ASSERT_PRINT("Entering:MMU_WriteToAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
-    MMFI res;
+    MMFI res = -1;
 
     READERSWRITERS_LockDataRead();
     IPT_t_p addr = HAT_GetEntry(address);
