@@ -3,5 +3,5 @@ createProcess
 write 0 0 ab 
 read 0 0 2 
 delProcess 0 
-delProcess 1 
+delProcess 1
 exit
