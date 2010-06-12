@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
     int i = 0;
 
     for (i; i < MaxNumOfProcesses; i++) {
-        if(PCBArray[i].active)
+        if(PCBArray[i].processThread)
             pthread_join(PCBArray[i].processThread,NULL);
     }
 
@@ -167,7 +167,6 @@ int main(int argc, char** argv) {
         //if(IPT[i]!=NULL)
             free(IPT[i]);
     }
-
     free(IPT);
     free(HAT);
     return (EXIT_SUCCESS);

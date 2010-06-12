@@ -14,9 +14,6 @@
 
 static Disk_t Disk;
 
-//pthread_mutex_t DISK_Lock;
-
-
 //initializes the disk data-type
 //return true on success, false otherwise
 bool DISK_Init();

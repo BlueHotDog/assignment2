@@ -67,7 +67,6 @@ void* PRM_Main() {
                         Page page = calloc(PageSize, sizeof (char));
                         DISK_ReadPage(disk_index, &page);
                         MM_WritePage(page, frame, PageSize, 0, 0);
-                        free(page);
                     }
 
                 }
