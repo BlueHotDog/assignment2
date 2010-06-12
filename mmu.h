@@ -24,7 +24,7 @@ bool MMU_Init();
 void MMU_Close();
 
 Page MMU_ReadAddress(MemoryAddress_t address);
-bool MMU_WriteToAddress(MemoryAddress_t address,Page value, int bitsToWrite);
+bool MMU_WriteToAddress(MemoryAddress_t address,Page value, int bitsToWrite, int startingFrom);
 
 
 #endif	/* _MMU_H */

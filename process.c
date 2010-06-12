@@ -54,23 +54,33 @@ void* PROCESS_RUN(void* pcb) {
                 int vAddr = comm->params[0];
                 int amount = comm->params[1];
                 string stringToWtrite = comm->stringParams[0];
-                int timesToRun = (amount / PageSize) + ((amount % PageSize > 0) ? 1 : 0);
+                int startPageNum = vAddr / PageSize;
+                int offsetFromBeginingOfPage = vAddr % PageSize;
+                int timesToRun = ((offsetFromBeginingOfPage + amount) / PageSize) + (((offsetFromBeginingOfPage + amount) % PageSize > 0) ? 1 : 0);
                 int i = 0;
                 //FUCK FUCK FUCK! vAddr is not the PAGE number.. its the byte number!!!! fuck!
                 for (i = 0; i < timesToRun; i++) {
-                    if (vAddr + i < NumOfProcessPages*PageSize) {
+                    if (startPageNum + i < NumOfProcessPages) {
                         MemoryAddress_t mem;
                         mem.processID = local_pcb->processID;
-                        mem.pageNumber = (vAddr + i)/PageSize; // need to fix this.. this should be the actual address!!!!
-                        int bitsToWrite = ((i + 1) * PageSize < amount) ? PageSize : (amount - ((timesToRun - 1) * PageSize)); //maybe the leak is from here!?
+                        mem.pageNumber = startPageNum + i; // need to fix this.. this should be the actual address!!!!
+                        int bitsToWrite = 0;
+                        if((i + 1) * PageSize <= amount)
+                            if(i == 0)
+                                bitsToWrite = (PageSize - offsetFromBeginingOfPage);
+                            else
+                                bitsToWrite = PageSize;
+                        else
+                            bitsToWrite = (amount - ((timesToRun - 1) * PageSize)); //maybe the leak is from here!?
                         Page pageToWrite = calloc(bitsToWrite, sizeof (Page));
+                        int startingFrom = (vAddr > startPageNum)? offsetFromBeginingOfPage : 0;
                         int charIndex = 0;
-                        for (charIndex = 0; charIndex < bitsToWrite; charIndex++) {
+                        for (charIndex; charIndex < bitsToWrite; charIndex++) {
                             
                             MM_MemoryReference();
-                            pageToWrite[charIndex] = stringToWtrite[i * PageSize + charIndex];
+                            pageToWrite[startingFrom+charIndex] = stringToWtrite[i * PageSize + charIndex];
                         }
-                        MMU_WriteToAddress(mem, pageToWrite, bitsToWrite);
+                        MMU_WriteToAddress(mem, pageToWrite, bitsToWrite, startingFrom);
                     }
                 }
                 ASSERT(DISK_PrintContent());

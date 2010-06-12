@@ -17,7 +17,7 @@ Page MM_ReadPage(int pageNum)
     IPT_UpdateReferencetyBit(pageNum, 1);
     return MM[pageNum];
 }
-void MM_WritePage(Page data,int pageNum, int bitsToWrite, int dirtyBit)
+void MM_WritePage(Page data,int pageNum, int bitsToWrite, int startingFrom, int dirtyBit)
 {
     ASSERT_PRINT("Entering: MM_WritePage(pageNum:%d)\n",pageNum);
     if(MM[pageNum] == NULL)
@@ -26,8 +26,9 @@ void MM_WritePage(Page data,int pageNum, int bitsToWrite, int dirtyBit)
         //memset(MM[pageNum],0,sizeof(MM[pageNum]));
     }
     int i=0;
-    for(i=0; i<bitsToWrite; i++)
+    for(i=startingFrom; i<startingFrom+bitsToWrite; i++)
         MM[pageNum][i] = data[i];
+    printf("%c\n\n",data[i]);
     IPT_UpdateDirtyBit(pageNum, dirtyBit);
     IPT_UpdateReferencetyBit(pageNum, 1);
     free(data);

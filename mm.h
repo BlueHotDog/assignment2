@@ -21,7 +21,7 @@ static int      MM_Hit_Counter;
 bool MM_Init();
 
 Page MM_ReadPage(int pageNum);
-void MM_WritePage(Page data,int pageNum, int bitsToWrite, int dirtyBit);
+void MM_WritePage(Page data,int pageNum, int bitsToWrite, int startingFrom, int dirtyBit);
 void MM_MemoryReference();
 void MM_Hit();
 //void MM_Miss();

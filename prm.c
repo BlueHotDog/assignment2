@@ -66,7 +66,7 @@ void* PRM_Main() {
 
                         Page page = calloc(PageSize, sizeof (char));
                         DISK_ReadPage(disk_index, &page);
-                        MM_WritePage(page, frame, PageSize, 0);
+                        MM_WritePage(page, frame, PageSize, 0, 0);
                     }
 
                 }
@@ -110,7 +110,7 @@ bool PRM_ReplaceMMFrameWithDiskFrame(DPI diskPageIndex, IPT_t_p IPTOldFrameLine)
 
     Page page = calloc(PageSize, sizeof (char));
     DISK_ReadPage(diskPageIndex, &page);
-    MM_WritePage(page, oldFramePage, PageSize, 0);
+    MM_WritePage(page, oldFramePage, PageSize, 0, 0);
     ASSERT_PRINT("Exiting:IPT_Replace() with return value: TRUE\n");
     return TRUE;
 }
