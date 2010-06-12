@@ -93,6 +93,8 @@ bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) //non blocki
 {
     sem_wait(&PROCESSES_empty[processID]); // decrement the empty semaphore
     sem_wait(&PROCESSES_mutex[0][processID]); // enter critical section
+    if(PCB_GetByProcessID(processID) == NULL)
+        return FALSE;
     QueueItem_t_p lastItem = QUEUES_GetLastItem(ProcessQueues[processID]);
     QueueItem_t_p toInsert = malloc(sizeof (QueueItem_t));
 
@@ -104,6 +106,7 @@ bool QUEUES_WriteToProcess(PID processID, QueueCommand_t_p command) //non blocki
         ProcessQueues[processID]->head = toInsert;
     sem_post(&PROCESSES_mutex[0][processID]); // leave critical section
     sem_post(&PROCESSES_full[processID]); // increment the full semaphore
+    return TRUE;
 }
 
 bool QUEUES_WriteToPRM(QueueCommand_t_p command) //non blocking

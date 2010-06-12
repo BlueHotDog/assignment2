@@ -134,8 +134,8 @@ void UI_HandleDelProcess(PID processID) {
     }
     comm->stringParamsAmount = 0;
     comm->paramsAmount = 0;
-    QUEUES_WriteToProcess(processID, comm);
-    pthread_join(PCB_GetByProcessID(processID)->processThread, NULL);
+    if(QUEUES_WriteToProcess(processID, comm) == TRUE)
+        pthread_join(PCB_GetByProcessID(processID)->processThread, NULL);
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
 }
 
@@ -218,8 +218,8 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
     comm->paramsAmount = 2;
     comm->stringParamsAmount = 1;
     comm->voidParamsAmount = 0;
-    QUEUES_WriteToProcess(processID, comm);
-    printf("OK");
+    if(QUEUES_WriteToProcess(processID, comm) == TRUE);
+        printf("OK");
     ASSERT_PRINT("Exiting: UI_HandleWrite(vAddr:%d, processID:%d, content:%s)\n", vAddr, processID, s);
 }
 

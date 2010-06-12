@@ -59,12 +59,11 @@ void* PROCESS_RUN(void* pcb) {
                 int timesToRun = ((offsetFromBeginingOfPage + amount) / PageSize) + (((offsetFromBeginingOfPage + amount) % PageSize > 0) ? 1 : 0);
                 int i = 0;
                 int stringIndex = 0;
-                //FUCK FUCK FUCK! vAddr is not the PAGE number.. its the byte number!!!! fuck!
                 for (i = 0; i < timesToRun; i++) {
                     if (startPageNum + i < NumOfProcessPages) {
                         MemoryAddress_t mem;
                         mem.processID = local_pcb->processID;
-                        mem.pageNumber = startPageNum + i; // need to fix this.. this should be the actual address!!!!
+                        mem.pageNumber = startPageNum + i; 
                         int bitsToWrite = 0;
                         if((i + 1) * PageSize <= amount)
                             if(i == 0)
