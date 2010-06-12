@@ -11,6 +11,51 @@ void* PROCESS_RUN(void* pcb) {
             {
                 int vAddr = comm->params[0];
                 int amount = comm->params[1];
+                //string stringToWtrite = comm->stringParams[0];
+                int startPageNum = vAddr / PageSize;
+                int offsetFromBeginingOfPage = vAddr % PageSize;
+                int timesToRun = ((offsetFromBeginingOfPage + amount) / PageSize) + (((offsetFromBeginingOfPage + amount) % PageSize > 0) ? 1 : 0);
+                int i = 0;
+                int bitIndex = 0;
+                for (i = 0; i < timesToRun; i++) {
+                    if (startPageNum + i < NumOfProcessPages) {
+                        MemoryAddress_t mem;
+                        mem.processID = local_pcb->processID;
+                        mem.pageNumber = startPageNum + i;
+                        int bitsToRead = 0;
+                        if((i + 1) * PageSize <= amount)
+                            if(i == 0)
+                                bitsToRead = (PageSize - offsetFromBeginingOfPage);
+                            else
+                                bitsToRead = PageSize;
+                        else
+                            bitsToRead = ((amount -(PageSize -offsetFromBeginingOfPage)) - ((timesToRun - 2) * PageSize)); //maybe the leak is from here!?
+                        Page pageToRead = calloc(amount, sizeof (char));
+                        int startingFrom = 0;
+                        if(i==0)
+                            startingFrom = offsetFromBeginingOfPage;
+                        else
+                            startingFrom = 0;
+                        int charIndex = 0;
+                        for (charIndex; charIndex < bitsToRead; charIndex++) {
+
+                            MM_MemoryReference();
+                            pageToRead[startingFrom+charIndex] = MMU_ReadAddress(mem,bitIndex);
+                            bitIndex++;
+                        }
+                        MMU_WriteToAddress(mem, pageToRead, bitsToRead, startingFrom);
+                    }
+                }
+                ASSERT(DISK_PrintContent());
+            }
+                break;
+/*
+            case ProcessReadAddress:
+            {
+                int vAddr = comm->params[0];
+                int amount = comm->params[1];
+                int startPageNum = vAddr / PageSize;
+                int offsetFromBeginingOfPage = vAddr % PageSize;
                 FILE* toWrite = stdout;
                 if (comm->voidParamsAmount == 1) {
                     toWrite = comm->voidParams[0];
@@ -49,6 +94,7 @@ void* PROCESS_RUN(void* pcb) {
                 ASSERT(DISK_PrintContent());
             }
                 break;
+*/
             case ProcessWriteToAddress:
             {
                 int vAddr = comm->params[0];
@@ -72,7 +118,7 @@ void* PROCESS_RUN(void* pcb) {
                                 bitsToWrite = PageSize;
                         else
                             bitsToWrite = ((amount -(PageSize -offsetFromBeginingOfPage)) - ((timesToRun - 2) * PageSize)); //maybe the leak is from here!?
-                        Page pageToWrite = calloc(PageSize, sizeof (Page));
+                        Page pageToWrite = calloc(PageSize, sizeof (char));
                         int startingFrom = 0;
                         if(i==0)
                             startingFrom = offsetFromBeginingOfPage;
