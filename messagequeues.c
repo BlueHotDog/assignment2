@@ -179,8 +179,14 @@ void QUEUES_DeInitPRM() {
 }
 
 void QUEUES_FreeCommand(QueueCommand_t_p comm) {
+    int i=0;
     if (comm->stringParamsAmount > 0)
+    {
+        
+        for(i;i<(comm->stringParamsAmount);i++)
+            free(comm->stringParams[i]);
         free(comm->stringParams);
+    }
     if (comm->voidParamsAmount > 0)
         free(comm->voidParams);
     if (comm->paramsAmount > 0)

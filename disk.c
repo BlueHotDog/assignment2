@@ -12,10 +12,12 @@ bool DISK_Init() {
         Disk[i] = calloc(PageSize, sizeof (char));
 
 
+/*
     for (i = 0; i < NumOfPagesInDisk; i++)
         for (j = 0; j < PageSize; j++) {
             Disk[i][j] = 48 + (((i + 1) * j) % 42);
         }
+*/
 
     ASSERT(DISK_PrintContent());
     if (Disk == NULL)

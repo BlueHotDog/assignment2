@@ -1,2 +1,5 @@
 createProcess
-
+w 0 0 danni
+r 0 0 5
+delProcess 0
+exit
