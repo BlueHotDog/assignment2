@@ -186,7 +186,7 @@ int IPT_FindLineByFrame(MMFI frame)
     for (i;i<SIZE_OF_IPT && line==-1; i++)
         if(IPT[i] != NULL && IPT[i]->frame == frame)
         {
-            ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: TRUE, line = %d\n",*line);
+            ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: TRUE, line = %d\n",line);
             return i;
         }
     ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: FALSE\n");

@@ -20,7 +20,7 @@ void* UI_Main() {
 
 void UI_ParseCommand(const string * const comm) {
     ASSERT_PRINT("Entering: UI_ParseCommand(%s)\n", *comm);
-    printf("Command:%s\n",*comm);
+    printf("Command:%s\n", *comm);
     if (strcmp(*comm, "createProcess") == 0 || strcmp(*comm, "c") == 0) {
         UI_HandleCreateProcess();
     } else if (strcmp(*comm, "read") == 0 || strcmp(*comm, "r") == 0) {
@@ -60,13 +60,14 @@ void UI_ParseCommand(const string * const comm) {
         int vAddr = -1;
         int id = -1;
         string str = calloc(60, sizeof (char));
+        
         fscanf(inFile, "%d %d %60s", &vAddr, &id, str);
         UI_HandleWrite(vAddr, id, str);
         free(str);
     } else if (strcmp(*comm, "loopWrite") == 0) { //loopWrite vAddr id c off amount
         int vAddr = -1;
         int id = -1;
-        char c;
+        char c = 0;
         int offset = -1;
         int amount = -1;
         fscanf(inFile, "%d %d %c %d %d", &vAddr, &id, &c, &offset, &amount);
@@ -108,6 +109,7 @@ bool UI_CreateUIThread() {
 void UI_SignalUIThreadToStop() {
     ASSERT_PRINT("Entering:UI_SignalUIThreadToStop\n");
     UI_ShouldUIThreadClose = TRUE;
+    ASSERT_PRINT("Exiting:UI_SignalUIThreadToStop\n");
 }
 
 void UI_HandleCreateProcess() {
@@ -134,12 +136,12 @@ void UI_HandleDelProcess(PID processID) {
     }
     comm->stringParamsAmount = 0;
     comm->paramsAmount = 0;
-    if(QUEUES_WriteToProcess(processID, comm) == TRUE)
+    if (QUEUES_WriteToProcess(processID, comm) == TRUE)
         pthread_join(PCB_GetByProcessID(processID)->processThread, NULL);
 
     comm = malloc(sizeof (QueueCommand_t));
     comm->command = PRMDeleteProcessIPT;
-    comm->params = calloc(2,sizeof(int));
+    comm->params = calloc(2, sizeof (int));
     comm->params[0] = -1;
     comm->params[1] = processID;
     comm->paramsAmount = 2;
@@ -218,9 +220,11 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
 
     comm->command = ProcessWriteToAddress;
     comm->params = calloc(2, sizeof (int));
-    comm->stringParams = calloc(1, sizeof (string));
+
     comm->params[0] = addr.pageNumber;
     comm->params[1] = strlen(s);
+
+    comm->stringParams = calloc(1, sizeof (string));
     comm->stringParams[0] = calloc(strlen(s), sizeof (char));
     int i = 0;
     for (i = 0; i < strlen(s); i++)
@@ -228,16 +232,20 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
     comm->paramsAmount = 2;
     comm->stringParamsAmount = 1;
     comm->voidParamsAmount = 0;
-    if(QUEUES_WriteToProcess(processID, comm) == TRUE);
-        printf("OK");
+    if (QUEUES_WriteToProcess(processID, comm) == TRUE);
+    printf("OK");
     ASSERT_PRINT("Exiting: UI_HandleWrite(vAddr:%d, processID:%d, content:%s)\n", vAddr, processID, s);
 }
 
 void UI_HandleLoopWrite(int vAddr, PID processID, char c, int off, unsigned int amount) {
     ASSERT_PRINT("Entering: UI_HandleLoopWrite(vAddr:%d, processID:%d,char:%c,off:%d,amount:%d)\n", vAddr, processID, c, off, amount);
     int i = 0;
+    string temp = calloc(2,sizeof(char));
+    temp[0] = c;
+    temp[1] = 0;
     for (i; i < amount; i++)
-        UI_HandleWrite(vAddr + i * off, processID, &c);
+        UI_HandleWrite(vAddr + i * off, processID, temp);
+    free(temp);
     ASSERT_PRINT("Exiting: UI_HandleLoopWrite(vAddr:%d, processID:%d,char:%c,off:%d,amount:%d)\n", vAddr, processID, c, off, amount);
 }
 
@@ -288,14 +296,14 @@ void UI_HandlePrintMM() {
     ASSERT_PRINT("Entering: UI_HanldePrintMM()\n");
     int i = 0;
     int j = 0;
-    Page* res = calloc(PageSize, sizeof (char));
+    Page res; //= calloc(PageSize, sizeof (char));
     for (i = 0; i < NumOfPagesInMM; i++) {
 
-        *res = MM_ReadPage(i);
+        res = MM_ReadPage(i);
         printf("%d) ", i);
-        if (*res != NULL) {
+        if (res != NULL) {
             for (j = 0; j < PageSize; j++) {
-                fprintf(outFile, "%c|", (*res)[j]);
+                fprintf(outFile, "%c|", (res)[j]);
             }
         } else
             printf("NULL");
