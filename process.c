@@ -16,10 +16,10 @@ void* PROCESS_RUN(void* pcb) {
                 int offsetFromBeginingOfPage = vAddr % PageSize;
                 int timesToRun = ((offsetFromBeginingOfPage + amount) / PageSize) + (((offsetFromBeginingOfPage + amount) % PageSize > 0) ? 1 : 0);
                 int i = 0;
-                int bitIndex = 0;
+                int bitIndex = offsetFromBeginingOfPage;
                 int ansIndex = 0;
                 FILE* toWrite = stdout;
-                Page stringToRead = calloc(amount+1, sizeof (char));
+                char stringToRead[amount+1];
                 for (i = 0; i < timesToRun; i++) {
                     if (startPageNum + i < NumOfProcessPages) {
                         MemoryAddress_t mem;
@@ -50,7 +50,6 @@ void* PROCESS_RUN(void* pcb) {
                 }
                 stringToRead[ansIndex] = 0;
                 fprintf(toWrite, "%s\n", stringToRead);
-                free(stringToRead);
                 if (comm->voidParamsAmount == 1) {
                     fclose(toWrite);
                 }
