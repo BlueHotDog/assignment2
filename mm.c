@@ -31,7 +31,6 @@ void MM_WritePage(Page data,int pageNum, int bitsToWrite, int startingFrom, int 
     }
     IPT_UpdateDirtyBit(pageNum, dirtyBit);
     IPT_UpdateReferencetyBit(pageNum, 1);
-    free(data);
     ASSERT_PRINT("Exiting: MM_WritePage(pageNum:%d)\n",pageNum);
 }
 

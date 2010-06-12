@@ -17,6 +17,9 @@ void* PROCESS_RUN(void* pcb) {
                 int timesToRun = ((offsetFromBeginingOfPage + amount) / PageSize) + (((offsetFromBeginingOfPage + amount) % PageSize > 0) ? 1 : 0);
                 int i = 0;
                 int bitIndex = 0;
+                int ansIndex = 0;
+                FILE* toWrite = stdout;
+                Page stringToRead = calloc(amount+1, sizeof (char));
                 for (i = 0; i < timesToRun; i++) {
                     if (startPageNum + i < NumOfProcessPages) {
                         MemoryAddress_t mem;
@@ -30,7 +33,6 @@ void* PROCESS_RUN(void* pcb) {
                                 bitsToRead = PageSize;
                         else
                             bitsToRead = ((amount -(PageSize -offsetFromBeginingOfPage)) - ((timesToRun - 2) * PageSize)); //maybe the leak is from here!?
-                        Page pageToRead = calloc(amount, sizeof (char));
                         int startingFrom = 0;
                         if(i==0)
                             startingFrom = offsetFromBeginingOfPage;
@@ -40,11 +42,17 @@ void* PROCESS_RUN(void* pcb) {
                         for (charIndex; charIndex < bitsToRead; charIndex++) {
 
                             MM_MemoryReference();
-                            pageToRead[startingFrom+charIndex] = MMU_ReadAddress(mem,bitIndex);
-                            bitIndex++;
+                            stringToRead[ansIndex] = MMU_ReadAddress(mem,bitIndex);
+                            bitIndex = (bitIndex + 1) % PageSize;
+                            ansIndex++;
                         }
-                        MMU_WriteToAddress(mem, pageToRead, bitsToRead, startingFrom);
                     }
+                }
+                stringToRead[ansIndex] = 0;
+                fprintf(toWrite, "%s\n", stringToRead);
+                free(stringToRead);
+                if (comm->voidParamsAmount == 1) {
+                    fclose(toWrite);
                 }
                 ASSERT(DISK_PrintContent());
             }
@@ -75,6 +83,7 @@ void* PROCESS_RUN(void* pcb) {
                         int temp = (amount < PageSize) ? amount : PageSize;
                         for (ii; ii < temp; ii++) {
                             MM_MemoryReference();
+
                             toPrint[indexInRes] = res[ii];
                             // fprintf(outFile,"%c|", res[ii]);
                             indexInRes++;
@@ -118,7 +127,7 @@ void* PROCESS_RUN(void* pcb) {
                                 bitsToWrite = PageSize;
                         else
                             bitsToWrite = ((amount -(PageSize -offsetFromBeginingOfPage)) - ((timesToRun - 2) * PageSize)); //maybe the leak is from here!?
-                        Page pageToWrite = calloc(PageSize, sizeof (char));
+                        char pageToWrite[PageSize];
                         int startingFrom = 0;
                         if(i==0)
                             startingFrom = offsetFromBeginingOfPage;
@@ -184,11 +193,6 @@ void PROCESS_DeInit(PID id) {
         if (IPT[i] != NULL && IPT[i]->processID == id) {
             if (IPT[i]->prev != NULL)
                 IPT[i]->prev = IPT[i]->next;
-            IPT[i]->processID = -1;
-            IPT[i]->frame = -1;
-            IPT[i]->dirtyBit = FALSE;
-            IPT[i]->referenceBit = FALSE;
-            IPT[i]->pageNumber = -1;
             IPT[i] = NULL;
             //free(IPT[i]);
             //IPT[i] = NULL;
@@ -232,6 +236,7 @@ int PROCESS_CREATE() {
     } while (FALSE);
     return -1;
 }
+
 
 /*
 void PROCESS_STOP() {
