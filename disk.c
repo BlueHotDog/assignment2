@@ -12,14 +12,15 @@ bool DISK_Init() {
         Disk[i] = calloc(PageSize, sizeof (char));
 
 
-/*
-    for (i = 0; i < NumOfPagesInDisk; i++)
-        for (j = 0; j < PageSize; j++) {
-            Disk[i][j] = 48 + (((i + 1) * j) % 42);
-        }
-*/
+    //pthread_mutex_init(&DISK_Lock, NULL);
+    /*
+        for (i = 0; i < NumOfPagesInDisk; i++)
+            for (j = 0; j < PageSize; j++) {
+                Disk[i][j] = 48 + (((i + 1) * j) % 42);
+            }
+     */
 
-    ASSERT(DISK_PrintContent());
+    //ASSERT(DISK_PrintContent());
     if (Disk == NULL)
         return FALSE;
     return TRUE;
@@ -28,15 +29,16 @@ bool DISK_Init() {
 void DISK_PrintContent() {
     int i = 0;
     int j = 0;
+    //pthread_mutex_lock(&DISK_Lock);
     ASSERT_PRINT("Disk content:\n");
-    for (i = 0; i < NumOfPagesInDisk; i++)
-    {
+    for (i = 0; i < NumOfPagesInDisk; i++) {
         for (j = 0; j < PageSize; j++)
-            fprintf(outFile,"%c|", Disk[i][j]);
-        fprintf(outFile,"\n");
-        if((i+1)%NumOfProcessPages==0)
-            fprintf(outFile,"\n");
+            fprintf(outFile, "%c|", Disk[i][j]);
+        fprintf(outFile, "\n");
+        if ((i + 1) % NumOfProcessPages == 0)
+            fprintf(outFile, "\n");
     }
+    //pthread_mutex_unlock(&DISK_Lock);
     ASSERT_PRINT("End disk content\n");
 }
 
@@ -45,7 +47,7 @@ bool DISK_AllocateSpace(unsigned int start, unsigned int end) {
     int i = start;
     for (i; i < end; i++) {
         if (FreeList[i].isFree == FALSE) {
-            fprintf(outFile,"Error allocating space for process\n");
+            fprintf(outFile, "Error allocating space for process\n");
             return FALSE;
         }
         //Disk[i] = calloc(PageSize, sizeof (char));
@@ -68,9 +70,11 @@ bool DISK_DeAllocateSpace(unsigned int start, unsigned int end) {
 
 void DISK_ReadPage(int pageNum, OUT Page* pageToReturn) {
     ASSERT_PRINT("Entering:DISK_ReadPage(pageNum:%d)\n", pageNum);
-    int i=0;
-    for(i=0; i<PageSize; i++)
+    //pthread_mutex_lock(&DISK_Lock);
+    int i = 0;
+    for (i = 0; i < PageSize; i++)
         (*pageToReturn)[i] = Disk[pageNum][i];
+    //pthread_mutex_unlock(&DISK_Lock);
     ASSERT_PRINT("Exiting:DISK_ReadPage(pageNum:%d)\n", pageNum);
 }
 
@@ -78,15 +82,17 @@ void DISK_ReadPage(int pageNum, OUT Page* pageToReturn) {
 
 bool DISK_WritePage(Page data, int pageNum) {
     ASSERT_PRINT("Entering:DISK_WritePage(pageNum:%d)\n", pageNum);
+    //pthread_mutex_lock(&DISK_Lock);
     ASSERT(strlen(data) == PageSize);
-    int i=0;
-    for(i; i<PageSize; i++)
+    int i = 0;
+    for (i; i < PageSize; i++)
         Disk[pageNum][i] = data[i];
+    //pthread_mutex_unlock(&DISK_Lock);
     ASSERT_PRINT("Exiting:DISK_WritePage(pageNum:%d)\n", pageNum);
 }
 
-void DISK_DeInit()
-{
-    DISK_DeAllocateSpace(0,NumOfPagesInDisk);
+void DISK_DeInit() {
+    DISK_DeAllocateSpace(0, NumOfPagesInDisk);
     free(Disk);
+    //pthread_mutex_destroy(&DISK_Lock);
 }
