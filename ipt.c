@@ -47,8 +47,8 @@ bool IPT_Add(
     {
         newIPTLine->prev = 0;
         newIPTLine->next = 0;
-        int lineIndex = IPT_FindIndexByPointer(pointer);
-        IPT[lineIndex] = newIPTLine;
+        //int lineIndex = IPT_FindIndexByPointer(pointer);
+        *(IPT_FindEmptyLine()) = newIPTLine;
         HAT[HATPointedIndex] = newIPTLine;
         totalPagesInIPT++;
         return TRUE;
@@ -60,8 +60,8 @@ bool IPT_Add(
         temp = temp->next;
     }
     IPT_t_p* newPointer;
-    if (newPointer = IPT_FindEmptyLine()) {
-        return FALSE;
+    if ((newPointer = IPT_FindEmptyLine())==NULL) {
+        return TRUE;
     } else
         foundFrame = TRUE;
     *newPointer = newIPTLine;
