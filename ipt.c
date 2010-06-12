@@ -145,7 +145,7 @@ bool IPT_Remove(
         son->prev = father;
     }
     IPT[line] = NULL;
-    toDelete = NULL;
+    //toDelete = NULL;
     free(toDelete);
     totalPagesInIPT--;
     ASSERT_PRINT("Exiting:IPT_Remove() with return value: TRUE\n");

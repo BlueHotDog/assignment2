@@ -39,4 +39,5 @@ noMonitor
 createProcess
 write 0 0 geves
 read 0 0 5
+delProcess 0
 exit
