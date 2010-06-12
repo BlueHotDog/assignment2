@@ -189,6 +189,7 @@ void PROCESS_DeInit(PID id) {
             IPT[i]->dirtyBit = FALSE;
             IPT[i]->referenceBit = FALSE;
             IPT[i]->pageNumber = -1;
+            IPT[i] = NULL;
             //free(IPT[i]);
             //IPT[i] = NULL;
         }
