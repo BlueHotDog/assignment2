@@ -45,33 +45,35 @@ bool IPT_Add(
     ASSERT_PRINT("Entering:IPT_Add()\n");
     IPT_t_p newIPTLine;
     newIPTLine = IPT_CreateIPT_t_p(processID, pageNumber, frame);
-    IPT_t_p pointer = IPT[HATPointedIndex];
+    IPT_t_p pointer = HAT[HATPointedIndex];
     if (pointer == NULL) //the field was never invoked. 
     {
         newIPTLine->prev = 0;
         newIPTLine->next = 0;
-        IPT[HATPointedIndex] = newIPTLine;
+        int lineIndex = IPT_FindIndexByPointer(pointer);
+        IPT[lineIndex] = newIPTLine;
         HAT[HATPointedIndex] = newIPTLine;
         totalPagesInIPT++;
         return TRUE;
     }
 
     bool foundFrame = FALSE;
-    int iterations = 0;
-    int temp = HATPointedIndex;
-    while (IPT[temp] != NULL && iterations <= SIZE_OF_IPT) {
-        INDEX_INC(temp);
-        iterations++;
+    IPT_t_p temp = HAT[HATPointedIndex];
+    while (temp != NULL && temp->next != NULL){
+        temp = temp->next;
     }
-    if (iterations > SIZE_OF_IPT) {
+    IPT_t_p* newPointer;
+    if (newPointer = IPT_FindEmptyLine()) {
         return FALSE;
     } else
         foundFrame = TRUE;
-    newIPTLine->next = pointer;
-    pointer->prev = newIPTLine;
-    newIPTLine->prev = 0;
-    IPT[temp] = newIPTLine;
-    HAT[HATPointedIndex] = newIPTLine;
+    *newPointer = newIPTLine;
+
+    newIPTLine->prev = temp;
+    temp->next = newIPTLine;
+    newIPTLine->next = 0;
+    //IPT[temp] = newIPTLine;
+   // HAT[HATPointedIndex] = newIPTLine;
     totalPagesInIPT++;
     ASSERT_PRINT("Exiting:IPT_Add()\n");
     return TRUE;
@@ -179,16 +181,24 @@ int IPT_FindEmptyFrame()
     return i;
 }
 
-IPT_t_p IPT_FindEmptyLine()
+IPT_t_p* IPT_FindEmptyLine()
 {
     ASSERT_PRINT("Entering:IPT_FindEmptyLine()\n");
     int i=0;
     for (i; i<SIZE_OF_IPT; i++)
         if(IPT[i] == NULL)
-            return IPT[i];
+            return &IPT[i];
     ASSERT_PRINT("Exiting:IPT_FindEmptyLine()\n");
     return NULL;
+}
 
+int IPT_FindIndexByPointer(IPT_t_p pointer)
+{
+    int i=0;
+    for(i;i<SIZE_OF_IPT; i++)
+        if (IPT[i] == pointer)
+            return i;
+    return -1;
 }
 
 int IPT_FindLineByFrame(MMFI frame)

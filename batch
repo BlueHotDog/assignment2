@@ -4,25 +4,7 @@ createProcess
 createProcess
 write 0 0 amitgeve
 write 0 1 s!!!!!!!
-delProcess 3
-noMonitor
-createProcess
-printMM
-readToFile 0 0 8 po_output1.txt
-loopReadToFile 0 1 4 2 p1_output1.txt
-loopWrite 0 3 s 1 8
-loopReadToFile 0 3 2 4 p3_output1.txt
-loopWrite 0 2 s 1 8
-loopReadToFile 0 2 2 4 p2_output1.txt
-printMM
-hitRate
-monitor
-write 0 3 gevessss
-printMMUTable
-readToFile 0 3 8 p3_output2.txt
-write 0 0 rrrrrrrr
-write 0 2 rrrrrrrr
-write 0 1 dudi
+read 0 0 8
 delProcess 0
 delProcess 1
 delProcess 2
