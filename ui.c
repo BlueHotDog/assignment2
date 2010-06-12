@@ -143,6 +143,8 @@ void UI_HandleDelProcess(PID processID) {
     comm->params[0] = -1;
     comm->params[1] = processID;
     comm->paramsAmount = 2;
+    comm->stringParamsAmount = 0;
+    comm->voidParamsAmount = 0;
     QUEUES_WriteToPRM(comm);
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
 }

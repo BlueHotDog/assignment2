@@ -1,1 +1,1 @@
-valgrind --track-fds=yes -v --leak-check=full --show-reachable=yes ./dist/Debug/GNU-Linux-x86/assignment2 config
+valgrind --track-fds=yes --leak-check=full --show-reachable=yes ./dist/Debug/GNU-Linux-x86/assignment2 config

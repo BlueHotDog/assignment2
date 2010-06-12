@@ -62,53 +62,6 @@ void* PROCESS_RUN(void* pcb) {
                 //ASSERT(DISK_PrintContent());
             }
                 break;
-/*
-            case ProcessReadAddress:
-            {
-                int vAddr = comm->params[0];
-                int amount = comm->params[1];
-                int startPageNum = vAddr / PageSize;
-                int offsetFromBeginingOfPage = vAddr % PageSize;
-                FILE* toWrite = stdout;
-                if (comm->voidParamsAmount == 1) {
-                    toWrite = comm->voidParams[0];
-                }
-                int timesToRun = (amount / PageSize) + ((amount % PageSize > 0) ? 1 : 0);
-                int i = 0;
-                int indexInRes = 0;
-                string toPrint = calloc(amount + 1, sizeof (char));
-                for (i = 0; i < timesToRun; i++) {
-                    if (vAddr + i < NumOfProcessPages) {
-                        MemoryAddress_t mem;
-                        mem.processID = local_pcb->processID;
-                        mem.pageNumber = vAddr + i;
-
-                        Page res = MMU_ReadAddress(mem);
-                        int ii = 0;
-                        int temp = (amount < PageSize) ? amount : PageSize;
-                        for (ii; ii < temp; ii++) {
-                            MM_MemoryReference();
-
-                            toPrint[indexInRes] = res[ii];
-                            // fprintf(outFile,"%c|", res[ii]);
-                            indexInRes++;
-
-                        }
-                        amount -= PageSize;
-                    }
-
-                }
-                toPrint[indexInRes] = 0;
-                fprintf(toWrite, "%s\n", toPrint);
-                free(toPrint);
-                if (comm->voidParamsAmount == 1) {
-                    fclose(toWrite);
-                }
-
-                ASSERT(DISK_PrintContent());
-            }
-                break;
-*/
             case ProcessWriteToAddress:
             {
                 int vAddr = comm->params[0];
@@ -151,7 +104,6 @@ void* PROCESS_RUN(void* pcb) {
                         MMU_WriteToAddress(mem, pageToWrite, bitsToWrite, startingFrom);
                     }
                 }
-                //ASSERT(DISK_PrintContent());
             }
                 break;
             case ProcessClose:

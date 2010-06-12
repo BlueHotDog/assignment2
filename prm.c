@@ -86,6 +86,14 @@ void* PRM_Main() {
                             totalPagesInIPT--;
                             if (IPT[index]->prev != NULL)
                                 IPT[index]->prev = IPT[index]->next;
+
+                            int ii = 0;
+                            for(ii;ii<NumOfPagesInMM;ii++)
+                            {
+                                if(HAT[ii]!=NULL && HAT[ii]==IPT[index])
+                                   HAT[ii] = NULL;
+                            }
+
                             IPT_t_p temp = IPT[index];
                             IPT[index] = NULL;
                             free(temp);
