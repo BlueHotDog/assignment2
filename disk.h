@@ -27,7 +27,7 @@ void DISK_ReadPage(int pageNum, OUT Page* pageToReturn);
 //Writes the data to the pageNumber returns true if all went well, false otherwise.
 bool DISK_WritePage(Page data,int pageNum);
 void DISK_PrintContent();
-
+void DISK_DeInit();
 
 #endif	/* _DISK_H */
 

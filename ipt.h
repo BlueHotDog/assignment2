@@ -24,11 +24,10 @@ bool IPT_Init();
  * return false if allocation failed.
  * the returned value is at newIPTLine, not allocated by the calling method.
  * */
-bool IPT_CreateIPT_t_p(
+IPT_t_p IPT_CreateIPT_t_p(
             PID processID,
             LPN pageNumber,
-            MMFI frame, 
-            OUT IPT_t_p *newIPTLine);
+            MMFI frame);
 
 /*
  * update prev and next of newIPTLine and add to IPT table.
@@ -67,16 +66,15 @@ bool IPT_Remove(
  * and searching for an empty spot.
  * return false if there is no empty spot.
  * */
-bool IPT_FindEmptyFrame(OUT MMFI* frame);
+int IPT_FindEmptyFrame();
 
 /*
  * search the IPT for entry with frame value equal to given frame.
  * return true if found such entry
  * return false oherwize.
  * */
-bool IPT_FindLineByFrame(
-        MMFI frame,
-        OUT int *line);
+int IPT_FindLineByFrame(
+        MMFI frame);
 
 /*
  * search the IPT for line folding outProcessID and outPageNumber,

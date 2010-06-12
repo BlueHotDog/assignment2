@@ -27,7 +27,7 @@
 #include "mm.h"
 #include "disk.h"
 
-static bool PRM_shouldClose = FALSE;
+static volatile bool PRM_shouldClose = FALSE;
 pthread_t PRM;
 
 bool PRM_Create();

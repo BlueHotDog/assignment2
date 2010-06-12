@@ -19,6 +19,7 @@
 #include "mm.h"
 #include "readerswriters.h"
 #include "aging.h"
+#include "prm.h"
 
 void readConfigFromFile(string fileName) {
     const int lineLength = 100;
@@ -112,19 +113,20 @@ void init() {
     ASSERT_PRINT("Init Aging Deamon...\n");
     ReturnVal = AGING_Init();
     ASSERT(ReturnVal != FALSE);
-    
+
     ASSERT_PRINT("Creating UI Thread...\n");
     ReturnVal = UI_CreateUIThread();
     ASSERT(ReturnVal != FALSE);
 }
 
 int main(int argc, char** argv) {
-    void* status;
+    void* status = NULL;
     inFile = stdin;
     outFile = stdout;
 #ifndef DEBUG
     readConfigFromFile("config");
     printConfigInfo();
+    UI_HandleBatchFile("batch");
 #else
     if (argc != 2) {
         printUsage();
@@ -134,7 +136,38 @@ int main(int argc, char** argv) {
 #endif
     init();
     pthread_join(UI_Thread, status);
+    int i = 0;
+/*
+    for (i; i < MaxNumOfProcesses; i++) {
+        if(PCBArray[i].processThread)
+            pthread_join(PCBArray[i].processThread,NULL);
+    }
+*/
+    //closing AGING deamon
+    AGING_Close();
+    pthread_mutex_unlock(&Aging_mutex);
+    pthread_join(Aging, NULL);
+
     FREELIST_DeAllocate();
-    free(PRMQueue);
+
+    //closing PRM
+    PRM_Close();
+    sem_post(&PRM_full); // decrement the full semaphore
+    sem_post(&PRM_mutex); // enter critical section
+    pthread_join(PRM, NULL);
+
+    QUEUES_DeInit();
+    MM_DeInit();
+    fclose(inFile);
+    fclose(outFile);
+
+    DISK_DeInit();
+    PCB_Free();
+    for (i = 0; i < NumOfPagesInMM; i++) {
+        //if(IPT[i]!=NULL)
+            free(IPT[i]);
+    }
+    free(IPT);
+    free(HAT);
     return (EXIT_SUCCESS);
 }

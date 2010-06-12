@@ -24,7 +24,7 @@ void AGING_Close() {
 
 void AGING_DeInit() {
     ASSERT_PRINT("Entering:AGING_DeInit()\n");
-    //TODO:Add free memory stuff here..
+    free(Aging_Registers);
     ASSERT_PRINT("Exiting:AGING_DeInit()\n");
 }
 
