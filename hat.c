@@ -25,10 +25,10 @@ IPT_t_p HAT_GetEntry(MemoryAddress_t memoryAddress) {
     int index = HAT_PRIVATE_Hash(memoryAddress);
     if(HAT[index]==0)
     {
-        HAT[index] = IPT[index];
+        HAT[index] = IPT_FindEmptyLine();
     }
     ASSERT_PRINT("Exiting:HAT_GetEntry(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
-    return IPT[index];
+    return HAT[index];
 }
 
 void HAT_Print()
