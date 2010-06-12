@@ -39,7 +39,7 @@ void* PRM_Main() {
                         mem.processID = process;
                         mem.pageNumber = pageNumber;
                         int HATPointedIndex = HAT_PRIVATE_Hash(mem);
-                        if (!IPT_Remove(HATPointedIndex, IPT[line]->processID, IPT[line]->pageNumber)) {
+                        if (!IPT_Remove(HATPointedIndex, IPT[line]->processID, IPT[line]->pageNumber,line)) {
                             ASSERT(1 == 2);
                             exit(-1);
                         }

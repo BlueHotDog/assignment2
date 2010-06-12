@@ -59,7 +59,8 @@ bool IPT_FindFrame(
 bool IPT_Remove(
         int HATPointedIndex,
         PID processID,
-        LPN pageNumber);
+        LPN pageNumber,
+        int line);
 
 /*
  * search the ipt for empy frame by going over all frames in the ipt

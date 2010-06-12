@@ -4,7 +4,20 @@ createProcess
 createProcess
 write 0 0 amitgeve
 write 0 1 s!!!!!!!
+delProcess 3
+noMonitor
+createProcess
+printMM
 read 0 0 8
+printMM
+hitRate
+monitor
+write 0 3 gevessss
+printMMUTable
+read 0 3 8
+write 0 0 rrrrrrrr
+write 0 2 rrrrrrrr
+write 0 1 dudi
 delProcess 0
 delProcess 1
 delProcess 2

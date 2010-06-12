@@ -60,7 +60,7 @@ bool IPT_Add(
         temp = temp->next;
     }
     IPT_t_p* newPointer;
-    if ((newPointer = IPT_FindEmptyLine())==NULL) {
+    if ((newPointer = IPT_FindEmptyLine()) == NULL) {
         return TRUE;
     } else
         foundFrame = TRUE;
@@ -84,15 +84,15 @@ IPT_t_p* IPT_FindIPTLine(
     int iterations = 0;
     //IPT_t_p toReturn = NULL;
     IPT_t_p pointer = HAT[HATPointedIndex];
-    while (pointer != 0 && iterations <= SIZE_OF_IPT) {
+    while (pointer != NULL && iterations <= SIZE_OF_IPT) {
         if (pointer->processID == processID && pointer->pageNumber == pageNumber) {
             return &IPT[IPT_FindIndexByPointer(pointer)];
             ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: TRUE\n");
         }
         //INDEX_INC(HATPointedIndex);
         //if (toReturn == NULL) {
-            pointer = pointer->next;
-            iterations++;
+        pointer = pointer->next;
+        iterations++;
         //}
     }
     //the page is not in the IPT, i.e. not in the MM
@@ -110,7 +110,9 @@ bool IPT_FindFrame(
     IPT_t_p* line = 0;
     line = IPT_FindIPTLine(HATPointedIndex, processID, pageNumber);
     if (line != 0) {
-        if(*line) {int i=1;}
+        if (*line) {
+            int i = 1;
+        }
         *frame = (*line)->frame;
         ASSERT_PRINT("Exiting:IPT_FindFrame() with return value: TRUE, frame=%d\n", *frame);
         return TRUE;
@@ -122,26 +124,29 @@ bool IPT_FindFrame(
 bool IPT_Remove(
         int HATPointedIndex,
         PID processID,
-        LPN pageNumber) {
+        LPN pageNumber,
+        int line) {
     ASSERT_PRINT("Entering:IPT_Remove()\n");
-    IPT_t_p* line = NULL;
-    if (line = IPT_FindIPTLine(HATPointedIndex, processID, pageNumber)) {
-        // the entry is not in the IPT.
-        return FALSE;
-    }
 
-    if ((*line)->prev != NULL) {
-        (*line)->prev = (*line)->next;
-        if ((*line)->next != NULL)
-            (*line)->next->prev = (*line)->prev;
+    if ((IPT[line])->prev != NULL) {
+        (IPT[line])->prev = (IPT[line])->next;
+        if ((IPT[line])->next != NULL)
+            (IPT[line])->next->prev = (IPT[line])->prev;
     } else {
-        HAT[HATPointedIndex] = (*line)->next;
+
+        int pid = IPT[line]->processID;
+        int pageNum = IPT[line]->pageNumber;
+        MemoryAddress_t mem;
+        mem.pageNumber = pageNum;
+        mem.processID = pid;
+        //HAT_PRIVATE_Hash(mem);
+        HAT[HAT_PRIVATE_Hash(mem)] = (IPT[line])->next;
     }
-    IPT_t_p* temp = line;
-    *line = NULL;
+    IPT_t_p temp = IPT[line];
+    IPT[line] = NULL;
     //toDelete = NULL;
 
-    free(*temp);
+    free(temp);
     totalPagesInIPT--;
     ASSERT_PRINT("Exiting:IPT_Remove() with return value: TRUE\n");
     return TRUE;
