@@ -77,29 +77,28 @@ bool IPT_Add(
     return TRUE;
 }
 
-bool IPT_FindIPTLine(
+IPT_t_p* IPT_FindIPTLine(
         int HATPointedIndex,
         PID processID,
-        LPN pageNumber,
-        OUT IPT_t_p *IPT_line)
+        LPN pageNumber)
 {
     ASSERT_PRINT("Entering:IPT_FindIPTLine()\n");
     int iterations = 0;
+    IPT_t_p* toReturn = NULL;
     IPT_t_p pointer = HAT[HATPointedIndex];
     while (pointer != 0 && iterations <= SIZE_OF_IPT)
     {
         if (pointer->processID == processID && pointer->pageNumber == pageNumber)
         {
-            *IPT_line = pointer;
+            toReturn = &pointer;
             ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: TRUE\n");
-            return TRUE;
         }
         INDEX_INC(HATPointedIndex);
         iterations++;
     }
     //the page is not in the IPT, i.e. not in the MM
     ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: FALSE\n");
-    return FALSE;
+    return toReturn;
 
 }
 
@@ -110,10 +109,10 @@ bool IPT_FindFrame(
         OUT MMFI *frame)
 {
     ASSERT_PRINT("Entering:IPT_FindFramPRM_ReplaceMMFrameWithDiskFramee()\n");
-    int line = -1;
-    if (IPT_FindIPTLine(HATPointedIndex,processID,pageNumber,&line))
+    IPT_t_p* line = NULL;
+    if (line=IPT_FindIPTLine(HATPointedIndex,processID,pageNumber))
     {
-        *frame = IPT[line]->frame;
+        *frame = (*line)->frame;
         ASSERT_PRINT("Exiting:IPT_FindFrame() with return value: TRUE, frame=%d\n", *frame);
         return TRUE;
     }
@@ -127,28 +126,28 @@ bool IPT_Remove(
         LPN pageNumber)
 {
     ASSERT_PRINT("Entering:IPT_Remove()\n");
-    IPT_t_p line = -1;
-    if (!IPT_FindIPTLine(HATPointedIndex, processID, pageNumber, &line))
+    IPT_t_p* line = NULL;
+    if (line = IPT_FindIPTLine(HATPointedIndex, processID, pageNumber))
     {
         // the entry is not in the IPT.
         return FALSE;
     }
-    IPT_t_p toDelete = line;
-    IPT_t_p father = line->prev;
-    IPT_t_p son = line->next;
-    if (!father)
-        line = son;
-    else if(!son)
-        father->next = NULL;
+
+    if((*line)->prev!=NULL)
+    {
+        (*line)->prev = (*line)->next;
+        if((*line)->next!=NULL)
+            (*line)->next->prev = (*line)->prev;
+    }
     else
     {
-        father->next = son;
-        son->prev = father;
+        HAT[HATPointedIndex] = (*line)->next;
     }
-    &line = NULL;
-    toDelete = NULL;
+    IPT_t_p* temp = line;
+    *line = NULL;
+    //toDelete = NULL;
 
-    free(toDelete);
+    free(*temp);
     totalPagesInIPT--;
     ASSERT_PRINT("Exiting:IPT_Remove() with return value: TRUE\n");
     return TRUE;
@@ -188,7 +187,7 @@ IPT_t_p IPT_FindEmptyLine()
         if(IPT[i] == NULL)
             return IPT[i];
     ASSERT_PRINT("Exiting:IPT_FindEmptyLine()\n");
-    reutrn NULL;
+    return NULL;
 
 }
 
@@ -230,8 +229,8 @@ bool IPT_Replace(
         MMFI inFrame)
 {
     ASSERT_PRINT("Entering:IPT_Replace()\n");
-    int line = 0;
-    if(!IPT_FindIPTLine(0,outProcessID,outPageNumber, &line))
+    IPT_t_p* line = NULL;
+    if(line=IPT_FindIPTLine(0,outProcessID,outPageNumber))
         return FALSE;
 
 /* YANIV.. why do you do this? i couldnt understand...
@@ -242,8 +241,8 @@ bool IPT_Replace(
         return FALSE;
     }
 */
-    IPT_t_p lineToDelete = IPT[line];
-    IPT[line] = NULL;
+    IPT_t_p lineToDelete = *line;
+    *line = NULL;
     MemoryAddress_t mem;
     mem.pageNumber = inPageNumber;
     mem.processID = inProcessID;
