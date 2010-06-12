@@ -139,9 +139,10 @@ void UI_HandleDelProcess(PID processID) {
 
     comm = malloc(sizeof (QueueCommand_t));
     comm->command = PRMDeleteProcessIPT;
-    comm->params = malloc(sizeof(int));
-    comm->params[0] = processID;
-    comm->paramsAmount = 1;
+    comm->params = calloc(2,sizeof(int));
+    comm->params[0] = -1;
+    comm->params[1] = processID;
+    comm->paramsAmount = 2;
     QUEUES_WriteToPRM(comm);
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
 }

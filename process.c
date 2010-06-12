@@ -181,35 +181,8 @@ void PROCESS_DeInit(PID id) {
     ASSERT_PRINT("Entering: PROCESS_DeInit(id:%d)\n", id);
 
     int i = 0;
-    //Cleaning the HAT
-    /*
-        for (i = 0; i < NumOfPagesInMM; i++) {
-            if (HAT[i] != NULL && HAT[i]->processID == id) {
-                IPT_t_p temp = HAT[i];
-                if (HAT[i]->prev != NULL)
-                    HAT[i]->prev = HAT[i]->next;
-                if (HAT[i]->next != NULL)
-                    HAT[i] = HAT[i]->next;
-                temp->processID = -1;
-                free(temp);
-                HAT[i] = NULL;
-            }
-        }
-     */
-    //Cleaning the IPT
-/*
-    for (i = 0; i < NumOfPagesInMM; i++) {
-        if (IPT[i] != NULL && IPT[i]->processID == id) {
-            if (IPT[i]->prev != NULL)
-                IPT[i]->prev = IPT[i]->next;
-            IPT_t_p temp = IPT[i];
-            IPT[i] = NULL;
-            free(temp);
-            //free(IPT[i]);
-            //IPT[i] = NULL;
-        }
-    }
-*/
+
+
 
     FREELIST_SetNotTaken(PCBArray[id].start);
     PCB_GetByProcessID(id)->active = FALSE;

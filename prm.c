@@ -73,10 +73,17 @@ void* PRM_Main() {
                     break;
                 case PRMDeleteProcessIPT:
                 {
-                    int id = command->params[0];
-                    int index=0;
+                    int id = command->params[1];
+                    int index = 0;
+                    pthread_mutex_lock(&MM_Counter_Mutex);
+
                     for (index = 0; index < NumOfPagesInMM; index++) {
                         if (IPT[index] != NULL && IPT[index]->processID == id) {
+                            if(IPT[index]->frame>0)
+                            {
+                                Aging_Registers[IPT[index]->frame]=0;
+                            }
+                            totalPagesInIPT--;
                             if (IPT[index]->prev != NULL)
                                 IPT[index]->prev = IPT[index]->next;
                             IPT_t_p temp = IPT[index];
@@ -84,9 +91,13 @@ void* PRM_Main() {
                             free(temp);
                         }
                     }
+                    pthread_mutex_unlock(&MM_Counter_Mutex);
+
+
                 }
                     break;
             }
+
             DONE_WITH_PRM(command->params[1]);
             QUEUES_FreeCommand(command);
         }
