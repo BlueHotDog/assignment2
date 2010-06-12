@@ -81,15 +81,16 @@ bool IPT_FindIPTLine(
         int HATPointedIndex,
         PID processID,
         LPN pageNumber,
-        OUT int *line)
+        OUT IPT_t_p *IPT_line)
 {
     ASSERT_PRINT("Entering:IPT_FindIPTLine()\n");
     int iterations = 0;
-    while (IPT[HATPointedIndex] != 0 && iterations <= SIZE_OF_IPT)
+    IPT_t_p pointer = HAT[HATPointedIndex];
+    while (pointer != 0 && iterations <= SIZE_OF_IPT)
     {
-        if (IPT[HATPointedIndex]->processID == processID && IPT[HATPointedIndex]->pageNumber == pageNumber)
+        if (pointer->processID == processID && pointer->pageNumber == pageNumber)
         {
-            *line = HATPointedIndex;
+            *IPT_line = pointer;
             ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: TRUE\n");
             return TRUE;
         }
@@ -126,17 +127,17 @@ bool IPT_Remove(
         LPN pageNumber)
 {
     ASSERT_PRINT("Entering:IPT_Remove()\n");
-    int line = -1;
+    IPT_t_p line = -1;
     if (!IPT_FindIPTLine(HATPointedIndex, processID, pageNumber, &line))
     {
         // the entry is not in the IPT.
         return FALSE;
     }
-    IPT_t_p toDelete = IPT[line];
-    IPT_t_p father = IPT[line]->prev;
-    IPT_t_p son = IPT[line]->next;
+    IPT_t_p toDelete = line;
+    IPT_t_p father = line->prev;
+    IPT_t_p son = line->next;
     if (!father)
-        IPT[line] = son;
+        line = son;
     else if(!son)
         father->next = NULL;
     else
@@ -144,8 +145,9 @@ bool IPT_Remove(
         father->next = son;
         son->prev = father;
     }
-    IPT[line] = NULL;
-    //toDelete = NULL;
+    &line = NULL;
+    toDelete = NULL;
+
     free(toDelete);
     totalPagesInIPT--;
     ASSERT_PRINT("Exiting:IPT_Remove() with return value: TRUE\n");
@@ -176,6 +178,18 @@ int IPT_FindEmptyFrame()
     free(frameArry);
     ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: TRUE, frame = %d\n",i);
     return i;
+}
+
+IPT_t_p IPT_FindEmptyLine()
+{
+    ASSERT_PRINT("Entering:IPT_FindEmptyLine()\n");
+    int i=0;
+    for (i; i<SIZE_OF_IPT; i++)
+        if(IPT[i] == NULL)
+            return IPT[i];
+    ASSERT_PRINT("Exiting:IPT_FindEmptyLine()\n");
+    reutrn NULL;
+
 }
 
 int IPT_FindLineByFrame(MMFI frame)

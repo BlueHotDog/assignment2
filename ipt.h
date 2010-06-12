@@ -95,6 +95,13 @@ bool IPT_Replace(
  * */
 void IPT_UpdateDirtyBit(MMFI frame, bool dirtyBit);
 
+IPT_t_p IPT_FindEmptyLine();
+
+bool IPT_FindIPTLine(
+        int HATPointedIndex,
+        PID processID,
+        LPN pageNumber,
+        OUT IPT_t_p *IPT_line);
 /*
  * find line by frame index and update it's reference bit.
  * */
