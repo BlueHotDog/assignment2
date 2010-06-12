@@ -58,6 +58,7 @@ void* PROCESS_RUN(void* pcb) {
                 int offsetFromBeginingOfPage = vAddr % PageSize;
                 int timesToRun = ((offsetFromBeginingOfPage + amount) / PageSize) + (((offsetFromBeginingOfPage + amount) % PageSize > 0) ? 1 : 0);
                 int i = 0;
+                int stringIndex = 0;
                 //FUCK FUCK FUCK! vAddr is not the PAGE number.. its the byte number!!!! fuck!
                 for (i = 0; i < timesToRun; i++) {
                     if (startPageNum + i < NumOfProcessPages) {
@@ -71,14 +72,19 @@ void* PROCESS_RUN(void* pcb) {
                             else
                                 bitsToWrite = PageSize;
                         else
-                            bitsToWrite = (amount - ((timesToRun - 1) * PageSize)); //maybe the leak is from here!?
-                        Page pageToWrite = calloc(bitsToWrite, sizeof (Page));
-                        int startingFrom = (vAddr > startPageNum)? offsetFromBeginingOfPage : 0;
+                            bitsToWrite = ((amount -(PageSize -offsetFromBeginingOfPage)) - ((timesToRun - 2) * PageSize)); //maybe the leak is from here!?
+                        Page pageToWrite = calloc(PageSize, sizeof (Page));
+                        int startingFrom = 0;
+                        if(i==0)
+                            startingFrom = offsetFromBeginingOfPage;
+                        else
+                            startingFrom = 0;
                         int charIndex = 0;
                         for (charIndex; charIndex < bitsToWrite; charIndex++) {
                             
                             MM_MemoryReference();
-                            pageToWrite[startingFrom+charIndex] = stringToWtrite[i * PageSize + charIndex];
+                            pageToWrite[startingFrom+charIndex] = stringToWtrite[stringIndex];
+                            stringIndex++;
                         }
                         MMU_WriteToAddress(mem, pageToWrite, bitsToWrite, startingFrom);
                     }
