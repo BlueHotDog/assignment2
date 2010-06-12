@@ -21,7 +21,7 @@ IPT_t_p IPT_CreateIPT_t_p(
         LPN pageNumber,
         MMFI frame)
 {
-    ASSERT_PRINT("Entering:IPT_CreateIPT_t_p()\n");
+    ASSERT_PRINT("Entering:IPT_CreateIPPRM_ReplaceMMFrameWithDiskFrameT_t_p()\n");
     IPT_t_p newIPTLine;
     if (!(newIPTLine = malloc(sizeof (IPT_t))))
         return FALSE;
@@ -108,7 +108,7 @@ bool IPT_FindFrame(
         LPN pageNumber,
         OUT MMFI *frame)
 {
-    ASSERT_PRINT("Entering:IPT_FindFrame()\n");
+    ASSERT_PRINT("Entering:IPT_FindFramPRM_ReplaceMMFrameWithDiskFramee()\n");
     int line = -1;
     if (IPT_FindIPTLine(HATPointedIndex,processID,pageNumber,&line))
     {
@@ -186,8 +186,8 @@ int IPT_FindLineByFrame(MMFI frame)
     for (i;i<SIZE_OF_IPT && line==-1; i++)
         if(IPT[i] != NULL && IPT[i]->frame == frame)
         {
-            line = i;
             ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: TRUE, line = %d\n",*line);
+            return i;
         }
     ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: FALSE\n");
     return line;
