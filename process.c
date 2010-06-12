@@ -197,6 +197,7 @@ void PROCESS_DeInit(PID id) {
         }
      */
     //Cleaning the IPT
+/*
     for (i = 0; i < NumOfPagesInMM; i++) {
         if (IPT[i] != NULL && IPT[i]->processID == id) {
             if (IPT[i]->prev != NULL)
@@ -208,6 +209,7 @@ void PROCESS_DeInit(PID id) {
             //IPT[i] = NULL;
         }
     }
+*/
 
     FREELIST_SetNotTaken(PCBArray[id].start);
     PCB_GetByProcessID(id)->active = FALSE;
