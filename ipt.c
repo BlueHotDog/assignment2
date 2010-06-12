@@ -161,7 +161,7 @@ int IPT_FindEmptyFrame()
         frameArry[i] = FALSE;
 
     for (i=0;i<SIZE_OF_IPT; i++)
-        if(IPT[i] != NULL)
+        if(IPT[i] != NULL && IPT[i]->frame!=-1)
             frameArry[IPT[i]->frame] = TRUE;
 
     i=0;

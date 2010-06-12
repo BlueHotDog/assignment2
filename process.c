@@ -139,6 +139,10 @@ void PROCESS_DeInit(PID id) {
             if (IPT[i]->prev != NULL)
                 IPT[i]->prev = IPT[i]->next;
             IPT[i]->processID = -1;
+            IPT[i]->frame = -1;
+            IPT[i]->dirtyBit = FALSE;
+            IPT[i]->referenceBit = FALSE;
+            IPT[i]->pageNumber = -1;
             //free(IPT[i]);
             //IPT[i] = NULL;
         }
