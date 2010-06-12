@@ -136,6 +136,12 @@ void UI_HandleDelProcess(PID processID) {
     comm->paramsAmount = 0;
     if(QUEUES_WriteToProcess(processID, comm) == TRUE)
         pthread_join(PCB_GetByProcessID(processID)->processThread, NULL);
+
+    comm = malloc(sizeof (QueueCommand_t));
+    comm->command = PRMDeleteProcessIPT;
+    comm->params = malloc(sizeof(int));
+    comm->paramsAmount = 1;
+    QUEUES_WriteToPRM(comm);
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
 }
 

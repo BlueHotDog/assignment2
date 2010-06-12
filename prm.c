@@ -21,7 +21,7 @@ void* PRM_Main() {
 
         ASSERT_PRINT("PRM trying to read from queue /PRM\n");
         QueueCommand_t_p command = 0;
-        if ((command = QUEUES_ReadPRM())!=0) {
+        if ((command = QUEUES_ReadPRM()) != 0) {
             //QUEUES_PrintCommand(command);
             switch (command->command) {
                 case PRMSegmentationFault: //params[0]=pageNumber, params[1]=ProcessID
@@ -33,7 +33,7 @@ void* PRM_Main() {
                         int diskIndex = PCBArray[process].start + pageNumber;
                         MMFI oldFrame = PRM_FindOldestPage();
                         int line = -1;
-                        line=IPT_FindLineByFrame(oldFrame);
+                        line = IPT_FindLineByFrame(oldFrame);
                         PRM_ReplaceMMFrameWithDiskFrame(diskIndex, IPT[line]);
                         MemoryAddress_t mem;
                         mem.processID = process;
@@ -71,6 +71,21 @@ void* PRM_Main() {
 
                 }
                     break;
+                case PRMDeleteProcessIPT:
+                {
+                    int id = command->params[0];
+                    int index=0;
+                    for (index = 0; index < NumOfPagesInMM; index++) {
+                        if (IPT[index] != NULL && IPT[index]->processID == id) {
+                            if (IPT[index]->prev != NULL)
+                                IPT[index]->prev = IPT[index]->next;
+                            IPT_t_p temp = IPT[index];
+                            IPT[index] = NULL;
+                            free(temp);
+                        }
+                    }
+                }
+                    break;
             }
             DONE_WITH_PRM(command->params[1]);
             QUEUES_FreeCommand(command);
@@ -89,7 +104,7 @@ MMFI PRM_FindOldestPage() {
             smallest = Aging_Registers[i];
         }
     }
-    printf("oldest index: %d\n",oldestIndex);
+    printf("oldest index: %d\n", oldestIndex);
     return oldestIndex;
 }
 
