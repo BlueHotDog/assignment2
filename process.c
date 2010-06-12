@@ -201,7 +201,9 @@ void PROCESS_DeInit(PID id) {
         if (IPT[i] != NULL && IPT[i]->processID == id) {
             if (IPT[i]->prev != NULL)
                 IPT[i]->prev = IPT[i]->next;
+            IPT_t_p temp = IPT[i];
             IPT[i] = NULL;
+            free(temp);
             //free(IPT[i]);
             //IPT[i] = NULL;
         }
