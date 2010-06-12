@@ -19,6 +19,9 @@ void* PROCESS_RUN(void* pcb) {
                 int bitIndex = offsetFromBeginingOfPage;
                 int ansIndex = 0;
                 FILE* toWrite = stdout;
+                if (comm->voidParamsAmount == 1) {
+                    toWrite = comm->voidParams[0];
+                }
                 char stringToRead[amount+1];
                 for (i = 0; i < timesToRun; i++) {
                     if (startPageNum + i < NumOfProcessPages) {
@@ -32,7 +35,10 @@ void* PROCESS_RUN(void* pcb) {
                             else
                                 bitsToRead = PageSize;
                         else
-                            bitsToRead = ((amount -(PageSize -offsetFromBeginingOfPage)) - ((timesToRun - 2) * PageSize)); //maybe the leak is from here!?
+                            if (i==0)
+                                bitsToRead = amount;
+                            else
+                                bitsToRead = vAddr+amount - i*PageSize;
                         int startingFrom = 0;
                         if(i==0)
                             startingFrom = offsetFromBeginingOfPage;
@@ -53,7 +59,7 @@ void* PROCESS_RUN(void* pcb) {
                 if (comm->voidParamsAmount == 1) {
                     fclose(toWrite);
                 }
-                ASSERT(DISK_PrintContent());
+                //ASSERT(DISK_PrintContent());
             }
                 break;
 /*
@@ -125,7 +131,10 @@ void* PROCESS_RUN(void* pcb) {
                             else
                                 bitsToWrite = PageSize;
                         else
-                            bitsToWrite = ((amount -(PageSize -offsetFromBeginingOfPage)) - ((timesToRun - 2) * PageSize)); //maybe the leak is from here!?
+                            if (i==0)
+                                bitsToWrite = amount;
+                            else
+                                bitsToWrite = vAddr+amount - i*PageSize;
                         char pageToWrite[PageSize];
                         int startingFrom = 0;
                         if(i==0)
@@ -142,7 +151,7 @@ void* PROCESS_RUN(void* pcb) {
                         MMU_WriteToAddress(mem, pageToWrite, bitsToWrite, startingFrom);
                     }
                 }
-                ASSERT(DISK_PrintContent());
+                //ASSERT(DISK_PrintContent());
             }
                 break;
             case ProcessClose:

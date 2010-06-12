@@ -19,7 +19,7 @@ bool DISK_Init() {
         }
 */
 
-    ASSERT(DISK_PrintContent());
+    //ASSERT(DISK_PrintContent());
     if (Disk == NULL)
         return FALSE;
     return TRUE;
