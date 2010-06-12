@@ -138,13 +138,14 @@ bool IPT_Remove(
     if (!father)
         IPT[line] = son;
     else if(!son)
-        father->next = son;
+        father->next = NULL;
     else
     {
         father->next = son;
         son->prev = father;
     }
     IPT[line] = NULL;
+    toDelete = NULL;
     free(toDelete);
     totalPagesInIPT--;
     ASSERT_PRINT("Exiting:IPT_Remove() with return value: TRUE\n");
