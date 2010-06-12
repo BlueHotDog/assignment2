@@ -153,13 +153,15 @@ void PROCESS_DeInit(PID id) {
      */
     //Cleaning the IPT
     for (i = 0; i < NumOfPagesInMM; i++) {
-        if (IPT!=NULL && IPT[i] != NULL && IPT[i]->processID == id) {
+        if (IPT[i]!=NULL && IPT[i]->processID == id) {
             if (IPT[i]->prev != NULL)
                 IPT[i]->prev = IPT[i]->next;
             //IPT[i] = NULL;
             //memset(IPT[i],NULL,sizeof(IPT[i]));
-            IPT[i]->processID = -1;
-            free(IPT[i]);
+            IPT_t_p temp = IPT[i];
+            IPT[i] = NULL;
+            //IPT[i]->processID = -1;
+            free(temp);
             //IPT[i] = NULL;
         }
     }
