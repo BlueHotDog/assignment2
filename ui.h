@@ -41,14 +41,14 @@ void UI_HandleDelProcess(PID processID);
  * Prints each byte as a char. (or description of error if it occurred).
  * $
  */
-void UI_HandleRead(int vAddr,PID processID,unsigned int amount);
+void UI_HandleRead(int vAddr,PID processID,unsigned int amount,FILE* file);
 /*reads and prints the chars found at
  * vAddr, vAddr+off, vAddr+2*off, …, vAddr+(amount-1)*off of process id.
  * Assume these memory addresses are within the bounds of the virtual memory
  * (not below 0 or too big). Assume amount > 0.
  * $
  */
-void UI_HandleLoopRead(int vAddr,PID processID,int offset,unsigned int amount);
+void UI_HandleLoopRead(int vAddr,PID processID,int offset,unsigned int amount,FILE* file);
 /*
  * identical in definition to “read vAddr id amount”,
  * with the sole difference that output is written to the specified file

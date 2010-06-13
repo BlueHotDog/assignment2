@@ -69,7 +69,8 @@ enum Commands {
     PRMWriteToAddress,
     PRMSegmentationFault,
     PRMSegmentationFaultMMIsFull,
-    PRMDeleteProcessIPT
+    PRMDeleteProcessIPT,
+    ProcessCloseFile
 };
 typedef struct queueCommandStruct {
     enum Commands command;

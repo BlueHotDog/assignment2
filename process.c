@@ -61,9 +61,11 @@ void* PROCESS_RUN(void* pcb) {
                 fprintf(toWrite, "\n");
 
                 //fprintf(toWrite, "%s\n", stringToRead);
+/*
                 if (comm->voidParamsAmount == 1) {
                     fclose(toWrite);
                 }
+*/
                 //ASSERT(DISK_PrintContent());
             }
                 break;
@@ -117,6 +119,12 @@ void* PROCESS_RUN(void* pcb) {
                 close = TRUE;
                 break;
             }
+            break;
+            case ProcessCloseFile:
+            {
+                fclose(comm->voidParams[0]);
+            }
+            break;
         }
         if (close)
             break;
