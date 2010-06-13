@@ -60,7 +60,7 @@ void UI_ParseCommand(const string * const comm) {
         int vAddr = -1;
         int id = -1;
         string str = calloc(60, sizeof (char));
-        
+
         fscanf(inFile, "%d %d %60s", &vAddr, &id, str);
         UI_HandleWrite(vAddr, id, str);
         free(str);
@@ -138,7 +138,7 @@ void UI_HandleDelProcess(PID processID) {
     comm->paramsAmount = 0;
     if (QUEUES_WriteToProcess(processID, comm) == TRUE)
         pthread_join(PCB_GetByProcessID(processID)->processThread, NULL);
-
+    printf("process closed..\n");
     comm = malloc(sizeof (QueueCommand_t));
     comm->command = PRMDeleteProcessIPT;
     comm->params = calloc(2, sizeof (int));
@@ -240,7 +240,7 @@ void UI_HandleWrite(int vAddr, PID processID, string s) {
 void UI_HandleLoopWrite(int vAddr, PID processID, char c, int off, unsigned int amount) {
     ASSERT_PRINT("Entering: UI_HandleLoopWrite(vAddr:%d, processID:%d,char:%c,off:%d,amount:%d)\n", vAddr, processID, c, off, amount);
     int i = 0;
-    string temp = calloc(2,sizeof(char));
+    string temp = calloc(2, sizeof (char));
     temp[0] = c;
     temp[1] = 0;
     for (i; i < amount; i++)
@@ -282,6 +282,7 @@ void UI_HandleBatchFile(string filename) {
 void UI_HandlePrintMMUTable() {
     ASSERT_PRINT("Entering: UI_HandleBatchFile()\n");
     int i = 0;
+    pthread_mutex_lock(&IPT_mutex);
     for (i = 0; i < SIZE_OF_IPT; i++) {
         if (IPT[i])
             fprintf(outFile, "%d) (pid=%d, pageNum=%d, dirty bit=%d, aging reference bit=?)\n", i, IPT[i]->processID, IPT[i]->pageNumber, IPT[i]->dirtyBit);
@@ -289,6 +290,7 @@ void UI_HandlePrintMMUTable() {
             fprintf(outFile, "%d) (free)\n", i);
 
     }
+    pthread_mutex_unlock(&IPT_mutex);
     ASSERT_PRINT("Exiting: UI_HandleBatchFile()\n");
 }
 
@@ -296,6 +298,7 @@ void UI_HandlePrintMM() {
     ASSERT_PRINT("Entering: UI_HanldePrintMM()\n");
     int i = 0;
     int j = 0;
+    //MM[-1]=1;
     Page res; //= calloc(PageSize, sizeof (char));
     for (i = 0; i < NumOfPagesInMM; i++) {
 

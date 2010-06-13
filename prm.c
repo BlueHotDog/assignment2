@@ -76,11 +76,12 @@ void* PRM_Main() {
                 {
                     int id = command->params[1];
                     int index = 0;
-                    pthread_mutex_lock(&MM_Counter_Mutex);
 
+                    pthread_mutex_lock(&MM_Counter_Mutex);
+                    pthread_mutex_lock(&IPT_mutex);
                     for (index = 0; index < NumOfPagesInMM; index++) {
                         if (IPT[index] != NULL && IPT[index]->processID == id) {
-                            if(IPT[index]->frame>0)
+                            if(IPT[index]->frame>=0)
                             {
                                 Aging_Registers[IPT[index]->frame]=0;
                             }
@@ -106,6 +107,7 @@ void* PRM_Main() {
                             free(temp);
                         }
                     }
+                    pthread_mutex_unlock(&IPT_mutex);
                     pthread_mutex_unlock(&MM_Counter_Mutex);
 
 

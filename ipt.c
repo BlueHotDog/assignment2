@@ -59,6 +59,7 @@ bool IPT_Add(
 
     bool foundFrame = FALSE;
     IPT_t_p temp = HAT[HATPointedIndex];
+    //printf("got: %p\n", HAT[HATPointedIndex]);
     while (temp != NULL && temp->next != NULL) {
         temp = temp->next;
     }
@@ -83,7 +84,6 @@ IPT_t_p* IPT_FindIPTLine(
         int HATPointedIndex,
         PID processID,
         LPN pageNumber) {
-
     IPT_t_p* toReturn = NULL;
     ASSERT_PRINT("Entering:IPT_FindIPTLine()\n");
     int iterations = 0;
@@ -138,7 +138,7 @@ bool IPT_Remove(
     ASSERT_PRINT("Entering:IPT_Remove()\n");
     pthread_mutex_lock(&IPT_mutex);
     if ((IPT[line])->prev != NULL) {
-        (IPT[line])->prev = (IPT[line])->next;
+        (IPT[line])->prev->next = (IPT[line])->next;
         if ((IPT[line])->next != NULL)
             (IPT[line])->next->prev = (IPT[line])->prev;
     } else {
@@ -148,11 +148,13 @@ bool IPT_Remove(
         mem.pageNumber = pageNum;
         mem.processID = pid;
         //HAT_PRIVATE_Hash(mem);
-        int i=0;
+        //printf("freeing pointer:%p\n", IPT[line]);
         HAT[HAT_PRIVATE_Hash(mem)] = IPT[line]->next;
+        if (IPT[line]->next != NULL)
+            IPT[line]->next->prev = NULL;
     }
     IPT_t_p temp = IPT[line];
-    int i = 0;
+    //int i = 0;
     IPT[line] = NULL;
     free(temp);
     totalPagesInIPT--;
@@ -163,6 +165,7 @@ bool IPT_Remove(
 
 int IPT_FindEmptyFrame() {
     ASSERT_PRINT("Entering:IPT_FindEmptyFrame()\n");
+    pthread_mutex_lock(&IPT_mutex);
     int i = 0;
     bool* frameArry = calloc(SIZE_OF_IPT, sizeof (bool));
     for (i; i < SIZE_OF_IPT; i++)
@@ -181,6 +184,7 @@ int IPT_FindEmptyFrame() {
         i = -1;
     }
     free(frameArry);
+    pthread_mutex_unlock(&IPT_mutex);
     ASSERT_PRINT("Exiting:IPT_FindEmptyFrame() with return value: TRUE, frame = %d\n", i);
     return i;
 }
@@ -205,18 +209,21 @@ int IPT_FindIndexByPointer(IPT_t_p pointer) {
 
 int IPT_FindLineByFrame(MMFI frame) {
     ASSERT_PRINT("Entering:IPT_FindLineByFrame()\n");
+    pthread_mutex_lock(&IPT_mutex);
     int i = 0;
     int line = -1;
     for (i; i < SIZE_OF_IPT && line == -1; i++)
         if (IPT[i] != NULL && IPT[i]->frame == frame) {
             ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: TRUE, line = %d\n", line);
-            return i;
+            line = i;
         }
     ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: FALSE\n");
+    pthread_mutex_unlock(&IPT_mutex);
     return line;
 }
 
 void IPT_UpdateDirtyBit(MMFI frame, bool dirtyBit) {
+
     int lineIndex = -1;
     lineIndex = IPT_FindLineByFrame(frame);
     IPT[lineIndex]->dirtyBit = dirtyBit;
@@ -225,8 +232,9 @@ void IPT_UpdateDirtyBit(MMFI frame, bool dirtyBit) {
 void IPT_UpdateReferencetyBit(MMFI frame, bool referenceBit) {
     int lineIndex = -1;
     lineIndex = IPT_FindLineByFrame(frame);
-    if (lineIndex != -1) //if printMM than it is possible to access empty IPT ref.
+    if (lineIndex >= 0) //if printMM than it is possible to access empty IPT ref.
         IPT[lineIndex]->referenceBit = referenceBit;
+    return;
 }
 
 bool IPT_Replace(

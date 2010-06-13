@@ -38,8 +38,9 @@ char MMU_ReadAddress(MemoryAddress_t address, int bitIndex) {
     if (!wasInLoop)
         MM_Hit();
     Page toReturn = MM_ReadPage(res); //May be an error here, need some mutex to protect agains RACE conditions..
+    char ret = toReturn[bitIndex];
     READERSWRITERS_UnlockDataRead();
-    return toReturn[bitIndex];
+    return ret;
     ASSERT_PRINT("Exiting:MMU_ReadAddress(pid:%d,addr:%d)\n", address.processID, address.pageNumber);
 }
 
