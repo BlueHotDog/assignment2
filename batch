@@ -1,2 +1,10 @@
-noMonitor
+createProcess
+createProcess
+write 1 0 Yanivdudu
+loopReadToFile 0 0 1 8 YANIVOWNSYOU.txt
+read 0 0 4;
+delProcess 0
+delProcess 1
+delProcess 2
 exit
+

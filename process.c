@@ -54,8 +54,13 @@ void* PROCESS_RUN(void* pcb) {
                         }
                     }
                 }
-                stringToRead[ansIndex] = 0;
-                fprintf(toWrite, "%s\n", stringToRead);
+                int strIndex = 0;
+                for(strIndex=0; strIndex<ansIndex; strIndex++){
+                    fprintf(toWrite, "%c", stringToRead[strIndex]);
+                }
+                fprintf(toWrite, "\n");
+
+                //fprintf(toWrite, "%s\n", stringToRead);
                 if (comm->voidParamsAmount == 1) {
                     fclose(toWrite);
                 }
