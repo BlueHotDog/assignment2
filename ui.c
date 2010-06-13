@@ -73,7 +73,7 @@ void UI_ParseCommand(const string * const comm) {
         UI_HandleLoopWrite(vAddr, id, c, offset, amount);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
-    } else if (strcmp(*comm, "delProcess") == 0 ||strcmp(*comm, "d") == 0) { //void UI_HandleDelProcess(PID processID);
+    } else if (strcmp(*comm, "delProcess") == 0) { //void UI_HandleDelProcess(PID processID);
         int id = -1;
         fscanf(inFile, "%d", &id);
         UI_HandleDelProcess(id);
@@ -123,7 +123,11 @@ void UI_HandleCreateProcess() {
 
 void UI_HandleDelProcess(PID processID) {
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
-
+    if(PCBArray[processID].active == FALSE)
+    {
+        fprintf(stderr, "WARNING! tring to kill a dead process: %d\n",processID);
+        return;
+    }
     QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
     comm->command = ProcessClose;
     if (outFile != stdout) {
@@ -197,13 +201,10 @@ void UI_HandleReadToFile(int vAddr, PID processID, unsigned int amount, string f
 
 void UI_HandleLoopReadToFile(int vAddr, PID processID, int off, unsigned int amount, string filename) {
     ASSERT_PRINT("Entering: UI_HandleLoopReadToFile(vAddr:%d,processID:%d, off:%d, amount:%d, fileName:%s)\n", vAddr, processID, off, amount, filename);
-
-    int i = 0;
-    for (i; i < amount; i++) {
-        if ((outFile = fopen(filename, "w")) != NULL) {
-            UI_HandleRead(vAddr + i * off, processID, 1);
-            outFile = stdout;
-        }
+    if ((outFile = fopen(filename, "w")) != NULL) {
+        UI_HandleLoopRead(vAddr, processID, off, amount);
+        close(outFile);
+        outFile = stdout;
     }
     ASSERT_PRINT("Exiting: UI_HandleLoopReadToFile(vAddr:%d,processID:%d, off:%d, amount:%d, fileName:%s)\n", vAddr, processID, off, amount, filename);
 }
