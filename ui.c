@@ -15,6 +15,7 @@ void* UI_Main() {
 
         }
     }
+    free(command);
     pthread_exit(NULL);
 }
 

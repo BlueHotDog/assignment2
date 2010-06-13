@@ -41,7 +41,7 @@ bool IPT_Add(
         PID processID,
         LPN pageNumber,
         MMFI frame) {
-    //pthread_mutex_lock(&IPT_mutex);
+    pthread_mutex_lock(&IPT_mutex);
     ASSERT_PRINT("Entering:IPT_Add()\n");
     IPT_t_p newIPTLine;
     newIPTLine = IPT_CreateIPT_t_p(processID, pageNumber, frame);
@@ -54,6 +54,7 @@ bool IPT_Add(
         *(IPT_FindEmptyLine()) = newIPTLine;
         HAT[HATPointedIndex] = newIPTLine;
         totalPagesInIPT++;
+            pthread_mutex_unlock(&IPT_mutex);
         return TRUE;
     }
 
@@ -64,18 +65,21 @@ bool IPT_Add(
         temp = temp->next;
     }
     IPT_t_p* newPointer;
+    //pthread_mutex_unlock(&IPT_mutex);
     if ((newPointer = IPT_FindEmptyLine()) == NULL) {
+            pthread_mutex_unlock(&IPT_mutex);
         return TRUE;
     } else
         foundFrame = TRUE;
     *newPointer = newIPTLine;
-
+    
     newIPTLine->prev = temp;
     temp->next = newIPTLine;
     newIPTLine->next = 0;
     //IPT[temp] = newIPTLine;
     // HAT[HATPointedIndex] = newIPTLine;
     totalPagesInIPT++;
+    pthread_mutex_unlock(&IPT_mutex);
     ASSERT_PRINT("Exiting:IPT_Add()\n");
     return TRUE;
 }
@@ -209,7 +213,7 @@ int IPT_FindIndexByPointer(IPT_t_p pointer) {
 
 int IPT_FindLineByFrame(MMFI frame) {
     ASSERT_PRINT("Entering:IPT_FindLineByFrame()\n");
-    pthread_mutex_lock(&IPT_mutex);
+    //pthread_mutex_lock(&IPT_mutex);
     int i = 0;
     int line = -1;
     for (i; i < SIZE_OF_IPT && line == -1; i++)
@@ -218,7 +222,7 @@ int IPT_FindLineByFrame(MMFI frame) {
             line = i;
         }
     ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: FALSE\n");
-    pthread_mutex_unlock(&IPT_mutex);
+    //pthread_mutex_unlock(&IPT_mutex);
     return line;
 }
 
@@ -231,9 +235,11 @@ void IPT_UpdateDirtyBit(MMFI frame, bool dirtyBit) {
 
 void IPT_UpdateReferencetyBit(MMFI frame, bool referenceBit) {
     int lineIndex = -1;
+    pthread_mutex_lock(&IPT_mutex);
     lineIndex = IPT_FindLineByFrame(frame);
     if (lineIndex >= 0) //if printMM than it is possible to access empty IPT ref.
         IPT[lineIndex]->referenceBit = referenceBit;
+    pthread_mutex_unlock(&IPT_mutex);
     return;
 }
 

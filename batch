@@ -1,3 +1,4 @@
+<<<<<<< HEAD:batch
 createProcess
 createProcess
 write 1 0 Yanivdudu
@@ -6,5 +7,8 @@ read 0 0 4;
 delProcess 0
 delProcess 1
 delProcess 2
+=======
+noMonitor
+>>>>>>> 2f982798ca082f2dcf79682d58d85e669c0de210:batch
 exit
 
