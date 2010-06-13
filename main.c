@@ -81,6 +81,7 @@ void init() {
     ReturnVal = FREELIST_Init();
     ASSERT(ReturnVal != FALSE);
 
+
     ASSERT_PRINT("Init Disk...\n");
     ReturnVal = DISK_Init();
     ASSERT(ReturnVal != FALSE);
@@ -117,6 +118,7 @@ void init() {
     ReturnVal = AGING_Init();
     ASSERT(ReturnVal != FALSE);
 
+
     ASSERT_PRINT("Creating UI Thread...\n");
     ReturnVal = UI_CreateUIThread();
     ASSERT(ReturnVal != FALSE);
@@ -139,6 +141,7 @@ int main(int argc, char** argv) {
 #endif
     init();
     pthread_join(UI_Thread, status);
+
     int i = 0;
 
     for (i; i < MaxNumOfProcesses; i++) {
@@ -161,8 +164,7 @@ int main(int argc, char** argv) {
 
     QUEUES_DeInit();
     MM_DeInit();
-    fclose(inFile);
-    fclose(outFile);
+
 
     DISK_DeInit();
     PCB_Free();
@@ -172,5 +174,8 @@ int main(int argc, char** argv) {
     }
     free(IPT);
     free(HAT);
+
+    fclose(inFile);
+    fclose(outFile);
     return (EXIT_SUCCESS);
 }

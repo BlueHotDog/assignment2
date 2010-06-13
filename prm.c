@@ -33,7 +33,9 @@ void* PRM_Main() {
                         int diskIndex = PCBArray[process].start + pageNumber;
                         MMFI oldFrame = PRM_FindOldestPage();
                         int line = -1;
+                        pthread_mutex_lock(&IPT_mutex);
                         line = IPT_FindLineByFrame(oldFrame);
+                        pthread_mutex_unlock(&IPT_mutex);
                         PRM_ReplaceMMFrameWithDiskFrame(diskIndex, IPT[line]);
                         MemoryAddress_t mem;
                         mem.processID = process;
