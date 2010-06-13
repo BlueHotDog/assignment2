@@ -65,7 +65,7 @@ void printConfigInfo() {
 }
 
 void printUsage() {
-    fprintf(outFile, "Incorrect usage, please user:\n sim config_file_name");
+    fprintf(outFile, "Incorrect usage, please user:\n sim config_file_name\n");
 
 }
 
@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
     void* status = NULL;
     inFile = stdin;
     outFile = stdout;
-#ifndef DEBUG
+#ifdef DEBUG
     readConfigFromFile("config");
     printConfigInfo();
     UI_HandleBatchFile("batch");
