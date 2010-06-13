@@ -17,6 +17,9 @@
 IPT_t_p* IPT;
 int totalPagesInIPT;
 
+pthread_mutex_t IPT_mutex;
+
+
 bool IPT_Init();
 
 /*

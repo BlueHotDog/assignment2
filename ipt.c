@@ -11,6 +11,7 @@ bool IPT_Init() {
         IPT[i] = 0;
     }
     totalPagesInIPT = 0;
+    pthread_mutex_init(&IPT_mutex, NULL);
     ASSERT_PRINT("Exiting:IPT_Init()\n");
     return TRUE;
 }
@@ -19,6 +20,7 @@ IPT_t_p IPT_CreateIPT_t_p(
         PID processID,
         LPN pageNumber,
         MMFI frame) {
+    //pthread_mutex_lock(&IPT_mutex);
     ASSERT_PRINT("Entering:IPT_CreateIPPRM_ReplaceMMFrameWithDiskFrameT_t_p()\n");
     IPT_t_p newIPTLine;
     if (!(newIPTLine = malloc(sizeof (IPT_t))))
@@ -39,6 +41,7 @@ bool IPT_Add(
         PID processID,
         LPN pageNumber,
         MMFI frame) {
+    //pthread_mutex_lock(&IPT_mutex);
     ASSERT_PRINT("Entering:IPT_Add()\n");
     IPT_t_p newIPTLine;
     newIPTLine = IPT_CreateIPT_t_p(processID, pageNumber, frame);
@@ -80,13 +83,15 @@ IPT_t_p* IPT_FindIPTLine(
         int HATPointedIndex,
         PID processID,
         LPN pageNumber) {
+
+    IPT_t_p* toReturn = NULL;
     ASSERT_PRINT("Entering:IPT_FindIPTLine()\n");
     int iterations = 0;
     //IPT_t_p toReturn = NULL;
     IPT_t_p pointer = HAT[HATPointedIndex];
-    while (pointer != NULL && iterations <= SIZE_OF_IPT) {
+    while (pointer != NULL && iterations <= SIZE_OF_IPT && toReturn == NULL) {
         if (pointer->processID == processID && pointer->pageNumber == pageNumber) {
-            return &IPT[IPT_FindIndexByPointer(pointer)];
+            toReturn = &IPT[IPT_FindIndexByPointer(pointer)];
             ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: TRUE\n");
         }
         //INDEX_INC(HATPointedIndex);
@@ -97,7 +102,8 @@ IPT_t_p* IPT_FindIPTLine(
     }
     //the page is not in the IPT, i.e. not in the MM
     ASSERT_PRINT("Exiting:IPT_FindIPTLine() with return value: FALSE\n");
-    return NULL;
+
+    return toReturn;
 
 }
 
@@ -106,6 +112,8 @@ bool IPT_FindFrame(
         PID processID,
         LPN pageNumber,
         OUT MMFI *frame) {
+    pthread_mutex_lock(&IPT_mutex);
+    bool toReturn = FALSE;
     ASSERT_PRINT("Entering:IPT_FindFramPRM_ReplaceMMFrameWithDiskFramee()\n");
     IPT_t_p* line = 0;
     line = IPT_FindIPTLine(HATPointedIndex, processID, pageNumber);
@@ -115,10 +123,11 @@ bool IPT_FindFrame(
         }
         *frame = (*line)->frame;
         ASSERT_PRINT("Exiting:IPT_FindFrame() with return value: TRUE, frame=%d\n", *frame);
-        return TRUE;
+        toReturn = TRUE;
     }
     ASSERT_PRINT("Exiting:IPT_FindFrame() with return value: FALSE\n");
-    return FALSE;
+    pthread_mutex_unlock(&IPT_mutex);
+    return toReturn;
 }
 
 bool IPT_Remove(
@@ -127,28 +136,28 @@ bool IPT_Remove(
         LPN pageNumber,
         int line) {
     ASSERT_PRINT("Entering:IPT_Remove()\n");
-
+    pthread_mutex_lock(&IPT_mutex);
     if ((IPT[line])->prev != NULL) {
         (IPT[line])->prev = (IPT[line])->next;
         if ((IPT[line])->next != NULL)
             (IPT[line])->next->prev = (IPT[line])->prev;
     } else {
-
         int pid = IPT[line]->processID;
         int pageNum = IPT[line]->pageNumber;
         MemoryAddress_t mem;
         mem.pageNumber = pageNum;
         mem.processID = pid;
         //HAT_PRIVATE_Hash(mem);
-        HAT[HAT_PRIVATE_Hash(mem)] = (IPT[line])->next;
+        int i=0;
+        HAT[HAT_PRIVATE_Hash(mem)] = IPT[line]->next;
     }
     IPT_t_p temp = IPT[line];
+    int i = 0;
     IPT[line] = NULL;
-    //toDelete = NULL;
-
     free(temp);
     totalPagesInIPT--;
     ASSERT_PRINT("Exiting:IPT_Remove() with return value: TRUE\n");
+    pthread_mutex_unlock(&IPT_mutex);
     return TRUE;
 }
 
