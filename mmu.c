@@ -23,6 +23,7 @@ char MMU_ReadAddress(MemoryAddress_t address, int bitIndex) {
     bool wasInLoop = FALSE;
     while (IPT_FindFrame(hashIndex, address.processID, address.pageNumber, &res) == FALSE) {
         ASSERT_PRINT("segmentation fault...\n");
+        if (monitor) printf("sending message to PRM: PRMSegmentationFault, page:%d, pid:%d\n",address.pageNumber, address.processID);
         wasInLoop = TRUE;
         QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
         comm->command = PRMSegmentationFault;
@@ -37,6 +38,7 @@ char MMU_ReadAddress(MemoryAddress_t address, int bitIndex) {
     }
     if (!wasInLoop)
         MM_Hit();
+    if (monitor) printf("MMU:\tfound MM frame:%d for page:%d, pid:%d\n",res ,address.pageNumber, address.processID);
     Page toReturn = MM_ReadPage(res); //May be an error here, need some mutex to protect agains RACE conditions..
     char ret = toReturn[bitIndex];
     READERSWRITERS_UnlockDataRead();
@@ -54,6 +56,7 @@ bool MMU_WriteToAddress(MemoryAddress_t address, Page value, int bitsToWrite, in
     bool wasInLoop = FALSE;
     while (IPT_FindFrame(hashIndex, address.processID, address.pageNumber, &res) == FALSE) {
         ASSERT_PRINT("segmentation fault...\n");
+        if (monitor) printf("MMU:\tPRMSegmentationFault, page:%d, pid:%d\n",address.pageNumber, address.processID);
         wasInLoop = TRUE;
         QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
         comm->command = PRMSegmentationFault;
@@ -67,6 +70,7 @@ bool MMU_WriteToAddress(MemoryAddress_t address, Page value, int bitsToWrite, in
     }
     if (!wasInLoop)
         MM_Hit();
+    if (monitor) printf("MMU:\tfound MM frame:%d for address page:%d, pid:%d\n",res ,address.pageNumber, address.processID);
     MM_WritePage(value, res, bitsToWrite, startingFrom, 1);
     READERSWRITERS_UnlockDataRead();
     return TRUE;
@@ -77,7 +81,6 @@ void* MMU_Main() {
     ASSERT_PRINT("Entering:MMU_Main()\n");
 
     while (!MMU_shouldClose) {
-
         ASSERT_PRINT("MMU trying to read from queue /MMU\n");
         //        QueueCommand_t_p command = QUEUES_ReadMMU();
         //        QUEUES_PrintCommand(command);

@@ -59,5 +59,6 @@ void HAT_Print()
             fprintf(outFile,"\n");
         }
     }
+    fprintf(outFile,"\n");
     ASSERT_PRINT("Exiting: HAT_Print()\n");
 }

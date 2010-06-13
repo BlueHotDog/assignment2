@@ -86,7 +86,7 @@ void* PRM_Main() {
                                 Aging_Registers[IPT[index]->frame]=0;
                             }
                             totalPagesInIPT--;
-
+                            
                             if (IPT[index]->prev != NULL)
                             {
                                 IPT[index]->prev->next = IPT[index]->next;

@@ -74,6 +74,9 @@ void init() {
 
     ASSERT_PRINT("===Starting init===\n");
 
+    ASSERT_PRINT("Init Monitor = FALSE\n");
+    monitor = FALSE;
+
     ASSERT_PRINT("Init FreeList...\n");
     ReturnVal = FREELIST_Init();
     ASSERT(ReturnVal != FALSE);
