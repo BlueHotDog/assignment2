@@ -224,7 +224,6 @@ void UI_HandleLoopReadToFile(int vAddr, PID processID, int off, unsigned int amo
         comm->stringParamsAmount = 0;
         comm->voidParamsAmount = 1;
         QUEUES_WriteToProcess(processID, comm);
-        //outFile = stdout;
     }
     ASSERT_PRINT("Exiting: UI_HandleLoopReadToFile(vAddr:%d,processID:%d, off:%d, amount:%d, fileName:%s)\n", vAddr, processID, off, amount, filename);
 }
