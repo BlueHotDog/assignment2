@@ -17,6 +17,9 @@
 IPT_t_p* IPT;
 int totalPagesInIPT;
 
+pthread_mutex_t IPT_mutex;
+
+
 bool IPT_Init();
 
 /*
@@ -59,7 +62,8 @@ bool IPT_FindFrame(
 bool IPT_Remove(
         int HATPointedIndex,
         PID processID,
-        LPN pageNumber);
+        LPN pageNumber,
+        int line);
 
 /*
  * search the ipt for empy frame by going over all frames in the ipt

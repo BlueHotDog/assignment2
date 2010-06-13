@@ -39,7 +39,7 @@ void* PRM_Main() {
                         mem.processID = process;
                         mem.pageNumber = pageNumber;
                         int HATPointedIndex = HAT_PRIVATE_Hash(mem);
-                        if (!IPT_Remove(HATPointedIndex, IPT[line]->processID, IPT[line]->pageNumber)) {
+                        if (!IPT_Remove(HATPointedIndex, IPT[line]->processID, IPT[line]->pageNumber,line)) {
                             ASSERT(1 == 2);
                             exit(-1);
                         }
@@ -85,9 +85,15 @@ void* PRM_Main() {
                                 Aging_Registers[IPT[index]->frame]=0;
                             }
                             totalPagesInIPT--;
+                            
                             if (IPT[index]->prev != NULL)
+                            {
                                 IPT[index]->prev->next = IPT[index]->next;
-
+                            }
+                            
+                            if(IPT[index]->next!=NULL)
+                                IPT[index]->next->prev = IPT[index]->prev;
+                            
                             int ii = 0;
                             for(ii;ii<NumOfPagesInMM;ii++)
                             {
