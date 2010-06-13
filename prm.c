@@ -80,13 +80,13 @@ void* PRM_Main() {
 
                     for (index = 0; index < NumOfPagesInMM; index++) {
                         if (IPT[index] != NULL && IPT[index]->processID == id) {
-                            if(IPT[index]->frame>0)
+                            if(IPT[index]->frame>=0)
                             {
                                 Aging_Registers[IPT[index]->frame]=0;
                             }
                             totalPagesInIPT--;
                             if (IPT[index]->prev != NULL)
-                                IPT[index]->prev = IPT[index]->next;
+                                IPT[index]->prev->next = IPT[index]->next;
 
                             int ii = 0;
                             for(ii;ii<NumOfPagesInMM;ii++)
