@@ -204,7 +204,6 @@ void UI_HandleLoopReadToFile(int vAddr, PID processID, int off, unsigned int amo
     ASSERT_PRINT("Entering: UI_HandleLoopReadToFile(vAddr:%d,processID:%d, off:%d, amount:%d, fileName:%s)\n", vAddr, processID, off, amount, filename);
     if ((outFile = fopen(filename, "w")) != NULL) {
         UI_HandleLoopRead(vAddr, processID, off, amount);
-        close(outFile);
         outFile = stdout;
     }
     ASSERT_PRINT("Exiting: UI_HandleLoopReadToFile(vAddr:%d,processID:%d, off:%d, amount:%d, fileName:%s)\n", vAddr, processID, off, amount, filename);
