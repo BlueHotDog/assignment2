@@ -55,6 +55,7 @@ volatile unsigned int NumOfPagesInMM;
 volatile unsigned int NumOfPagesInDisk;
 volatile unsigned int NumOfProcessPages;
 volatile unsigned int ShiftClock;
+volatile bool monitor;
 
 
 

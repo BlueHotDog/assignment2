@@ -35,9 +35,8 @@ void UI_ParseCommand(const string * const comm) {
         int id = -1;
         int amount = -1;
         int offset = -1;
-        int i = 0;
         fscanf(inFile, "%d %d %d %d", &vAddr, &id, &offset, &amount);
-        UI_HandleLoopRead(vAddr, id, offset + i, 1);
+        UI_HandleLoopRead(vAddr, id, offset, amount);
     } else if (strcmp(*comm, "readToFile") == 0) { //readToFile vAddr id amount filename
         int vAddr = 0;
         int id = 0;
@@ -74,7 +73,7 @@ void UI_ParseCommand(const string * const comm) {
         UI_HandleLoopWrite(vAddr, id, c, offset, amount);
     } else if (strcmp(*comm, "exit") == 0) {
         UI_SignalUIThreadToStop();
-    } else if (strcmp(*comm, "delProcess") == 0) { //void UI_HandleDelProcess(PID processID);
+    } else if (strcmp(*comm, "delProcess") == 0 ||strcmp(*comm, "d") == 0) { //void UI_HandleDelProcess(PID processID);
         int id = -1;
         fscanf(inFile, "%d", &id);
         UI_HandleDelProcess(id);
@@ -257,14 +256,14 @@ void UI_HandlePrintHat() {
 
 void UI_HandleMonitor() {
     ASSERT_PRINT("Entering: UI_HandleMonitor()\n");
-    //monitor = TRUE;
+    monitor = TRUE;
     ASSERT_PRINT("Exiting: UI_HandleMonitor()\n");
 }
 //switches the system to No Monitor mode.
 
 void UI_HandleNoMonitor() {
     ASSERT_PRINT("Entering: UI_HandleNoMonitor()\n");
-    //monitor = FALSE;
+    monitor = FALSE;
     ASSERT_PRINT("Exiting: UI_HandleNoMonitor()\n");
 }
 

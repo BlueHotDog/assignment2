@@ -159,6 +159,7 @@ int PROCESS_CREATE() {
             for (i; i < start + NumOfProcessPages; i++) {
                 if (FreeList[i].isFree == TRUE) {
                     fprintf(outFile, "Error allocating space for process\n");
+                    exit(-1);
                 }
             }
             FREELIST_SetNotTaken(start);
