@@ -5,5 +5,6 @@ readToFile 0 0 8 YANIVOWNSYOU.txt
 read 0 0 4;
 delProcess 0
 delProcess 1
+delProcess 2
 exit
 

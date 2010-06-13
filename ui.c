@@ -29,7 +29,7 @@ void UI_ParseCommand(const string * const comm) {
         int id = -1;
         int amount = -1;
         fscanf(inFile, "%d %d %d", &vAddr, &id, &amount);
-        UI_HandleRead(vAddr, id, amount);
+        UI_HandleRead(vAddr, id, amount,stdout);
     } else if (strcmp(*comm, "loopRead") == 0) {
         //loopRead vAddr id off amount
         int vAddr = -1;
@@ -37,7 +37,7 @@ void UI_ParseCommand(const string * const comm) {
         int amount = -1;
         int offset = -1;
         fscanf(inFile, "%d %d %d %d", &vAddr, &id, &offset, &amount);
-        UI_HandleLoopRead(vAddr, id, offset, amount);
+        UI_HandleLoopRead(vAddr, id, offset, amount,stdout);
     } else if (strcmp(*comm, "readToFile") == 0) { //readToFile vAddr id amount filename
         int vAddr = 0;
         int id = 0;
@@ -124,9 +124,8 @@ void UI_HandleCreateProcess() {
 
 void UI_HandleDelProcess(PID processID) {
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
-    if(PCBArray[processID].active == FALSE)
-    {
-        fprintf(stderr, "WARNING! tring to kill a dead process: %d\n",processID);
+    if (PCBArray[processID].active == FALSE) {
+        fprintf(stderr, "WARNING! tring to kill a dead process: %d\n", processID);
         return;
     }
     QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
@@ -155,7 +154,7 @@ void UI_HandleDelProcess(PID processID) {
     ASSERT_PRINT("Entering: UI_HandleDelProcess(%d)\n", processID);
 }
 
-void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
+void UI_HandleRead(int vAddr, PID processID, unsigned int amount,FILE* file) {
     ASSERT_PRINT("Entering: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
 
     MemoryAddress_t addr;
@@ -169,9 +168,9 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
     comm->params[0] = addr.pageNumber;
     comm->params[1] = amount;
 
-    if (outFile != stdout) {
+    if (file != stdout) {
         comm->voidParams = calloc(1, sizeof (void*));
-        comm->voidParams[0] = outFile;
+        comm->voidParams[0] = file;
         comm->voidParamsAmount = 1;
     } else {
         comm->voidParamsAmount = 0;
@@ -184,27 +183,47 @@ void UI_HandleRead(int vAddr, PID processID, unsigned int amount) {
     ASSERT_PRINT("Exiting: UI_HandleRead(%d,%d,%d)\n", vAddr, processID, amount);
 }
 
-void UI_HandleLoopRead(int vAddr, PID processID, int offset, unsigned int amount) {
+void UI_HandleLoopRead(int vAddr, PID processID, int offset, unsigned int amount,FILE* file) {
     int i = 0;
     for (i; i < amount; i++) {
-        UI_HandleRead(vAddr + i * offset, processID, 1);
+        UI_HandleRead(vAddr + i * offset, processID, 1,file);
     }
 }
 
 void UI_HandleReadToFile(int vAddr, PID processID, unsigned int amount, string filename) {
     ASSERT_PRINT("Entering: UI_HandleReadToFile(vAddr:%d,processID:%d,amount:%d,fileName:%s)\n", vAddr, processID, amount, filename);
-    if ((outFile = fopen(filename, "w+")) != NULL) {
-        UI_HandleRead(vAddr, processID, amount);
-        outFile = stdout;
+    FILE* temp;
+    if ((temp = fopen(filename, "w")) != NULL) {
+        UI_HandleRead(vAddr, processID, amount,temp);
+        QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
+        comm->command = ProcessCloseFile;
+        comm->voidParams = calloc(1,sizeof(void*));
+        comm->voidParams[0] = temp;
+        comm->paramsAmount = 0;
+        comm->stringParamsAmount = 0;
+        comm->voidParamsAmount = 1;
+        QUEUES_WriteToProcess(processID, comm);
+        
+        //outFile = stdout;
     }
     ASSERT_PRINT("Exiting: UI_HandleReadToFile(vAddr:%d,processID:%d,amount:%d,fileName:%s)\n", vAddr, processID, amount, filename);
 }
 
 void UI_HandleLoopReadToFile(int vAddr, PID processID, int off, unsigned int amount, string filename) {
     ASSERT_PRINT("Entering: UI_HandleLoopReadToFile(vAddr:%d,processID:%d, off:%d, amount:%d, fileName:%s)\n", vAddr, processID, off, amount, filename);
-    if ((outFile = fopen(filename, "w")) != NULL) {
-        UI_HandleLoopRead(vAddr, processID, off, amount);
-        outFile = stdout;
+
+    FILE* temp;
+    if ((temp = fopen(filename, "w")) != NULL) {
+        UI_HandleLoopRead(vAddr, processID, off, amount,temp);
+
+        QueueCommand_t_p comm = malloc(sizeof (QueueCommand_t));
+        comm->command = ProcessCloseFile;
+        comm->voidParams = calloc(1,sizeof(void*));
+        comm->voidParams[0] = temp;
+        comm->paramsAmount = 0;
+        comm->stringParamsAmount = 0;
+        comm->voidParamsAmount = 1;
+        QUEUES_WriteToProcess(processID, comm);
     }
     ASSERT_PRINT("Exiting: UI_HandleLoopReadToFile(vAddr:%d,processID:%d, off:%d, amount:%d, fileName:%s)\n", vAddr, processID, off, amount, filename);
 }
