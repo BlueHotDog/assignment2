@@ -29,24 +29,37 @@ void AGING_DeInit() {
 }
 
 void* AGING_Main() {
-    ASSERT_PRINT("Entering:AGING_Main()\n");
     int i = 0;
     unsigned int m = ((unsigned int) - 1 >> 1) + 1; //a number with its msb set to 1
     while (!AGING_ShouldClose) {
         pthread_mutex_lock(&Aging_mutex);
+        pthread_mutex_lock(&IPT_mutex);
+	pthread_mutex_lock(&IPT_mutex_helper);
+ASSERT_PRINT("Entering:AGING_Main()\n");
         if (IPT != NULL) {
             ASSERT_PRINT("Aging deamon kicks in...\n");
             for (i = 0; i < NumOfPagesInMM; i++) {
                 Aging_Registers[i] >>= 1;
-                if (IPT[i] != NULL && IPT[i]->referenceBit == TRUE)
-                {
+                if (IPT[i] != NULL && IPT[i]->referenceBit == TRUE) {
                     Aging_Registers[IPT[i]->frame] |= m;
                 }
-                if (IPT[i] != NULL)
-                    IPT_UpdateReferencetyBit(IPT[i]->frame, FALSE);
+                if (IPT[i] != NULL) {
+                    int i = 0;
+                    int line = -1;
+                    for (i; i < SIZE_OF_IPT && line == -1; i++)
+                        if (IPT[i] != NULL && IPT[i]->frame == IPT[i]->frame) {
+                            line = i;
+                            ASSERT_PRINT("Exiting:IPT_FindLineByFrame() with return value: TRUE, line = %d\n", line);
+                        }
+                    if(line!=-1)
+                        IPT[line]->referenceBit = FALSE;
+                }
+                //IPT_UpdateReferencetyBit(IPT[i]->frame, FALSE);
             }
         }
         ASSERT_PRINT("Aging deamon finished...\n");
+	pthread_mutex_unlock(&IPT_mutex_helper);
+        pthread_mutex_unlock(&IPT_mutex);
         pthread_mutex_unlock(&MM_Counter_Mutex);
     }
     AGING_DeInit();

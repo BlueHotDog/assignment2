@@ -23,12 +23,17 @@ int HAT_PRIVATE_Hash(MemoryAddress_t memoryAddress) {
 IPT_t_p HAT_GetEntry(MemoryAddress_t memoryAddress) {
     ASSERT_PRINT("Entering:HAT_GetEntry(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
     int index = HAT_PRIVATE_Hash(memoryAddress);
+/*
     if(HAT[index]==0)
     {
-        HAT[index] = IPT[index];
+        IPT_t_p* temp = (IPT_FindEmptyLine());
+        if(temp==NULL || *temp==NULL)
+            exit(-1);
+        HAT[index] = *temp;
     }
+*/
     ASSERT_PRINT("Exiting:HAT_GetEntry(pid:%d,addr:%d)\n", memoryAddress.processID, memoryAddress.pageNumber);
-    return IPT[index];
+    return HAT[index];
 }
 
 void HAT_Print()
@@ -54,5 +59,6 @@ void HAT_Print()
             fprintf(outFile,"\n");
         }
     }
+    fprintf(outFile,"\n");
     ASSERT_PRINT("Exiting: HAT_Print()\n");
 }

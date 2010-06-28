@@ -5,8 +5,9 @@ bool MM_Init()
     if(MM==NULL)
         return FALSE;
     MM_Hit_Counter = 0;
-    MM_Access_Counter = 0;
-    pthread_mutex_init(&MM_Counter_Mutex, NULL);
+    	MM_Access_Counter = 0;
+    	pthread_mutex_init(&MM_Counter_Mutex, NULL);
+	//pthread_mutex_lock(&MM_Counter_Mutex);
     return TRUE;
 }
 

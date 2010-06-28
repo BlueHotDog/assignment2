@@ -54,11 +54,18 @@ void* PROCESS_RUN(void* pcb) {
                         }
                     }
                 }
-                stringToRead[ansIndex] = 0;
-                fprintf(toWrite, "%s\n", stringToRead);
+                int strIndex = 0;
+                for(strIndex=0; strIndex<ansIndex; strIndex++){
+                    fprintf(toWrite, "%c", stringToRead[strIndex]);
+                }
+                fprintf(toWrite, "\n");
+
+                //fprintf(toWrite, "%s\n", stringToRead);
+/*
                 if (comm->voidParamsAmount == 1) {
                     fclose(toWrite);
                 }
+*/
                 //ASSERT(DISK_PrintContent());
             }
                 break;
@@ -112,6 +119,12 @@ void* PROCESS_RUN(void* pcb) {
                 close = TRUE;
                 break;
             }
+            break;
+            case ProcessCloseFile:
+            {
+                fclose(comm->voidParams[0]);
+            }
+            break;
         }
         if (close)
             break;
@@ -159,6 +172,7 @@ int PROCESS_CREATE() {
             for (i; i < start + NumOfProcessPages; i++) {
                 if (FreeList[i].isFree == TRUE) {
                     fprintf(outFile, "Error allocating space for process\n");
+                    exit(-1);
                 }
             }
             FREELIST_SetNotTaken(start);

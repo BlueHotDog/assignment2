@@ -17,6 +17,10 @@
 IPT_t_p* IPT;
 int totalPagesInIPT;
 
+pthread_mutex_t IPT_mutex;
+pthread_mutex_t IPT_mutex_helper;
+pthread_mutex_t IPT_mutex_helper2;
+
 bool IPT_Init();
 
 /*
@@ -59,7 +63,8 @@ bool IPT_FindFrame(
 bool IPT_Remove(
         int HATPointedIndex,
         PID processID,
-        LPN pageNumber);
+        LPN pageNumber,
+        int line);
 
 /*
  * search the ipt for empy frame by going over all frames in the ipt
@@ -94,6 +99,15 @@ bool IPT_Replace(
  * find line by frame index and update it's dirty bit.
  * */
 void IPT_UpdateDirtyBit(MMFI frame, bool dirtyBit);
+
+IPT_t_p* IPT_FindEmptyLine();
+
+IPT_t_p* IPT_FindIPTLine(
+        int HATPointedIndex,
+        PID processID,
+        LPN pageNumber);
+
+int IPT_FindIndexByPointer(IPT_t_p pointer);
 
 /*
  * find line by frame index and update it's reference bit.

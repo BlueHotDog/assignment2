@@ -19,6 +19,7 @@
 static bool MMU_shouldClose = FALSE;
 
 pthread_t MMU;
+pthread_mutex_t MMU_mutex_helper;
 
 bool MMU_Init();
 void MMU_Close();

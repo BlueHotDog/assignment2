@@ -33,13 +33,19 @@ void* PRM_Main() {
                         int diskIndex = PCBArray[process].start + pageNumber;
                         MMFI oldFrame = PRM_FindOldestPage();
                         int line = -1;
+			pthread_mutex_lock(&IPT_mutex_helper2);
+                        pthread_mutex_lock(&IPT_mutex);
                         line = IPT_FindLineByFrame(oldFrame);
+			
+
                         PRM_ReplaceMMFrameWithDiskFrame(diskIndex, IPT[line]);
+			pthread_mutex_unlock(&IPT_mutex);
+			pthread_mutex_unlock(&IPT_mutex_helper2);
                         MemoryAddress_t mem;
                         mem.processID = process;
                         mem.pageNumber = pageNumber;
                         int HATPointedIndex = HAT_PRIVATE_Hash(mem);
-                        if (!IPT_Remove(HATPointedIndex, IPT[line]->processID, IPT[line]->pageNumber)) {
+                        if (!IPT_Remove(HATPointedIndex, IPT[line]->processID, IPT[line]->pageNumber,line)) {
                             ASSERT(1 == 2);
                             exit(-1);
                         }
@@ -65,8 +71,10 @@ void* PRM_Main() {
                         IPT_Add(HATPointedIndex, process, pageNumber, frame); //add a line to the IPT
 
                         Page page = calloc(PageSize, sizeof (char));
+    			//pthread_mutex_lock(&IPT_mutex_helper);
                         DISK_ReadPage(disk_index, &page);
                         MM_WritePage(page, frame, PageSize, 0, 0);
+    			//pthread_mutex_unlock(&IPT_mutex_helper);
                         free(page);
                     }
 
@@ -76,18 +84,26 @@ void* PRM_Main() {
                 {
                     int id = command->params[1];
                     int index = 0;
-                    pthread_mutex_lock(&MM_Counter_Mutex);
 
+                    pthread_mutex_lock(&MM_Counter_Mutex);
+                    pthread_mutex_lock(&IPT_mutex);
+			pthread_mutex_lock(&IPT_mutex_helper);
                     for (index = 0; index < NumOfPagesInMM; index++) {
                         if (IPT[index] != NULL && IPT[index]->processID == id) {
-                            if(IPT[index]->frame>0)
+                            if(IPT[index]->frame>=0)
                             {
                                 Aging_Registers[IPT[index]->frame]=0;
                             }
                             totalPagesInIPT--;
+                            
                             if (IPT[index]->prev != NULL)
-                                IPT[index]->prev = IPT[index]->next;
-
+                            {
+                                IPT[index]->prev->next = IPT[index]->next;
+                            }
+                            
+                            if(IPT[index]->next!=NULL)
+                                IPT[index]->next->prev = IPT[index]->prev;
+                            
                             int ii = 0;
                             for(ii;ii<NumOfPagesInMM;ii++)
                             {
@@ -100,6 +116,8 @@ void* PRM_Main() {
                             free(temp);
                         }
                     }
+pthread_mutex_unlock(&IPT_mutex_helper);
+                    pthread_mutex_unlock(&IPT_mutex);
                     pthread_mutex_unlock(&MM_Counter_Mutex);
 
 
@@ -124,7 +142,7 @@ MMFI PRM_FindOldestPage() {
             smallest = Aging_Registers[i];
         }
     }
-    printf("oldest index: %d\n", oldestIndex);
+    ("oldest index: %d\n", oldestIndex);
     return oldestIndex;
 }
 

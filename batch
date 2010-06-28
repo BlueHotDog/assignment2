@@ -1,43 +1,26 @@
-hitRate
-printRegisters
 createProcess
 createProcess
 createProcess
 createProcess
 createProcess
 createProcess
-delProcess 2
-createProcess
-hitRate
-write 4 1 12345
-read 4 1 5
-loopRead 4 1 1 4
-readToFile 4 1 4 p1_output1.txt
-loopReadToFile 4 1 1 4 p1_output2.txt
-write 0 2 amitgeves
-read 0 2 8
-write 0 0 88888888
-loopRead 0 0 2 4
-loopReadToFile 0 0 2 4 p0_output.txt
-hitRate
-printDisk
-printMMUTable
-printHat
+loopWrite 0 0 A 1 256
+loopWrite 0 1 B 1 256
+loopReadToFile 0 0 1 256 A.txt
+loopReadToFile 0 1 1 256 B.txt
+loopWrite 0 2 C 1 256
+loopWrite 0 3 D 1 256
+loopReadToFile 0 2 1 256 C.txt
+loopReadToFile 0 3 1 256 D.txt
+loopWrite 0 4 E 1 256
+loopWrite 0 5 F 1 256
+loopReadToFile 0 4 1 256 E.txt
+loopReadToFile 0 5 1 256 F.txt
 delProcess 0
-printDisk
-printMMUTable
-printHat
-createProcess
-delProcess 0
-delProcess 3
-delProcess 2
 delProcess 1
-printDisk
-printMMUTable
-printHat
-noMonitor
-createProcess
-write 0 0 geves
-read 0 0 5
-delProcess 0
+delProcess 2
+delProcess 3
+delProcess 4
+delProcess 5
 exit
+

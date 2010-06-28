@@ -1,8 +1,0 @@
-createProcess
-write 0 0 "trynumberone"
-loopWrite 16 0 "a" 2 6
-write 32 0 "hello"
-read 16 0 7
-readToFile 0 0 12 "b.txt"
-loopRead 16 0 1 10
-printMM

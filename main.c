@@ -65,7 +65,7 @@ void printConfigInfo() {
 }
 
 void printUsage() {
-    fprintf(outFile, "Incorrect usage, please user:\n sim config_file_name");
+    fprintf(outFile, "Incorrect usage, please user:\n sim config_file_name\n");
 
 }
 
@@ -73,6 +73,13 @@ void init() {
     bool ReturnVal = FALSE;
 
     ASSERT_PRINT("===Starting init===\n");
+
+    ASSERT_PRINT("Init Monitor = FALSE\n");
+    monitor = FALSE;
+
+    ASSERT_PRINT("Init IPT..\n");
+    ReturnVal = IPT_Init();
+    ASSERT(ReturnVal != FALSE);
 
     ASSERT_PRINT("Init FreeList...\n");
     ReturnVal = FREELIST_Init();
@@ -94,10 +101,6 @@ void init() {
     ReturnVal = QUEUES_Init();
     ASSERT(ReturnVal != FALSE);
 
-    ASSERT_PRINT("Init IPT..\n");
-    ReturnVal = IPT_Init();
-    ASSERT(ReturnVal != FALSE);
-
     ASSERT_PRINT("Init HAT..\n");
     ReturnVal = HAT_Init();
     ASSERT(ReturnVal != FALSE);
@@ -114,6 +117,7 @@ void init() {
     ReturnVal = AGING_Init();
     ASSERT(ReturnVal != FALSE);
 
+
     ASSERT_PRINT("Creating UI Thread...\n");
     ReturnVal = UI_CreateUIThread();
     ASSERT(ReturnVal != FALSE);
@@ -123,7 +127,8 @@ int main(int argc, char** argv) {
     void* status = NULL;
     inFile = stdin;
     outFile = stdout;
-#ifndef DEBUG
+
+#ifdef DEBUG
     readConfigFromFile("config");
     printConfigInfo();
     UI_HandleBatchFile("batch");
@@ -133,13 +138,15 @@ int main(int argc, char** argv) {
         exit(-1);
     }
     readConfigFromFile(argv[1]);
+
 #endif
-    init();
+   	init();
     pthread_join(UI_Thread, status);
+
     int i = 0;
 
     for (i; i < MaxNumOfProcesses; i++) {
-        if(PCBArray[i].processThread)
+        if(PCBArray[i].active)
             pthread_join(PCBArray[i].processThread,NULL);
     }
 
@@ -158,8 +165,7 @@ int main(int argc, char** argv) {
 
     QUEUES_DeInit();
     MM_DeInit();
-    fclose(inFile);
-    fclose(outFile);
+
 
     DISK_DeInit();
     PCB_Free();
@@ -169,5 +175,8 @@ int main(int argc, char** argv) {
     }
     free(IPT);
     free(HAT);
+
+    fclose(inFile);
+    fclose(outFile);
     return (EXIT_SUCCESS);
 }

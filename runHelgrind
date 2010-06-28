@@ -1,0 +1,1 @@
+valgrind --tool=helgrind --track-fds=yes sim --log-file=~/3/lf.txt

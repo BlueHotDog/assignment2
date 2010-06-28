@@ -5,7 +5,6 @@ bool PCB_Init()
 {
     ASSERT_PRINT("Entering:PCB_Init\n");
     PCBArray = calloc(MaxNumOfProcesses,sizeof(PCB_t));
-
     if(PCBArray==NULL)
         return FALSE;
     int i=0;
